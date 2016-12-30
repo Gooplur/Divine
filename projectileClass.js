@@ -98,7 +98,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             this.speed = this.trackSpeed;
             //var sxy = game.screenToWorld((game.mouseX - 1/2 * game.c.width) / game.scale, (game.mouseY - 1/2 * game.c.height) / game.scale); //broken fail!
             this.tracked = this.nearestEnemy();
-            self.rotation = Math.atan2(self.Y - tracked.Y, self.X - tracked.X) - Math.PI;
+            self.rotation = Math.atan2(self.Y - this.tracked.Y, self.X - this.tracked.X) - Math.PI;
         }
 
         self.X += Math.cos(self.rotation) * self.speed;
