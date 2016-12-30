@@ -26,6 +26,7 @@ function Ship(xx, yy, type, faction, AI, drive)
     this.aiSKey = false;
     this.aiAKey = false;
     this.aiDKey = false;
+    this.aiQKey = false;
     //SHIP STATS (stats that all ships have)
     this.ID = "The Cyrilean";
     this.type = type;
@@ -53,13 +54,17 @@ function Ship(xx, yy, type, faction, AI, drive)
     this.cloakingCost = 0.65;
     this.upgrades = []; //equipment that is used to enhance the ship.
     this.ammunition = []; //all of the ammunitions that are in store in the ship.
+    this.cargoBay = []; //all of the non-equipped weapons and ammo, and raw materials for trade.
     this.faction = faction; //This is the faction that the ship belongs to.
     this.shieldsColour = "blue";
     //Attack rate
     this.sidegunsRate = 0.2;
     this.sidegunsStoreTime = new Date().getTime();
+    this.maingunsRate = 5;
+    this.maingunsStoreTime = new Date().getTime();
     //turning off individual parts of the ship
     this.sidegunsPowered = true;
+    this.maingunsPowered = true;
 
     //upgrade bonuses to default stats
     this.shieldsUP = 0;
@@ -132,7 +137,7 @@ function Ship(xx, yy, type, faction, AI, drive)
             this.weaponCost = 0.25;
             this.explosionStyle = [25, 22, 30, ["red", "yellow", "orange"]];
             this.shieldsColour = "blue";
-            this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}];
+            this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
 
             //sounds
             this.explosionSound = new Audio("sounds/heavyXPL.wav");
@@ -242,6 +247,7 @@ function Ship(xx, yy, type, faction, AI, drive)
             this.cloaking = false;
             //turns off all parts of the ship
             this.sidegunsPowered = false;
+            this.maingunsPowered = false;
         }
 
         //To Do with stats
@@ -492,6 +498,14 @@ function Ship(xx, yy, type, faction, AI, drive)
                 else
                 {
                     this.sidegunsPowered = false;
+                }
+                if (this.maingunsPowered == false)
+                {
+                    this.maingunsPowered = true;
+                }
+                else
+                {
+                    this.maingunsPowered = false;
                 }
             }
             //Movement
@@ -799,6 +813,7 @@ function Ship(xx, yy, type, faction, AI, drive)
         }
     };
 
+    //function draw //img, strtX, strtY, width, height, myX, myY, sizeX, sizeY, rotation, discombobulated, alpha, adjX, adjY
     this.accessUpgrades = function(use) //draw: "drawBelow"/"drawAbove" activate upgrade's functions: "activate"/"playerActivate"
     {
         if (this.upgrades.length > 0)
@@ -848,6 +863,51 @@ function Ship(xx, yy, type, faction, AI, drive)
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 11 / 16) * 20, this.Y + Math.sin(this.rotation - Math.PI * 11 / 16) * 20, this, this.rotation - Math.PI / 2));
                                 game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 5 / 16) * 20, this.Y + Math.sin(this.rotation - Math.PI * 5 / 16) * 20, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                else if (this.upgrades[i].name == "M1Launcher" && this.upgrades[i].type == "Afid01" && this.upgrades[i].part == "mainguns")
+                {
+                    if (use == "drawAbove")
+                    {
+                        if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineStarterPack, 62, 75, 12, 14, 12, 14, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, 0, -32);
+                        }
+                        else
+                        {
+                            draw(divineStarterPack, 62, 75, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, 0, -32);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.qKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.qKey = false;
+                            if (this.power >= this.weaponCost)
+                            {
+                                this.power -= this.weaponCost;
+                                //this.laserSound1.currentTime = 0;
+                                //playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 2) * 27, this.Y + Math.sin(this.rotation - Math.PI / 2) * 27, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiQKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiQKey = false;
+                            if (this.power >= this.weaponCost)
+                            {
+                                this.power -= this.weaponCost;
+                                //this.laserSound1.currentTime = 0;
+                                //playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 2) * 27, this.Y + Math.sin(this.rotation - Math.PI / 2) * 27, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }

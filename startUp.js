@@ -70,6 +70,7 @@ function Game()
     this.cKey = false;
     this.lKey = false;
     this.tildKey = false;
+    this.qKey = false;
     this.spaceKey = false;
         //Other Sensing Flags
     this.mouseX = 0;

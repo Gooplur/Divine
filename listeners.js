@@ -4,7 +4,7 @@
 function keyPressSensing(event)
 {
     var key = event.keyCode || event.which;
-    console.log(event);
+    //console.log(event);
 
     if (key == 38)
     {
@@ -73,6 +73,10 @@ function keyPressSensing(event)
     if (key == 192)
     {
         game.tildKey = true;
+    }
+    if (key == 81)
+    {
+        game.qKey = true;
     }
     if (key == 32)
     {
@@ -151,6 +155,10 @@ function keyReleaseSensing(event)
     if (key == 192)
     {
         game.tildKey = false;
+    }
+    if (key == 81)
+    {
+        game.qKey = false;
     }
     if (key == 32)
     {
