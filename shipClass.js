@@ -98,6 +98,9 @@ function Ship(xx, yy, type, faction, AI, drive)
     this.laserSound3 = "none";
     this.accelSound = "none";
     this.idleSound = "none";
+    this.rechargeSound = "none";
+    this.shieldingSound = "none";
+    this.poweringSound = "none";
 
     //SOUND DETAIL VARIABLES
     this.accelSoundTime1 = false;
@@ -106,6 +109,8 @@ function Ship(xx, yy, type, faction, AI, drive)
     this.explosionSoundTime2 = false;
     this.laserSound1Time1 = false;
     this.laserSound1Time2 = false;
+    this.laserSound2Time1 = false;
+    this.laserSound2Time2 = false;
 
     //SHIP STAT SETUP
     this.setShipStats = function()
@@ -140,11 +145,14 @@ function Ship(xx, yy, type, faction, AI, drive)
             this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
 
             //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
             this.explosionSound = new Audio("sounds/heavyXPL.wav");
             this.accelSound = new Audio("sounds/accl.mp3");
             this.accelSoundTime1 = 0.2;
             this.accelSoundTime2 = 1.1;
             this.laserSound1 = new Audio("sounds/lightLas.wav");
+            this.laserSound2 = new Audio("sounds/missileLaunch.wav");
         }
         else if (this.type == "Disk01")
         {
@@ -172,11 +180,15 @@ function Ship(xx, yy, type, faction, AI, drive)
             this.handlingCost = 0;
             this.weaponCost = 0.35;
             this.explosionStyle = [25, 22, 30, ["Green", "Blue", "lightGreen"]];
-            this.explosionSound = new Audio("sounds/muffledXPL.wav");
-            this.idleSound = new Audio("sounds/hover.wav");
             this.destructDuration = 0.5;
             this.shieldsColour = "darkgreen";
             this.cloakingCost = 0.5;
+
+            //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
+            this.explosionSound = new Audio("sounds/muffledXPL.wav");
+            this.idleSound = new Audio("sounds/hover.wav");
         }
     };
 
@@ -255,8 +267,9 @@ function Ship(xx, yy, type, faction, AI, drive)
         {
             this.integrity = this.integrityMAX;
         }
-        else if (this.integrity < 0)
+        else if (this.integrity <= 0)
         {
+            this.integrity = 0;
             this.destructed = true;
         }
 
@@ -376,6 +389,20 @@ function Ship(xx, yy, type, faction, AI, drive)
                 this.accessUpgrades("drawAbove");
             }
         }
+        //Draw Power and Integrity Bars for teammates.
+        if (this.faction == "Player" && game.toggleFleetStatus)
+        {
+            if (!this.player)
+            {
+                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((this.integrity / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
+                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((this.power / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+            }
+            else if (game.toggleSelfStatus)
+            {
+                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((this.integrity / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
+                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((this.power / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+            }
+        }
     };
 
     this.rotationSystem = function()
@@ -480,10 +507,12 @@ function Ship(xx, yy, type, faction, AI, drive)
                 game.oKey = false;
                 if (this.shieldingOnline == false && this.power > (this.rechargeCost + this.shieldingCost) * 10)
                 {
+                    playSound(this.shieldingSound, this.volume, 0, this.shieldingSound.duration);
                     this.shieldingOnline = true;
                 }
                 else if (this.shieldingOnline)
                 {
+                    playSound(this.shieldingSound, this.volume, false, false, -1);
                     this.shieldingOnline = false;
                 }
             }
@@ -773,10 +802,13 @@ function Ship(xx, yy, type, faction, AI, drive)
                 game.pKey = false;
                 if (this.offline == true && this.power > 0)
                 {
+                    playSound(this.poweringSound, this.volume, 0, this.poweringSound.duration);
                     this.offline = false;
+
                 }
                 else if (this.offline == false)
                 {
+                    playSound(this.poweringSound, this.volume, false, false, -1);
                     this.offline = true;
                 }
             }
@@ -874,11 +906,11 @@ function Ship(xx, yy, type, faction, AI, drive)
                         if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
                         {
                             var colorized = colorizedImage(divineStarterPack, 62, 75, 12, 14, 12, 14, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
-                            draw(colorized, 0, 0, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, 0, -32);
+                            draw(colorized, 0, 0, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, -0.5, -32);
                         }
                         else
                         {
-                            draw(divineStarterPack, 62, 75, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, 0, -32);
+                            draw(divineStarterPack, 62, 75, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, -0.5, -32);
                         }
                     }
                     else if (use == "playerActivate")
@@ -890,9 +922,9 @@ function Ship(xx, yy, type, faction, AI, drive)
                             if (this.power >= this.weaponCost)
                             {
                                 this.power -= this.weaponCost;
-                                //this.laserSound1.currentTime = 0;
-                                //playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 2) * 27, this.Y + Math.sin(this.rotation - Math.PI / 2) * 27, this, this.rotation - Math.PI / 2));
+                                this.laserSound1.currentTime = 0;
+                                playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 1.95) * 27, this.Y + Math.sin(this.rotation - Math.PI / 1.95) * 27, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }
@@ -905,8 +937,8 @@ function Ship(xx, yy, type, faction, AI, drive)
                             if (this.power >= this.weaponCost)
                             {
                                 this.power -= this.weaponCost;
-                                //this.laserSound1.currentTime = 0;
-                                //playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                this.laserSound1.currentTime = 0;
+                                playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
                                 game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 2) * 27, this.Y + Math.sin(this.rotation - Math.PI / 2) * 27, this, this.rotation - Math.PI / 2));
                             }
                         }
@@ -918,24 +950,26 @@ function Ship(xx, yy, type, faction, AI, drive)
 
     this.runSystems = function()
     {
-        this.destruct();
-        if (this.activateThisShip)
+        if (ifInScreenDraw(this.X, this.Y, this.size) || game.togglePerformance == false)
         {
-            this.setShipStats();
-            this.activateThisShip = false;
+            this.destruct();
+            if (this.activateThisShip)
+            {
+                this.setShipStats();
+                this.activateThisShip = false;
+            }
+            this.mandateStats();
+            this.drawShip();
+            this.turnOnOffShip();
+            if (this.power > 0 && this.offline == false)
+            {
+                this.rotationSystem();
+                this.systemControls();
+            }
+            this.movementSystem();
+            this.strafing();
+            //console.log("Power: [ " + this.power + " / " + this.powerMAX + " ];");
         }
-        this.mandateStats();
-        this.drawShip();
-        this.turnOnOffShip();
-        if (this.power > 0 && this.offline == false)
-        {
-            this.rotationSystem();
-            this.systemControls();
-        }
-        this.movementSystem();
-        this.strafing();
-        //console.log("Power: [ " + this.power + " / " + this.powerMAX + " ];");
-
         //SET PLAYER TO SHIP IF DRIVING
         if (this.player == true)
         {

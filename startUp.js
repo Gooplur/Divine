@@ -78,6 +78,10 @@ function Game()
     this.MX = 0;
     this.MY = 0;
     this.gameJustStarted = true;
+        //Option Menu Toggles
+    this.toggleFleetStatus = true; //show entire fleet power and integrity or none.
+    this.toggleSelfStatus = true; //shows player driven ships power and integrity or not.
+    this.togglePerformance = false; //Everything off of the screen is paused, or not.
 
     //Lists
         //Star List
@@ -92,8 +96,19 @@ function Game()
         //Ships List
     this.shipsList = [];
     this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true));
-    //this.shipsList.push(new Ship(500, 500, "Disk01", "Boofeln Widget Corporation", "basic", false));
+
+    this.shipsList.push(new Ship(500, 500, "Afid01", "Boofeln Widget Corporation", "basic", false));
     this.shipsList.push(new Ship(-200, -200, "Afid01", "Boofeln Widget Corporation", "basic", false));
+    this.shipsList.push(new Ship(14000, 1500, "Afid01", "Boofeln Widget Corporation", "basic", false));
+    this.shipsList.push(new Ship(15500, -1000, "Afid01", "Boofeln Widget Corporation", "basic", false));
+    this.shipsList.push(new Ship(13000, -900, "Afid01", "Boofeln Widget Corporation", "basic", false));
+    this.shipsList.push(new Ship(15000, 2000, "Afid01", "Boofeln Widget Corporation", "basic", false));
+    this.shipsList.push(new Ship(14750, 1700, "Afid01", "Boofeln Widget Corporation", "basic", false));
+
+    this.shipsList.push(new Ship(5400, 0, "Afid01", "Player", "basic", false));
+    this.shipsList.push(new Ship(7000, 800, "Afid01", "Player", "basic", false));
+    this.shipsList.push(new Ship(5900, 1400, "Afid01", "Player", "basic", false));
+    this.shipsList.push(new Ship(6000, 1000, "Afid01", "Player", "none", false));
 
         //Projectiles List
     this.projectilesList = [];
@@ -334,10 +349,14 @@ function ifInScreenDraw(x, y, size)
 }
 
 //PLAY SOUND FUNCTION
-function playSound(audio, volume, time1, time2)
+function playSound(audio, volume, time1, time2, speed)
 {
     if (audio != "none")
     {
+        if (typeof(speed) != "undefined" && volume != false && speed != false)
+        {
+            audio.playbackRate = speed;
+        }
         audio.volume = game.masterVolume;
         if (typeof(volume) != "undefined" && volume != false)
         {

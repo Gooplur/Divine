@@ -14,6 +14,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.distanceTraveled = 0;
     this.damage = 1;
     this.phasing = false;
+    //rotating projectiles only
+    this.targetRotation = this.rotation;
+    this.turnSpeed = 1/9 * Math.PI;
     //tracking projectiles only
     this.tracking = false;
     this.launchTime = new Date().getTime();
@@ -49,7 +52,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.phasing = false;
                 this.tracking = true;
                 this.explodes = true;
+                this.explosionSound = new Audio("sounds/missileXPL.wav");
                 this.explosionStyle = [11, 5, 9, ["crimson", "orange", "red"]];
+                this.turnSpeed = 1/29 * Math.PI;
             }
         }
     };
@@ -68,12 +73,12 @@ function Projectile(type, x, y, who, rotation, adX, adY)
 
     this.nearestEnemy = function()
     {
-        var nearShip = {Y: 100000000, X: 10000000};
+        var nearShip = {Y: who.Y + Math.sin(who.rotation - Math.PI) * 1000000, X: who.X + Math.cos(who.rotation - Math.PI) * 1000000};
         var nearDist = false;
         for (var i = 0; i < game.shipsList.length; i++)
         {
             console.log(game.shipsList[i]);
-            if (game.shipsList[i].faction != who.faction)
+            if (game.shipsList[i].faction != who.faction && this.distanceTo(game.shipsList[i]) <= who.radarRange)
             {
                 if (nearDist == false)
                 {
@@ -96,9 +101,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         if (this.tracking == true && this.launchTime + this.trackWait * 1000 <= new Date().getTime())
         {
             this.speed = this.trackSpeed;
-            //var sxy = game.screenToWorld((game.mouseX - 1/2 * game.c.width) / game.scale, (game.mouseY - 1/2 * game.c.height) / game.scale); //broken fail!
             this.tracked = this.nearestEnemy();
-            self.rotation = Math.atan2(self.Y - this.tracked.Y, self.X - this.tracked.X) - Math.PI;
+            self.targetRotation = Math.atan2(self.Y - this.tracked.Y, self.X - this.tracked.X) - Math.PI;
+            this.projectileRotation();
         }
 
         self.X += Math.cos(self.rotation) * self.speed;
@@ -141,6 +146,31 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         }
     };
 
+    this.projectileRotation = function()
+    {
+        if (distBetweenAngles(this.targetRotation, this.rotation) > this.turnSpeed)
+        {
+            var d = (this.targetRotation - this.rotation) % (2 * Math.PI);
+            if (d > Math.PI)
+            {
+                d -= 2*Math.PI;
+            }
+            if (d < -Math.PI)
+            {
+                d += 2*Math.PI;
+            }
+            if (d > 0)
+            {
+                this.rotation += this.turnSpeed;
+            }
+            else
+            {
+                this.rotation -= this.turnSpeed;
+            }
+            this.rotation = this.rotation % (2 * Math.PI);
+        }
+    };
+
     this.projectileCollision = function()
     {
         for (var i = 0; i < game.shipsList.length; i++)
@@ -173,10 +203,13 @@ function Projectile(type, x, y, who, rotation, adX, adY)
 
     this.process = function()
     {
-        this.defineProjectileStats();
-        this.project();
-        this.drawProjectile();
-        this.projectileCollision();
-        //console.log(this.distanceTo(game.shipsList[1]));
+        if (this.tracking && who.faction != "Player" || ifInScreenDraw(this.X, this.Y, 5) || game.togglePerformance == false)
+        {
+            this.defineProjectileStats();
+            this.project();
+            this.drawProjectile();
+            this.projectileCollision();
+            //console.log(this.distanceTo(game.shipsList[1]));
+        }
     };
 }
