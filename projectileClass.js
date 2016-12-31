@@ -45,7 +45,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             }
             else if (this.type == "M1Missile")
             {
-                this.trackSpeed = 14;
+                this.trackSpeed = 22;
                 this.speed = who.speed + this.trackSpeed;
                 this.range = 5000;
                 this.damage = 105;

@@ -4,7 +4,7 @@
 //This is for all enemies and allies... Ships are the life of this game.
 
 //SHIP CLASS
-function Ship(xx, yy, type, faction, AI, drive)
+function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 {
     //IMPORTANT GAME INFO
     this.X = xx;
@@ -142,7 +142,11 @@ function Ship(xx, yy, type, faction, AI, drive)
             this.weaponCost = 0.25;
             this.explosionStyle = [25, 22, 30, ["red", "yellow", "orange"]];
             this.shieldsColour = "blue";
-            this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
+
+            if (upgrade == "standard")
+            {
+                this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
+            }
 
             //sounds
             this.shieldingSound = new Audio("sounds/shieldsUp.wav");
