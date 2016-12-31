@@ -35,5 +35,18 @@ function navigator()
         {
             game.scale = Math.max(0.09, game.scale - 0.02);
         }
+
+        if (game.tildKey)
+        {
+            game.tildKey = false;
+            for (var i = 0; i < game.shipsList.length; i++)
+            {
+                if (game.shipsList[i].faction == "Player")
+                {
+                    game.shipsList[i].player = true;
+                    break;
+                }
+            }
+        }
     }
 }

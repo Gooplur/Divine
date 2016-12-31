@@ -488,6 +488,24 @@ function Ship(xx, yy, type, faction, AI, drive)
                 game.mode = "navigator";
             }
 
+            //Toggle Hud playerOff/fleetOff/allOn
+            if (game.hKey == true)
+            {
+                game.hKey = false;
+                if (game.toggleSelfStatus == true)
+                {
+                    game.toggleSelfStatus = false;
+                }
+                else if (game.toggleSelfStatus == false && game.toggleFleetStatus == true)
+                {
+                    game.toggleFleetStatus = false;
+                }
+                else if (game.toggleFleetStatus == false)
+                {
+                    game.toggleSelfStatus = true;
+                    game.toggleFleetStatus = true;
+                }
+            }
             //Toggle Cloaking on/off
             if (game.cKey == true && this.cloakable == true)
             {
@@ -676,7 +694,7 @@ function Ship(xx, yy, type, faction, AI, drive)
                 }
             }
 
-            if (this.brain == "basic")
+            if (this.brain == "basic" || this.brain == "basic-missile")
             {
                 this.target = "none";
                 var closest = "none";
@@ -731,6 +749,7 @@ function Ship(xx, yy, type, faction, AI, drive)
                         if (this.distanceTo(this.target) > 900)
                         {
                             this.aiWKey = true;
+                            this.aiQKey = false;
                             if (this.strafable)
                             {
                                 this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
@@ -744,6 +763,10 @@ function Ship(xx, yy, type, faction, AI, drive)
                         {
                             this.aiWKey = false;
                             this.aiSKey = true;
+                            if (this.brain == "basic-missile")
+                            {
+                                this.aiQKey = true;
+                            }
                             if (this.strafable)
                             {
                                 this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
@@ -758,6 +781,7 @@ function Ship(xx, yy, type, faction, AI, drive)
                         {
                             this.aiWKey = false;
                             this.aiSKey = false;
+                            this.aiQKey = false;
                             if (this.strafable)
                             {
                                 this.aiAKey = true;
@@ -877,8 +901,8 @@ function Ship(xx, yy, type, faction, AI, drive)
                                 this.power -= (this.weaponCost * 2);
                                 this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 11 / 16) * 20, this.Y + Math.sin(this.rotation - Math.PI * 11 / 16) * 20, this, this.rotation - Math.PI / 2));
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 5 / 16) * 20, this.Y + Math.sin(this.rotation - Math.PI * 5 / 16) * 20, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }
@@ -893,8 +917,8 @@ function Ship(xx, yy, type, faction, AI, drive)
                                 this.power -= (this.weaponCost * 2);
                                 this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 11 / 16) * 20, this.Y + Math.sin(this.rotation - Math.PI * 11 / 16) * 20, this, this.rotation - Math.PI / 2));
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 5 / 16) * 20, this.Y + Math.sin(this.rotation - Math.PI * 5 / 16) * 20, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }

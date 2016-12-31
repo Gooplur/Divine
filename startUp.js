@@ -71,6 +71,7 @@ function Game()
     this.lKey = false;
     this.tildKey = false;
     this.qKey = false;
+    this.hKey = false;
     this.spaceKey = false;
         //Other Sensing Flags
     this.mouseX = 0;
@@ -103,12 +104,12 @@ function Game()
     this.shipsList.push(new Ship(15500, -1000, "Afid01", "Boofeln Widget Corporation", "basic", false));
     this.shipsList.push(new Ship(13000, -900, "Afid01", "Boofeln Widget Corporation", "basic", false));
     this.shipsList.push(new Ship(15000, 2000, "Afid01", "Boofeln Widget Corporation", "basic", false));
-    this.shipsList.push(new Ship(14750, 1700, "Afid01", "Boofeln Widget Corporation", "basic", false));
+    this.shipsList.push(new Ship(14750, 1700, "Afid01", "Boofeln Widget Corporation", "basic-missile", false));
 
-    this.shipsList.push(new Ship(5400, 0, "Afid01", "Player", "basic", false));
+    this.shipsList.push(new Ship(5400, 0, "Afid01", "Player", "basic-missile", false));
     this.shipsList.push(new Ship(7000, 800, "Afid01", "Player", "basic", false));
     this.shipsList.push(new Ship(5900, 1400, "Afid01", "Player", "basic", false));
-    this.shipsList.push(new Ship(6000, 1000, "Afid01", "Player", "none", false));
+    this.shipsList.push(new Ship(6000, 1000, "Afid01", "Player", "basic-missile", false));
 
         //Projectiles List
     this.projectilesList = [];

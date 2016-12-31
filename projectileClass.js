@@ -38,7 +38,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
 
             if (this.type == "f1Laser")
             {
-                this.speed = who.speed + 10;
+                this.speed = who.speed + 30;
                 this.range = 4000;
                 this.damage = 5;
                 this.phasing = false;

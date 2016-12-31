@@ -78,6 +78,10 @@ function keyPressSensing(event)
     {
         game.qKey = true;
     }
+    if (key == 72)
+    {
+        game.hKey = true;
+    }
     if (key == 32)
     {
         game.spaceKey = true;
@@ -159,6 +163,10 @@ function keyReleaseSensing(event)
     if (key == 81)
     {
         game.qKey = false;
+    }
+    if (key == 72)
+    {
+        game.hKey = false;
     }
     if (key == 32)
     {
