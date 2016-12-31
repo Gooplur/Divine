@@ -148,15 +148,39 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
             if (upgrade == "Standard")
             {
-                this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
+                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1)];
             }
             else if (upgrade == "Advanced")
             {
-                this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
+                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1)];
             }
             else if (upgrade == "Basic")
             {
                 this.upgrades = [];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = [itemize("M1Missile", 1)]
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = [itemize("M1Missile", 2)]
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = [itemize("M1Missile", 3)]
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = [itemize("M1Missile", 5)]
             }
 
             //sounds
@@ -204,6 +228,12 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.poweringSound = new Audio("sounds/powerOn.wav");
             this.explosionSound = new Audio("sounds/muffledXPL.wav");
             this.idleSound = new Audio("sounds/hover.wav");
+        }
+
+        //Predetermined Cargo
+        if (typeof(cargoHold) != "undefined" && cargoHold != false)
+        {
+            this.cargoBay = cargoHold;
         }
     };
 
@@ -772,7 +802,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             this.aiQKey = false;
                             this.aiSpaceKey = false;
 
-                            if (this.distanceTo(this.target) <= 5000 && this.distanceTo(this.target) >= 3500)
+                            if (this.distanceTo(this.target) <= 5000 && this.distanceTo(this.target) >= 2500)
                             {
                                 this.rotation = this.targetRotation;
                                 if (this.brain == "simple-missile")
@@ -815,7 +845,12 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                         else if (this.aiPhase == 3)
                         {
-                            this.rotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI; //while in shooting mode the ship has perfect rotation so that it can actually be a challenge.
+                            this.targetRotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
+
+                            if (this.rotation - this.handling < this.targetRotation && this.rotation + this.handling > this.targetRotation)
+                            {
+                                this.rotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI; //while in shooting mode the ship has perfect rotation so that it can actually be a challenge.
+                            }
 
                             this.aiSpaceKey = true;
 
@@ -1002,7 +1037,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         {
             for (var i = 0; i < this.upgrades.length; i++)
             {
-                if (this.upgrades[i].name == "F1Lasers" && this.upgrades[i].type == "Afid01" && this.upgrades[i].part == "sideguns")
+                if (this.upgrades[i].name == "Afid01-F1Lasers" && this.type == "Afid01" && this.upgrades[i].part == "sideguns")
                 {
                     if (use == "drawAbove")
                     {
@@ -1049,7 +1084,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
-                else if (this.upgrades[i].name == "M1Launcher" && this.upgrades[i].type == "Afid01" && this.upgrades[i].part == "mainguns")
+                else if (this.upgrades[i].name == "Afid01-M1Launcher" && this.type == "Afid01" && this.upgrades[i].part == "mainguns")
                 {
                     if (use == "drawAbove")
                     {
@@ -1069,12 +1104,29 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         {
                             this.maingunsStoreTime = new Date().getTime();
                             game.qKey = false;
-                            if (this.power >= this.weaponCost)
+                            var hasAmmoToShoot = false;
+                            for (var a = 0; a < this.ammunition.length; a++)
                             {
-                                this.power -= this.weaponCost;
-                                this.laserSound1.currentTime = 0;
-                                playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
-                                game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 1.95) * 27, this.Y + Math.sin(this.rotation - Math.PI / 1.95) * 27, this, this.rotation - Math.PI / 2));
+                                if (this.ammunition[a].name == "M1Missile" && this.ammunition[a].quantity >= 1)
+                                {
+                                    this.ammunition[a].quantity -= 1;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (hasAmmoToShoot)
+                            {
+                                if (this.power >= this.weaponCost)
+                                {
+                                    this.power -= this.weaponCost;
+                                    this.laserSound1.currentTime = 0;
+                                    playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                    game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 1.95) * 27, this.Y + Math.sin(this.rotation - Math.PI / 1.95) * 27, this, this.rotation - Math.PI / 2));
+                                }
                             }
                         }
                     }
@@ -1084,12 +1136,29 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         {
                             this.maingunsStoreTime = new Date().getTime();
                             this.aiQKey = false;
-                            if (this.power >= this.weaponCost)
+                            var hasAmmoToShoot = false;
+                            for (var a = 0; a < this.ammunition.length; a++)
                             {
-                                this.power -= this.weaponCost;
-                                this.laserSound1.currentTime = 0;
-                                playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
-                                game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 2) * 27, this.Y + Math.sin(this.rotation - Math.PI / 2) * 27, this, this.rotation - Math.PI / 2));
+                                if (this.ammunition[a].name == "M1Missile" && this.ammunition[a].quantity >= 1)
+                                {
+                                    this.ammunition[a].quantity -= 1;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (hasAmmoToShoot)
+                            {
+                                if (this.power >= this.weaponCost)
+                                {
+                                    this.power -= this.weaponCost;
+                                    this.laserSound1.currentTime = 0;
+                                    playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                    game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 2) * 27, this.Y + Math.sin(this.rotation - Math.PI / 2) * 27, this, this.rotation - Math.PI / 2));
+                                }
                             }
                         }
                     }
