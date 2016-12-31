@@ -135,6 +135,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     {
         var amt = this.damage;
 
+        target.rechargeBlockedTime = new Date().getTime();
         if (target.shields - amt >= 0)
         {
             target.shields -= amt;

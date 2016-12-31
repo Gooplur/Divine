@@ -66,6 +66,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.cargoBay = []; //all of the non-equipped weapons and ammo, and raw materials for trade.
     this.faction = faction; //This is the faction that the ship belongs to.
     this.shieldsColour = "blue";
+    this.rechargeShield = true;
+    this.rechargeTime = new Date().getTime();
+    this.rechargeBlocked = false;
+    this.rechargeBlockedTime = 0;
     //Attack rate
     this.sidegunsRate = 0.2;
     this.sidegunsStoreTime = new Date().getTime();
@@ -87,6 +91,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.handlingUP = 0;
     this.strafeUP = 0;
     this.boostStrafeUP = 0;
+    this.canRechargeInCombat = false;
 
     //UNIQUE SHIP STATS (stats that only some ships have)
     this.player = drive; //if this is true that means that the player is currently driving the ship.
@@ -436,7 +441,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
-                        var colorized = colorizedImage(divineStarterPack, 13, 11, 36, 51, 36, 51, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                        var colorized = colorizedImage(divineStarterPack, 13, 11, 36, 51, 36, 51, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
                         draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, 0, -5);
                     }
                     else
@@ -448,7 +453,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
-                        var colorized = colorizedImage(divineStarterPack, 65, 11, 36, 51, 36, 51, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                        var colorized = colorizedImage(divineStarterPack, 65, 11, 36, 51, 36, 51, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
                         draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, -1, -5);
                     }
                     else
@@ -469,7 +474,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     }
                     if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
-                        var colorized = colorizedImage(divineStarterPack, 124, 165, 32, 32, 32, 32, 0.65 * this.shields/this.getShields(), this.getShieldsColour());
+                        var colorized = colorizedImage(divineStarterPack, 124, 165, 32, 32, 32, 32, 0.65 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
                         draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
                     }
                     else
@@ -481,7 +486,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
-                        var colorized = colorizedImage(divineStarterPack, 183, 163, 32, 32, 32, 32, 0.65 * this.shields/this.getShields(), "black");
+                        var colorized = colorizedImage(divineStarterPack, 183, 163, 32, 32, 32, 32, 0.65 * Math.max(0, this.shields)/this.getShields(), "black");
                         draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
                     }
                     else
@@ -497,15 +502,15 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         {
             if (!this.player)
             {
-                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((this.integrity / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
-                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((this.power / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
-                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((this.shields / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
+                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.integrity) / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
+                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.power) / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.shields) / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
             }
             else if (game.toggleSelfStatus)
             {
-                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((this.integrity / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
-                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((this.power / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
-                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((this.shields / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
+                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.integrity) / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
+                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.power) / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.shields) / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
             }
         }
     };
@@ -578,6 +583,28 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         }
     };
 
+    this.recharging = function()
+    {
+        if (this.rechargeBlockedTime + 3000 > new Date().getTime())
+        {
+            this.rechargeBlocked = true;
+        }
+        else
+        {
+            this.rechargeBlocked = false;
+        }
+
+        if (this.rechargeShield && this.shields < this.getShields() && this.power >= this.rechargeCost / 10 && !this.rechargeBlocked || this.rechargeShield && this.shields < this.getShields() && this.power >= this.rechargeCost / 10 && this.canRechargeInCombat)
+        {
+            if (this.rechargeTime + 100 <= new Date().getTime())
+            {
+                this.rechargeTime = new Date().getTime();
+                this.shields += this.getRecharge() / 10;
+                this.power -= this.rechargeCost / 10;
+            }
+        }
+    };
+
     this.systemControls = function()
     {
         if (this.player == true)
@@ -639,6 +666,18 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.shieldingOnline = false;
                 }
             }
+            if (game.rKey == true)
+            {
+                if (this.rechargeShield)
+                {
+                    this.rechargeShield = false;
+                }
+                else if (!this.rechargeShield)
+                {
+                    this.rechargeShield = true;
+                }
+            }
+
             //Toggle Power to Weapons on/off
             if (game.lKey == true)
             {
@@ -1187,7 +1226,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     {
                         if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                         {
-                            var colorized = colorizedImage(divineStarterPack, 16, 74, 30, 14, 30, 14, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                            var colorized = colorizedImage(divineStarterPack, 16, 74, 30, 14, 30, 14, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
                             draw(colorized, 0, 0, 30, 14, this.X, this.Y, 30, 14, this.rotation, false, 1, -1, -18.5);
                         }
                         else
@@ -1236,7 +1275,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         {
                             if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                             {
-                                var colorized = colorizedImage(divineStarterPack, 82, 76, 15, 15, 15, 15, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                                var colorized = colorizedImage(divineStarterPack, 82, 76, 15, 15, 15, 15, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
                                 draw(colorized, 0, 0, 15, 15, this.X, this.Y, 15, 15, this.rotation, false, 1, -0.5, 19.5);
                             }
                             else
@@ -1248,7 +1287,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         {
                             if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                             {
-                                var colorized = colorizedImage(divineStarterPack, 97, 76, 15, 15, 15, 15, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                                var colorized = colorizedImage(divineStarterPack, 97, 76, 15, 15, 15, 15, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
                                 draw(colorized, 0, 0, 15, 15, this.X, this.Y, 15, 15, this.rotation, false, 1, -0.5, 19.5);
                             }
                             else
@@ -1273,6 +1312,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     {
                         this.shieldsColourUP = "crimson";
                         this.shieldsUP = 250;
+                        this.rechargeUP = 5;
                     }
                 }
                 else if (this.upgrades[i].name == "Afid01-M1Launcher" && this.type == "Afid01" && this.upgrades[i].part == "mainguns")
@@ -1281,7 +1321,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     {
                         if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                         {
-                            var colorized = colorizedImage(divineStarterPack, 62, 75, 12, 14, 12, 14, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                            var colorized = colorizedImage(divineStarterPack, 62, 75, 12, 14, 12, 14, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
                             draw(colorized, 0, 0, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, -0.5, -32);
                         }
                         else
@@ -1376,6 +1416,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             {
                 this.rotationSystem();
                 this.systemControls();
+                this.recharging();
             }
             this.movementSystem();
             this.strafing();

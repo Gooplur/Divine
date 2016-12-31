@@ -72,6 +72,7 @@ function Game()
     this.tildKey = false;
     this.qKey = false;
     this.hKey = false;
+    this.rKey = false;
     this.shiftKey = false;
     this.spaceKey = false;
         //Other Sensing Flags
