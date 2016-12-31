@@ -20,13 +20,16 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.target = "none";
     this.radarRange = 10000;
 
-        //AI controls
+        //AI controls / AI variables
     this.aiSpaceKey = false;
     this.aiWKey = false;
     this.aiSKey = false;
     this.aiAKey = false;
     this.aiDKey = false;
     this.aiQKey = false;
+    this.aiPhase = false; //what phase of the ai brain is this ship in?
+    this.aiTimer = new Date().getTime();
+
     //SHIP STATS (stats that all ships have)
     this.ID = "The Cyrilean";
     this.type = type;
@@ -143,9 +146,17 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.explosionStyle = [25, 22, 30, ["red", "yellow", "orange"]];
             this.shieldsColour = "blue";
 
-            if (upgrade == "standard")
+            if (upgrade == "Standard")
             {
                 this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [{name: "F1Lasers", type: "Afid01", part: "sideguns"}, {name: "M1Launcher", type: "Afid01", part: "mainguns"}];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [];
             }
 
             //sounds
@@ -698,7 +709,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 }
             }
 
-            if (this.brain == "basic" || this.brain == "basic-missile")
+            //TARGETING FOR AI
+            if (this.brain == "basic" || this.brain == "basic-missile" || this.brain == "simple")
             {
                 this.target = "none";
                 var closest = "none";
@@ -719,6 +731,116 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
+            }
+
+            //AI BRAINS
+            if (this.brain == "simple" || this.brain == "simple-missile")
+            {
+                if (this.target != "none")
+                {
+                    if (this.integrity / this.integrityMAX <= 0.9|| this.power / this.powerMAX < 0.25)
+                    {
+                        this.targetRotation = - Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
+
+                        if (this.brain == "simple-missile")
+                        {
+                            this.aiQKey = true;
+                        }
+
+                        if (this.distanceTo(this.target) < this.target.radarRange)
+                        {
+                            this.aiWKey = true;
+                            if (this.strafable)
+                            {
+                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                            }
+                        }
+                        else
+                        {
+                            this.aiSKey = true;
+                        }
+                    }
+                    else
+                    {
+                        if (this.aiPhase == false)
+                        {
+
+                            this.targetRotation = Math.atan2(this.Y - (this.target.Y + Math.sin(this.target.rotation) * this.target.speed), this.X - (this.target.X + Math.cos(this.target.rotation) * this.target.speed)) - 1/2 * Math.PI;
+
+                            this.aiWKey = true;
+                            this.aiSKey = false;
+                            this.aiQKey = false;
+                            this.aiSpaceKey = false;
+
+                            if (this.distanceTo(this.target) <= 5000 && this.distanceTo(this.target) >= 3500)
+                            {
+                                this.rotation = this.targetRotation;
+                                if (this.brain == "simple-missile")
+                                {
+                                    this.aiQKey = true;
+                                }
+                                this.aiSpaceKey = true;
+                            }
+
+                            if (this.distanceTo(this.target) <= 626)
+                            {
+                                this.aiPhase = 1;
+                            }
+                        }
+                        else if (this.aiPhase == 1)
+                        {
+                            this.aiSpaceKey = false;
+                            this.aiQKey = false;
+                            this.aiWKey = false;
+                            this.aiSKey = true;
+
+                            if (this.speed == 0)
+                            {
+                                this.aiPhase = 2;
+                            }
+                        }
+                        else if (this.aiPhase == 2)
+                        {
+                            this.aiSKey = false;
+
+                            this.targetRotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
+
+                            this.aiSpaceKey = false;
+
+                            if (this.aiTimer + 4000 < new Date().getTime())
+                            {
+                                this.aiTimer = new Date().getTime();
+                                this.aiPhase = 3;
+                            }
+                        }
+                        else if (this.aiPhase == 3)
+                        {
+                            this.rotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI; //while in shooting mode the ship has perfect rotation so that it can actually be a challenge.
+
+                            this.aiSpaceKey = true;
+
+                            if (this.aiTimer + 3000 < new Date().getTime())
+                            {
+                                this.aiTimer = new Date().getTime();
+                                if (this.distanceTo(this.target) >= 1100)
+                                {
+                                    this.aiPhase = false;
+                                }
+                                else
+                                {
+                                    this.aiPhase = 2;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+            }
+            else if (this.brain == "basic" || this.brain == "basic-missile")
+            {
                 if (this.target != "none")
                 {
                     if (this.integrity / this.integrityMAX <= 0.15 || this.power / this.powerMAX <= 0.10) //run away
