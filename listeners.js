@@ -82,6 +82,10 @@ function keyPressSensing(event)
     {
         game.hKey = true;
     }
+    if (key == 16)
+    {
+        game.shiftKey = true;
+    }
     if (key == 32)
     {
         game.spaceKey = true;
@@ -167,6 +171,10 @@ function keyReleaseSensing(event)
     if (key == 72)
     {
         game.hKey = false;
+    }
+    if (key == 16)
+    {
+        game.shiftKey = false;
     }
     if (key == 32)
     {

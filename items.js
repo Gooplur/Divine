@@ -22,6 +22,16 @@
             this.utility = "part";
             this.part = "mainguns";
         }
+        else if (name == "Afid01-Boosters")
+        {
+            this.utility = "part";
+            this.part = "boosters";
+        }
+        else if (name == "RedStarShields")
+        {
+            this.utility = "part";
+            this.part = "shielding";
+        }
 
         //Ammunition
         if (name == "M1Missile")

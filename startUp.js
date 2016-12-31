@@ -72,6 +72,7 @@ function Game()
     this.tildKey = false;
     this.qKey = false;
     this.hKey = false;
+    this.shiftKey = false;
     this.spaceKey = false;
         //Other Sensing Flags
     this.mouseX = 0;
@@ -96,7 +97,7 @@ function Game()
     }
         //Ships List
     this.shipsList = [];
-    this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Standard", "Stocked"));
+    this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Advanced", "Stocked"));
 
     this.shipsList.push(new Ship(10000, 500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));
     this.shipsList.push(new Ship(9000, -200, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));

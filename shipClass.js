@@ -22,6 +22,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
         //AI controls / AI variables
     this.aiSpaceKey = false;
+    this.aiShiftKey = false;
     this.aiWKey = false;
     this.aiSKey = false;
     this.aiAKey = false;
@@ -34,17 +35,21 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.ID = "The Cyrilean";
     this.type = type;
     this.integrityMAX = 50; //the amount of damage the physical ship can take before total destruction.
-    this.integrity = this.integrityMAX; //the current level of damage the ship can still withstand before destruction. damage to the ship affects the quality of all other functions the ship depends on.
+    this.integrity = 10000000000000; //the current level of damage the ship can still withstand before destruction. damage to the ship affects the quality of all other functions the ship depends on.
     this.shieldsMAX = 150; //the total capacity of the ships shielding systems.
-    this.shields = this.shieldsMAX; //the current status of the ships shielding systems.
+    this.shields = 10000000000000; //the current status of the ships shielding systems.
     this.rechargeMAX = 5; //the rate at which shields recharge in the ships best condition.
     this.recharge = this.rechargeMAX; //the rate at which shields recharge, may be reduced if ship is damaged.
     this.powerMAX = 500; //the total power capacity that the ship has.
-    this.power = this.powerMAX; //the current amount of power that the ship has left to run all of its functions with.
+    this.power = 10000000000000; //the current amount of power that the ship has left to run all of its functions with.
     this.cargoMAX = 25; //the total amount of cargo that the ship can carry.
     this.cargo = 0; //ships total cargo by volume.
     this.speedMAX = 30; //ships maximum potential speed
     this.speed = 0; //ships current speed
+    this.boostSpeed = 40;
+    this.boostAccel = 6;
+    this.boostHandle = 1/100 * Math.PI;
+    this.boostStrafe = 15;
     this.accelerationMAX = 4.5;//max speed up/slow down rate
     this.acceleration = this.accelerationMAX; //speed up/slow down rate
     this.handlingMAX = 1/100 * Math.PI; //max turn speed
@@ -55,6 +60,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.handlingCost = 0.01;
     this.weaponCost = 0.25;
     this.cloakingCost = 0.65;
+    this.boostCost = 1;
     this.upgrades = []; //equipment that is used to enhance the ship.
     this.ammunition = []; //all of the ammunitions that are in store in the ship.
     this.cargoBay = []; //all of the non-equipped weapons and ammo, and raw materials for trade.
@@ -72,6 +78,15 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     //upgrade bonuses to default stats
     this.shieldsUP = 0;
     this.shieldsColourUP = "none";
+    this.rechargeUP = 0;
+    this.boostSpeedUP = 0;
+    this.speedUP = 0;
+    this.accelerationUP = 0;
+    this.boostAccelUP = 0;
+    this.boostHandleUP = 0;
+    this.handlingUP = 0;
+    this.strafeUP = 0;
+    this.boostStrafeUP = 0;
 
     //UNIQUE SHIP STATS (stats that only some ships have)
     this.player = drive; //if this is true that means that the player is currently driving the ship.
@@ -122,13 +137,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         {
             this.size = 34;
             this.integrityMAX = 50; //the amount of damage the physical ship can take before total destruction.
-            this.integrity = this.integrityMAX;
             this.shieldsMAX = 150; //the total capacity of the ships shielding systems.
-            this.shields = this.shieldsMAX;
             this.rechargeMAX = 5; //the rate at which shields recharge in the ships best condition.
             this.recharge = this.rechargeMAX;
             this.powerMAX = 1000; //the total power capacity that the ship has.
-            this.power = this.powerMAX;
             this.radarRange = 12000;
             this.cargoMAX = 25; //the total amount of cargo that the ship can carry.
             this.speedMAX = 30; //ships maximum potential speed
@@ -145,6 +157,11 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.weaponCost = 0.25;
             this.explosionStyle = [25, 22, 30, ["red", "yellow", "orange"]];
             this.shieldsColour = "blue";
+            this.boostSpeed = 31;
+            this.boostAccel = 4.25;
+            this.boostHandle = 1.05/100 * Math.PI;
+            this.boostStrafe = 11;
+            this.boostCost = 1;
 
             if (upgrade == "Standard")
             {
@@ -152,7 +169,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
             else if (upgrade == "Advanced")
             {
-                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1)];
+                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-Boosters", 1), itemize("RedStarShields", 1)];
             }
             else if (upgrade == "Basic")
             {
@@ -199,13 +216,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.directionless = true;
             this.cloakable = true;
             this.integrityMAX = 20; //the amount of damage the physical ship can take before total destruction.
-            this.integrity = this.integrityMAX;
             this.shieldsMAX = 90; //the total capacity of the ships shielding systems.
-            this.shields = this.shieldsMAX;
             this.rechargeMAX = 3; //the rate at which shields recharge in the ships best condition.
             this.recharge = this.rechargeMAX;
             this.powerMAX = 500; //the total power capacity that the ship has.
-            this.power = this.powerMAX;
             this.radarRange = 8000;
             this.cargoMAX = 10; //the total amount of cargo that the ship can carry.
             this.speedMAX = 25; //ships maximum potential speed
@@ -237,6 +251,22 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         }
     };
 
+    this.resetBonuses = function()
+    {
+        this.shieldsUP = 0;
+        this.shieldsColourUP = "none";
+        this.rechargeUP = 0;
+        this.boostSpeedUP = 0;
+        this.speedUP = 0;
+        this.accelerationUP = 0;
+        this.boostAccelUP = 0;
+        this.boostHandleUP = 0;
+        this.handlingUP = 0;
+        this.strafeUP = 0;
+        this.boostStrafeUP = 0;
+        this.accessUpgrades("bonus");
+    };
+
     //GET SHIP STATS STATUS
     this.getShieldsColour = function()
     {
@@ -254,7 +284,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     {
         if (this.shieldingOnline)
         {
-            return this.shieldsMAX + this.shieldsUP * (this.integrity / this.integrityMAX);
+            return (this.shieldsMAX + this.shieldsUP) * (this.integrity / this.integrityMAX);
         }
         else
         {
@@ -266,7 +296,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     {
         if (this.shieldingOnline)
         {
-            return this.rechargeMAX * (this.integrity / this.integrityMAX);
+            return (this.rechargeMAX + this.rechargeUP) * (this.integrity / this.integrityMAX);
         }
         else
         {
@@ -276,22 +306,50 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
     this.getSpeed = function()
     {
-        return this.speedMAX * (this.integrity / this.integrityMAX);
+        if (game.shiftKey)
+        {
+            return (this.boostSpeed + this.boostSpeedUP) * (this.integrity / this.integrityMAX);
+        }
+        else
+        {
+            return (this.speedMAX + this.speedUP) * (this.integrity / this.integrityMAX);
+        }
     };
 
     this.getAcceleration = function()
     {
-        return this.accelerationMAX * (this.integrity / this.integrityMAX);
+        if (game.shiftKey)
+        {
+            return (this.boostAccel + this.boostAccelUP) * (this.integrity / this.integrityMAX);
+        }
+        else
+        {
+            return (this.accelerationMAX + this.accelerationUP) * (this.integrity / this.integrityMAX);
+        }
     };
 
     this.getHandling = function()
     {
-        return this.handlingMAX * (this.integrity / this.integrityMAX);
+        if (game.shiftKey)
+        {
+            return (this.boostHandle + this.boostHandleUP) * (this.integrity / this.integrityMAX);
+        }
+        else
+        {
+            return (this.handlingMAX + this.handlingUP) * (this.integrity / this.integrityMAX);
+        }
     };
 
     this.getStrafe = function()
     {
-        return this.strafeMAX * (this.integrity / this.integrityMAX);
+        if (game.shiftKey)
+        {
+            return (this.boostStrafe + this.boostStrafeUP) * (this.integrity / this.integrityMAX);
+        }
+        else
+        {
+            return (this.strafeMAX + this.strafeUP)* (this.integrity / this.integrityMAX);
+        }
     };
 
     //MANDATE SHIP STATS
@@ -318,18 +376,18 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.destructed = true;
         }
 
-        if (this.shields > this.shieldsMAX)
+        if (this.shields > this.getShields())
         {
-            this.shields = this.shieldsMAX;
+            this.shields = this.getShields();
         }
         else if (this.shields < 0)
         {
             this.shields = 0;
         }
 
-        if (this.recharge > this.rechargeMAX)
+        if (this.recharge > this.getRecharge())
         {
-            this.recharge = this.rechargeMAX;
+            this.recharge = this.getRecharge();
         }
         else if (this.recharge < 0)
         {
@@ -345,18 +403,18 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.power = 0;
         }
 
-        if (this.acceleration > this.accelerationMAX)
+        if (this.acceleration > this.getAcceleration())
         {
-            this.acceleration = this.accelerationMAX;
+            this.acceleration = this.getAcceleration();
         }
         else if (this.acceleration < 0)
         {
             this.acceleration = 0;
         }
 
-        if (this.handling > this.handlingMAX)
+        if (this.handling > this.getHandling())
         {
-            this.handling = this.handlingMAX;
+            this.handling = this.getHandling();
         }
         else if (this.handling < 0)
         {
@@ -376,7 +434,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 this.accessUpgrades("drawBelow");
                 if (this.speedAlteration == false)
                 {
-                    if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
+                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
                         var colorized = colorizedImage(divineStarterPack, 13, 11, 36, 51, 36, 51, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
                         draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, 0, -5);
@@ -388,9 +446,9 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 }
                 else
                 {
-                    if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
+                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
-                        var colorized = colorizedImage(divineStarterPack, 65, 11, 36, 51, 36, 51, 0.3 * this.shields/this.shieldsMAX, this.shieldsColour);
+                        var colorized = colorizedImage(divineStarterPack, 65, 11, 36, 51, 36, 51, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
                         draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, -1, -5);
                     }
                     else
@@ -409,7 +467,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     {
                         playSound(this.idleSound, this.volume);
                     }
-                    if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
+                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
                         var colorized = colorizedImage(divineStarterPack, 124, 165, 32, 32, 32, 32, 0.65 * this.shields/this.getShields(), this.getShieldsColour());
                         draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
@@ -421,7 +479,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 }
                 else
                 {
-                    if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
+                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                     {
                         var colorized = colorizedImage(divineStarterPack, 183, 163, 32, 32, 32, 32, 0.65 * this.shields/this.getShields(), "black");
                         draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
@@ -441,11 +499,13 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             {
                 circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((this.integrity / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
                 circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((this.power / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((this.shields / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
             }
             else if (game.toggleSelfStatus)
             {
                 circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((this.integrity / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
                 circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((this.power / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((this.shields / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
             }
         }
     };
@@ -608,7 +668,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (game.shiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else if (game.sKey == true)
                 {
@@ -616,7 +683,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.speedAlteration = true;
                     this.speed = Math.max(0, this.speed - (this.acceleration / 25));
                     this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (game.shiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else
                 {
@@ -634,7 +708,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (game.shiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else if (game.sKey == true)
                 {
@@ -642,7 +723,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.speedAlteration = true;
                     this.speed = Math.max(0, this.speed - (this.acceleration / 25));
                     this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (game.shiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else if (game.aKey == false && game.dKey == false)
                 {
@@ -658,14 +746,28 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.strafe = Math.max(-this.getStrafe(), this.strafe - (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (game.shiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else if (game.dKey == true)
                 {
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.strafe = Math.min(this.getStrafe(), this.strafe + (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (game.shiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
             }
         }
@@ -677,20 +779,34 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             //Movement
             if (this.directionless == true)
             {
-                if (game.wKey == true)
+                if (this.aiWKey == true)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (this.aiShiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
-                else if (game.sKey == true)
+                else if (this.aiSKey == true)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.speed = Math.max(0, this.speed - (this.acceleration / 25));
                     this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (this.aiShiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else
                 {
@@ -704,7 +820,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (this.aiShiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else if (this.aiSKey == true)
                 {
@@ -712,7 +835,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.speedAlteration = true;
                     this.speed = Math.max(0, this.speed - (this.acceleration / 25));
                     this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (this.aiShiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else if (this.aiAKey == false && this.aiDKey == false)
                 {
@@ -728,14 +858,28 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.strafe = Math.max(-this.getStrafe(), this.strafe - (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (this.aiShiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
                 else if (this.aiDKey == true)
                 {
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
                     this.strafe = Math.min(this.getStrafe(), this.strafe + (this.acceleration / 25));
-                    this.power -= this.accelerationCost / 100;
+                    if (this.aiShiftKey)
+                    {
+                        this.power -= this.boostCost / 100;
+                    }
+                    else
+                    {
+                        this.power -= this.accelerationCost / 100;
+                    }
                 }
             }
 
@@ -1041,7 +1185,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     if (use == "drawAbove")
                     {
-                        if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                         {
                             var colorized = colorizedImage(divineStarterPack, 16, 74, 30, 14, 30, 14, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
                             draw(colorized, 0, 0, 30, 14, this.X, this.Y, 30, 14, this.rotation, false, 1, -1, -18.5);
@@ -1084,11 +1228,58 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
+                else if (this.upgrades[i].name == "Afid01-Boosters" && this.type == "Afid01" && this.upgrades[i].part == "boosters")
+                {
+                    if (use == "drawAbove")
+                    {
+                        if (!this.speedAlteration)
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineStarterPack, 82, 76, 15, 15, 15, 15, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 15, 15, this.X, this.Y, 15, 15, this.rotation, false, 1, -0.5, 19.5);
+                            }
+                            else
+                            {
+                                draw(divineStarterPack, 82, 76, 15, 15, this.X, this.Y, 15, 15, this.rotation, false, 1, -0.5, 19.5);
+                            }
+                        }
+                        else
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineStarterPack, 97, 76, 15, 15, 15, 15, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 15, 15, this.X, this.Y, 15, 15, this.rotation, false, 1, -0.5, 19.5);
+                            }
+                            else
+                            {
+                                draw(divineStarterPack, 97, 76, 15, 15, this.X, this.Y, 15, 15, this.rotation, false, 1, -0.5, 19.5);
+                            }
+                        }
+                    }
+                    if (use == "bonus")
+                    {
+                        this.boostSpeedUP = 12;
+                        this.speedUP = 3;
+                        this.accelerationUP = 0.5;
+                        this.boostAccelUP = 6;
+                        this.handlingUP = (0.25 / 100) * Math.PI * 2;
+                        this.boostHandleUP = (0.5 / 100) * Math.PI * 2;
+                    }
+                }
+                else if (this.upgrades[i].name == "RedStarShields" && this.upgrades[i].part == "shielding")
+                {
+                    if (use == "bonus")
+                    {
+                        this.shieldsColourUP = "crimson";
+                        this.shieldsUP = 250;
+                    }
+                }
                 else if (this.upgrades[i].name == "Afid01-M1Launcher" && this.type == "Afid01" && this.upgrades[i].part == "mainguns")
                 {
                     if (use == "drawAbove")
                     {
-                        if (this.shieldingOnline && this.shieldsMAX > 0 && this.shields > 0)
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
                         {
                             var colorized = colorizedImage(divineStarterPack, 62, 75, 12, 14, 12, 14, 0.3 * this.shields/this.getShields(), this.getShieldsColour());
                             draw(colorized, 0, 0, 12, 14, this.X, this.Y, 12, 14, this.rotation, false, 1, -0.5, -32);
@@ -1177,6 +1368,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 this.setShipStats();
                 this.activateThisShip = false;
             }
+            this.resetBonuses();
             this.mandateStats();
             this.drawShip();
             this.turnOnOffShip();
