@@ -4,6 +4,7 @@
 function Projectile(type, x, y, who, rotation, adX, adY)
 {
     var self = this;
+    this.zIndex = 0;
     this.X = x;
     this.Y = y;
     this.type = type;
@@ -13,10 +14,15 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.range = 500;
     this.distanceTraveled = 0;
     this.damage = 1;
+    this.EMP = 0;
     this.phasing = false;
+    this.style = "normal";
     //rotating projectiles only
     this.targetRotation = this.rotation;
     this.turnSpeed = 1/9 * Math.PI;
+    //single-stream only
+    this.streamFixed = false;
+    this.streamType = "normal";
     //tracking projectiles only
     this.tracking = false;
     this.launchTime = new Date().getTime();
@@ -36,7 +42,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         {
             this.activateProjectile = false;
 
-            if (this.type == "f1Laser")
+            if (this.type == "F1Laser")
             {
                 this.speed = who.speed + 30;
                 this.range = 4000;
@@ -56,18 +62,62 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.explosionStyle = [11, 5, 9, ["crimson", "orange", "red"]];
                 this.turnSpeed = 1/29 * Math.PI;
             }
+            else if (this.type == "F1SingleStream")
+            {
+                this.speed = 0;
+                this.range = 1000;
+                this.damage = 0.25;
+                this.phasing = false;
+                this.streamFixed = false;
+                this.streamType = "normal";
+                this.style = "singleStream";
+                this.zIndex = 2;
+            }
         }
     };
 
-    this.drawProjectile = function()
+    this.drawProjectile = function(z)
     {
-        if (this.type == "f1Laser")
+        if (z == this.zIndex)
         {
-            circle(true, this.X, this.Y, 2, 0, 2*Math.PI, "red", false, false, false, 0, 0.65);
+            if (this.type == "F1Laser")
+            {
+                circle(true, this.X, this.Y, 2, 0, 2*Math.PI, "red", false, false, false, 0, 0.65);
+            }
+            else if (this.type == "M1Missile")
+            {
+                draw(divineStarterPack, 117, 12, 26, 7, this.X - 1/2 * 12, this.Y - 1/2 * 26, 26, 7, this.rotation, false, 1, 0, 0);
+            }
+            else if (this.type == "F1SingleStream")
+            {
+                this.target = this.nearestEnemy();
+                if (this.distanceTo(this.target) <= this.range)
+                {
+                    line(this.X, this.Y, this.target.X, this.target.Y, "red", 3, true, 0, 0.65);
+                    this.streamFixed = true;
+                }
+            }
         }
-        else if (this.type == "M1Missile")
+    };
+
+    this.singleStream = function()
+    {
+        if (this.style == "singleStream")
         {
-            draw(divineStarterPack, 117, 12, 26, 7, this.X - 1/2 * 12, this.Y - 1/2 * 26, 26, 7, this.rotation, false, 1, 0, 0);
+            if (this.streamFixed)
+            {
+                if (this.streamType == "normal")
+                {
+                    this.dealDamageTo(this.target);
+                }
+                if (this.streamType == "emp")
+                {
+                    this.empTo(this.target);
+                }
+
+                who.power -= who.weaponCost;
+            }
+            game.projectilesList.splice(game.projectilesList.indexOf(this), 1);
         }
     };
 
@@ -147,6 +197,22 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         }
     };
 
+    this.empTo = function(target)
+    {
+        var amt = this.EMP;
+
+        target.rechargeBlockedTime = new Date().getTime() - 27000;
+        if (target.shields - amt >= 0)
+        {
+            target.shields -= amt;
+        }
+        else
+        {
+            amt -= target.shields;
+            target.energy -= amt;
+        }
+    };
+
     this.projectileRotation = function()
     {
         if (distBetweenAngles(this.targetRotation, this.rotation) > this.turnSpeed)
@@ -174,26 +240,29 @@ function Projectile(type, x, y, who, rotation, adX, adY)
 
     this.projectileCollision = function()
     {
-        for (var i = 0; i < game.shipsList.length; i++)
+        if (this.style == "normal")
         {
-            if (game.shipsList[i].faction != who.faction)
+            for (var i = 0; i < game.shipsList.length; i++)
             {
-                if (this.distanceTo(game.shipsList[i]) < game.shipsList[i].size)
+                if (game.shipsList[i].faction != who.faction)
                 {
-                    this.dealDamageTo(game.shipsList[i]);
-                    if (this.phasing == false)
+                    if (this.distanceTo(game.shipsList[i]) < game.shipsList[i].size)
                     {
-                        if (this.explodes)
+                        this.dealDamageTo(game.shipsList[i]);
+                        if (this.phasing == false)
                         {
-                            playSound(this.explosionSound, this.volume, this.explosionSoundTime1, this.explosionSoundTime2);
-                            explosion(this.X, this.Y, this.explosionStyle[0], this.explosionStyle[1], this.explosionStyle[2], this.explosionStyle[3]);
-                        }
-                        for (var j = 0; j < game.projectilesList.length; j++)
-                        {
-                            if (game.projectilesList[j] === this)
+                            if (this.explodes)
                             {
-                                game.projectilesList.splice(j, 1);
-                                break;
+                                playSound(this.explosionSound, this.volume, this.explosionSoundTime1, this.explosionSoundTime2);
+                                explosion(this.X, this.Y, this.explosionStyle[0], this.explosionStyle[1], this.explosionStyle[2], this.explosionStyle[3]);
+                            }
+                            for (var j = 0; j < game.projectilesList.length; j++)
+                            {
+                                if (game.projectilesList[j] === this)
+                                {
+                                    game.projectilesList.splice(j, 1);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -208,8 +277,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         {
             this.defineProjectileStats();
             this.project();
-            this.drawProjectile();
+            //this.drawProjectile();
             this.projectileCollision();
+            this.singleStream();
             //console.log(this.distanceTo(game.shipsList[1]));
         }
     };

@@ -20,7 +20,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.target = "none";
     this.radarRange = 10000;
 
-        //AI controls / AI variables
+    //AI controls
     this.aiSpaceKey = false;
     this.aiShiftKey = false;
     this.aiWKey = false;
@@ -31,7 +31,12 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.aiPhase = false; //what phase of the ai brain is this ship in?
     this.aiTimer = new Date().getTime();
 
+    //FACTION VARIABLES
+    this.faction = faction; //This is the faction that the ship belongs to.
+    this.allies = [];
+
     //SHIP STATS (stats that all ships have)
+    this.zIndex = 1;
     this.ID = "The Cyrilean";
     this.type = type;
     this.integrityMAX = 50; //the amount of damage the physical ship can take before total destruction.
@@ -64,7 +69,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.upgrades = []; //equipment that is used to enhance the ship.
     this.ammunition = []; //all of the ammunitions that are in store in the ship.
     this.cargoBay = []; //all of the non-equipped weapons and ammo, and raw materials for trade.
-    this.faction = faction; //This is the faction that the ship belongs to.
     this.shieldsColour = "blue";
     this.rechargeShield = true;
     this.rechargeTime = new Date().getTime();
@@ -75,9 +79,12 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.sidegunsStoreTime = new Date().getTime();
     this.maingunsRate = 5;
     this.maingunsStoreTime = new Date().getTime();
+    this.turret1Rate = 0.45;
+    this.turret1StoreTime = new Date().getTime();
     //turning off individual parts of the ship
     this.sidegunsPowered = true;
     this.maingunsPowered = true;
+    this.turretPowered = true;
 
     //upgrade bonuses to default stats
     this.shieldsUP = 0;
@@ -135,6 +142,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.laserSound2Time1 = false;
     this.laserSound2Time2 = false;
 
+    //Ship Part Operation Variables
+    this.turretRot1 = 0;
+    this.sentryTarget = "none";
+
     //SHIP STAT SETUP
     this.setShipStats = function()
     {
@@ -174,7 +185,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
             else if (upgrade == "Advanced")
             {
-                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-Boosters", 1), itemize("RedStarShields", 1)];
+                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-Boosters", 1), itemize("RedStarShields", 1), itemize("Afid01-F1SentryGun", 1)];
             }
             else if (upgrade == "Basic")
             {
@@ -236,11 +247,48 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.rechargeCost = 0.15;
             this.accelerationCost = 0.3;
             this.handlingCost = 0;
-            this.weaponCost = 0.35;
+            this.weaponCost = 0.1;
             this.explosionStyle = [25, 22, 30, ["Green", "Blue", "lightGreen"]];
             this.destructDuration = 0.5;
             this.shieldsColour = "darkgreen";
             this.cloakingCost = 0.5;
+
+            if (upgrade == "Standard")
+            {
+                this.upgrades = [itemize("Disk01-F1SingleStream", 1)];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [itemize("Disk01-F1SingleStream", 1)];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = []
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = []
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = []
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = []
+            }
 
             //sounds
             this.shieldingSound = new Audio("sounds/shieldsUp.wav");
@@ -368,6 +416,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             //turns off all parts of the ship
             this.sidegunsPowered = false;
             this.maingunsPowered = false;
+            this.turretPowered = false;
         }
 
         //To Do with stats
@@ -429,88 +478,91 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
     //DRAW SHIPS
 
-    this.drawShip = function()
+    this.drawShip = function(z)
     {
-        if (ifInScreenDraw(this.X, this.Y, this.size))
+        if (z == this.zIndex)
         {
-            //DRAW SHIPS
-            if (this.type == "Afid01")
+            if (ifInScreenDraw(this.X, this.Y, this.size))
             {
-                this.accessUpgrades("drawBelow");
-                if (this.speedAlteration == false)
+                //DRAW SHIPS
+                if (this.type == "Afid01")
                 {
-                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                    this.accessUpgrades("drawBelow");
+                    if (this.speedAlteration == false)
                     {
-                        var colorized = colorizedImage(divineStarterPack, 13, 11, 36, 51, 36, 51, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
-                        draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, 0, -5);
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineStarterPack, 13, 11, 36, 51, 36, 51, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, 0, -5);
+                        }
+                        else
+                        {
+                            draw(divineStarterPack, 13, 11, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, 0, -5);
+                        }
                     }
                     else
                     {
-                        draw(divineStarterPack, 13, 11, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, 0, -5);
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineStarterPack, 65, 11, 36, 51, 36, 51, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, -1, -5);
+                        }
+                        else
+                        {
+                            draw(divineStarterPack, 65, 11, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, -1, -5);
+                        }
                     }
+                    this.accessUpgrades("drawAbove");
                 }
-                else
+                if (this.type == "Disk01")
                 {
-                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                    this.accessUpgrades("drawBelow");
+                    if (this.cloaking == false)
                     {
-                        var colorized = colorizedImage(divineStarterPack, 65, 11, 36, 51, 36, 51, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
-                        draw(colorized, 0, 0, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, -1, -5);
+                        if (!this.destructed && this.offline == false && this.power > 0)
+                        {
+                            playSound(this.idleSound, this.volume);
+                        }
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineStarterPack, 124, 165, 32, 32, 32, 32, 0.65 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineStarterPack, 124, 165, 32, 32, this.X, this.Y, 32, 32, 0, false, 1, 0, 0);
+                        }
                     }
                     else
                     {
-                        draw(divineStarterPack, 65, 11, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, -1, -5);
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineStarterPack, 183, 163, 32, 32, 32, 32, 0.65 * Math.max(0, this.shields)/this.getShields(), "black");
+                            draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineStarterPack, 183, 163, 32, 32, this.X, this.Y, 32, 32, 0, false, 1, 0, 0);
+                        }
                     }
+                    this.accessUpgrades("drawAbove");
                 }
-                this.accessUpgrades("drawAbove");
             }
-            if (this.type == "Disk01")
+            //Draw Power and Integrity Bars for teammates.
+            if (this.faction == "Player" && game.toggleFleetStatus)
             {
-                this.accessUpgrades("drawBelow");
-                if (this.cloaking == false)
+                if (!this.player)
                 {
-                    if (!this.destructed && this.offline == false && this.power > 0)
-                    {
-                        playSound(this.idleSound, this.volume);
-                    }
-                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
-                    {
-                        var colorized = colorizedImage(divineStarterPack, 124, 165, 32, 32, 32, 32, 0.65 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
-                        draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
-                    }
-                    else
-                    {
-                        draw(divineStarterPack, 124, 165, 32, 32, this.X, this.Y, 32, 32, 0, false, 1, 0, 0);
-                    }
+                    circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.integrity) / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
+                    circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.power) / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+                    circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.shields) / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
                 }
-                else
+                else if (game.toggleSelfStatus)
                 {
-                    if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
-                    {
-                        var colorized = colorizedImage(divineStarterPack, 183, 163, 32, 32, 32, 32, 0.65 * Math.max(0, this.shields)/this.getShields(), "black");
-                        draw(colorized, 0, 0, 32, 32, this.X, this.Y, 32, 32, this.rotation, false, 1, 0, 0);
-                    }
-                    else
-                    {
-                        draw(divineStarterPack, 183, 163, 32, 32, this.X, this.Y, 32, 32, 0, false, 1, 0, 0);
-                    }
+                    circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.integrity) / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
+                    circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.power) / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
+                    circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.shields) / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
                 }
-                this.accessUpgrades("drawAbove");
-            }
-        }
-        //Draw Power and Integrity Bars for teammates.
-        if (this.faction == "Player" && game.toggleFleetStatus)
-        {
-            if (!this.player)
-            {
-                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.integrity) / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
-                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.power) / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
-                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.shields) / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
-            }
-            else if (game.toggleSelfStatus)
-            {
-                circle(false, this.X, this.Y, this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.integrity) / this.integrityMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "lightGreen", false, false, 0.85);
-                circle(false, this.X, this.Y, 3 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.power) / this.powerMAX) * 2 * Math.PI), 2*Math.PI, false, 2, "yellow", false, false, 0.85);
-                circle(false, this.X, this.Y, 6 + this.size * 1.4, 2 * Math.PI - ((Math.max(0, this.shields) / this.getShields()) * 2 * Math.PI), 2*Math.PI, false, 2, this.getShieldsColour(), false, false, 0.85);
             }
         }
     };
@@ -612,14 +664,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             //activate upgrade effects
             this.accessUpgrades("playerActivate");
 
-            //Exit Ship View
-            if (game.tildKey == true)
-            {
-                game.tildKey = false;
-                this.player = false;
-                game.mode = "navigator";
-            }
-
             //Toggle Hud playerOff/fleetOff/allOn
             if (game.hKey == true)
             {
@@ -697,6 +741,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 else
                 {
                     this.maingunsPowered = false;
+                }
+                if (this.turretPowered == false)
+                {
+                    this.turretPowered = true;
+                }
+                else
+                {
+                    this.turretPowered = false;
                 }
             }
             //Movement
@@ -923,27 +975,9 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
 
             //TARGETING FOR AI
-            if (this.brain == "basic" || this.brain == "basic-missile" || this.brain == "simple")
+            if (this.brain == "basic" || this.brain == "basic-missile" || this.brain == "simple" || this.brain == "simple-missile")
             {
-                this.target = "none";
-                var closest = "none";
-                //attack nearby ships of differing faction
-                for (var i = 0; i < game.shipsList.length; i++)
-                {
-                    if (game.shipsList[i].faction != this.faction && game.shipsList[i].cloaking == false) //todo also make it so that it will not target allies.
-                    {
-                        if (closest == "none" && this.distanceTo(game.shipsList[i]) <= this.radarRange)
-                        {
-                            this.target = game.shipsList[i];
-                            closest = this.distanceTo(game.shipsList[i]);
-                        }
-                        else if (closest > this.distanceTo(game.shipsList[i]) && this.distanceTo(game.shipsList[i]) <= this.radarRange)
-                        {
-                            closest = this.distanceTo(game.shipsList[i]);
-                            this.target = game.shipsList[i];
-                        }
-                    }
-                }
+                this.targetClosestEnemy("ship");
             }
 
             //AI BRAINS
@@ -992,6 +1026,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 {
                                     this.aiQKey = true;
                                 }
+                                console.log(this.aiQKey);
                                 this.aiSpaceKey = true;
                             }
 
@@ -1245,8 +1280,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 this.power -= (this.weaponCost * 2);
                                 this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }
@@ -1261,8 +1296,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 this.power -= (this.weaponCost * 2);
                                 this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
-                                game.projectilesList.push(new Projectile("f1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }
@@ -1394,6 +1429,96 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
+                else if (this.upgrades[i].name == "Afid01-F1SentryGun" && this.type == "Afid01" && this.upgrades[i].part == "turret")
+                {
+                    if (use == "drawAbove")
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineStarterPack, 13, 98, 14, 14, 14, 14, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 14, 14, this.X, this.Y, 14, 14, this.rotation, false, 1, -0.5, 2.5);
+                            var colorized2 = colorizedImage(divineStarterPack, 34.5, 97, 30, 16, 30, 16, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 30, 16, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16, 30 * 0.9, 16 * 0.9, this.rotation + this.turretRot1, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineStarterPack, 13, 98, 14, 14, this.X, this.Y, 14, 14, this.rotation, false, 1, -0.5, 2.5);
+                            draw(divineStarterPack, 34.5, 97, 30, 16, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16, 30 * 0.9, 16 * 0.9, this.rotation + this.turretRot1, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.Y, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.X) - 1 * Math.PI - this.rotation; //TODO not exactly oriented properly at all...
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 2))
+                                {
+                                    this.power -= (this.weaponCost * 2);
+                                    this.laserSound1.currentTime = 0;
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("F1Laser", this.X  - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.cos(this.rotation + this.turretRot1 - Math.PI * 0 / 16) * 10, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.sin(this.rotation + this.turretRot1 - Math.PI * 0 / 16) * 10, this, this.rotation + this.turretRot1));
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.Y, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.X) - 1 * Math.PI - this.rotation; //TODO not exactly oriented properly at all...
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 2))
+                                {
+                                    this.power -= (this.weaponCost * 2);
+                                    this.laserSound1.currentTime = 0;
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("F1Laser", this.X  - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16, this, this.rotation + this.turretRot1));
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (this.upgrades[i].name == "Disk01-F1SingleStream" && this.type == "Disk01" && this.upgrades[i].part == "turret")
+                {
+                    if (use == "drawBelow")
+                    {
+                        if (this.turretPowered == true)
+                        {
+                            if (this.power >= this.weaponCost)
+                            {
+                                //this.laserSound1.currentTime = 0;
+                                //playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("F1SingleStream", this.X + Math.cos(this.rotation) * (1 * this.speed), this.Y + Math.sin(this.rotation) * (1 * this.speed), this, 0));
+
+                            }
+                        }
+                    }
+                }
             }
         }
     };
@@ -1410,13 +1535,23 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
             this.resetBonuses();
             this.mandateStats();
-            this.drawShip();
+            //this.drawShip();
             this.turnOnOffShip();
             if (this.power > 0 && this.offline == false)
             {
                 this.rotationSystem();
                 this.systemControls();
                 this.recharging();
+            }
+            if (this.player)
+            {
+                //Exit Ship View
+                if (game.tildKey == true)
+                {
+                    game.tildKey = false;
+                    this.player = false;
+                    game.mode = "navigator";
+                }
             }
             this.movementSystem();
             this.strafing();
@@ -1430,6 +1565,74 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             game.viewY = this.Y;
         }
     };
+
+    //AI FUNCTIONS
+    this.targetClosestEnemy = function(type)
+    {
+        if (type == "ship")
+        {
+            this.target = "none";
+            var closest = "none";
+            //attack nearby ships of differing faction
+            for (var i = 0; i < game.shipsList.length; i++)
+            {
+                var isAlly = false;
+                for (var al = 0; al < this.allies.length; al++)
+                {
+                    if (game.shipsList.faction == this.allies[al])
+                    {
+                        isAlly = true;
+                    }
+                }
+
+                if (game.shipsList[i].faction != this.faction && game.shipsList[i].cloaking == false && isAlly == false)
+                {
+                    if (closest == "none" && this.distanceTo(game.shipsList[i]) <= this.radarRange)
+                    {
+                        this.target = game.shipsList[i];
+                        closest = this.distanceTo(game.shipsList[i]);
+                    }
+                    else if (closest > this.distanceTo(game.shipsList[i]) && this.distanceTo(game.shipsList[i]) <= this.radarRange)
+                    {
+                        closest = this.distanceTo(game.shipsList[i]);
+                        this.target = game.shipsList[i];
+                    }
+                }
+            }
+        }
+        if (type == "sentry")
+        {
+            this.sentryTarget = "none";
+            var closest = "none";
+            //attack nearby ships of differing faction
+            for (var i = 0; i < game.shipsList.length; i++)
+            {
+                var isAlly = false;
+                for (var al = 0; al < this.allies.length; al++)
+                {
+                    if (game.shipsList.faction == this.allies[al])
+                    {
+                        isAlly = true;
+                    }
+                }
+
+                if (game.shipsList[i].faction != this.faction && game.shipsList[i].cloaking == false && isAlly == false)
+                {
+                    if (closest == "none" && this.distanceTo(game.shipsList[i]) <= this.radarRange)
+                    {
+                        this.sentryTarget = game.shipsList[i];
+                        closest = this.distanceTo(game.shipsList[i]);
+                    }
+                    else if (closest > this.distanceTo(game.shipsList[i]) && this.distanceTo(game.shipsList[i]) <= this.radarRange)
+                    {
+                        closest = this.distanceTo(game.shipsList[i]);
+                        this.sentryTarget = game.shipsList[i];
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 function colorizedImage(img, sx, sy, w, h, szX, szY, a, colour)

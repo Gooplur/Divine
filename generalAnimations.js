@@ -13,26 +13,30 @@ function explosion(x, y, size, quantity, spread, colourList)
 
 function Xploder(xx, yy, size, colour)
 {
-    this.animate = function()
+    this.zindex = 1;
+    this.animate = function(z)
     {
-        if (typeof(this.sz) == "undefined")
+        if (z == this.zindex)
         {
-            this.sz = 1;
-        }
-
-        if (this.sz < size)
-        {
-            this.sz += 0.25;
-            circle(true, xx, yy, this.sz, 0, 2*Math.PI, colour, false, "none", false, 0, Math.min(1, (this.sz / 2)/size));
-        }
-        else
-        {
-            for (var i = 0; i < game.animationsList.length; i++)
+            if (typeof(this.sz) == "undefined")
             {
-                if (game.animationsList[i] === this)
+                this.sz = 1;
+            }
+
+            if (this.sz < size)
+            {
+                this.sz += 0.25;
+                circle(true, xx, yy, this.sz, 0, 2*Math.PI, colour, false, "none", false, 0, Math.min(1, (this.sz / 2)/size));
+            }
+            else
+            {
+                for (var i = 0; i < game.animationsList.length; i++)
                 {
-                    game.animationsList.splice(i, 1);
-                    break;
+                    if (game.animationsList[i] === this)
+                    {
+                        game.animationsList.splice(i, 1);
+                        break;
+                    }
                 }
             }
         }

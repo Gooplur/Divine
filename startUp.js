@@ -99,15 +99,17 @@ function Game()
         //Ships List
     this.shipsList = [];
     this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(0, 0, "Disk01", "Player", "basic", true, "Advanced", "Stocked"));
 
-    this.shipsList.push(new Ship(10000, 500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));
-    this.shipsList.push(new Ship(9000, -200, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));
-    this.shipsList.push(new Ship(14000, 1500, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(15500, -1000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));
-    this.shipsList.push(new Ship(13000, -900, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));
-    this.shipsList.push(new Ship(15000, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));
-    this.shipsList.push(new Ship(14750, 1700, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", false));
-    this.shipsList.push(new Ship(1400, 1100, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", false));
+    //this.shipsList.push(new Ship(-1000, 500, "Disk01", "UIR", "simple", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(10000, 500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Advanced", "Good"));
+    this.shipsList.push(new Ship(9000, -200, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(14000, 1500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(15500, -1000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(13000, -900, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(15000, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(14750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(1400, 1100, "Afid01", "Boofeln Widget Corporation", "basic-missile", false, "Standard", "Good"));
 
     /*this.shipsList.push(new Ship(5400, 0, "Afid01", "Player", "simple-missile", false, "Standard", "Scarce"));
     this.shipsList.push(new Ship(7000, 800, "Afid01", "Player", "simple", false, "Standard", false));
@@ -121,7 +123,27 @@ function Game()
     this.animationsList = [];
 
     //Class List Activators
-    this.shipListActivator = function(draw)
+
+    this.drawAll = function()
+    {
+        for (var z = 0; z < 4; z++)
+        {
+            for (var i = 0; i < self.shipsList.length; i++)
+            {
+                self.shipsList[i].drawShip(z);
+            }
+            for (var i = 0; i < self.projectilesList.length; i++)
+            {
+                self.projectilesList[i].drawProjectile(z);
+            }
+            for (var i = 0; i < self.animationsList.length; i++)
+            {
+                self.animationsList[i].animate(z);
+            }
+        }
+    };
+
+    this.shipListActivator = function()
     {
         for (var i = 0; i < self.shipsList.length; i++)
         {
@@ -133,13 +155,6 @@ function Game()
         for (var i = 0; i < self.projectilesList.length; i++)
         {
             self.projectilesList[i].process();
-        }
-    };
-    this.animationListActivator = function()
-    {
-        for (var i = 0; i < self.animationsList.length; i++)
-        {
-            self.animationsList[i].animate();
         }
     };
 
@@ -171,7 +186,7 @@ function Game()
         //activators
         self.shipListActivator();
         self.projectileListActivator();
-        self.animationListActivator();
+        self.drawAll();
 
         game.x.restore();
         //GAME WORLD COORD STUFF ^^^^
@@ -287,6 +302,35 @@ function rectangle(solid, X, Y, W, H, fillColour, thickness, borderColour, disco
             game.x.stroke();
         }
     }
+    game.x.restore();
+}
+
+function line(X, Y, X2, Y2, Colour, thickness, discombobulated, rotation, alpha)
+{
+    game.x.save();
+    if (rotation != false && typeof(rotation) != "undefined")
+    {
+        game.x.rotate(rotation);
+    }
+    if (alpha != false && typeof(alpha) != "undefined")
+    {
+        game.x.globalAlpha = alpha;
+    }
+    game.x.beginPath();
+    game.x.strokeStyle = Colour;
+    game.x.lineWidth = thickness;
+    if (discombobulated != true)
+    {
+        game.x.moveTo(game.viewX - X + 1/2 * game.c.width, game.viewY - Y + 1/2 * game.c.height);
+        game.x.lineTo(game.viewX - X2 + 1/2 * game.c.width, game.viewY - Y2 + 1/2 * game.c.height);
+    }
+    else
+    {
+        game.x.moveTo(X, Y);
+        game.x.lineTo(X2, Y2);
+    }
+
+    game.x.stroke();
     game.x.restore();
 }
 
