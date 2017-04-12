@@ -98,7 +98,7 @@ function Game()
     }
         //Ships List
     this.shipsList = [];
-    this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Advanced", "Doom"));
     //this.shipsList.push(new Ship(0, 0, "Disk01", "Player", "basic", true, "Advanced", "Stocked"));
 
     //this.shipsList.push(new Ship(-1000, 500, "Disk01", "UIR", "simple", false, "Advanced", "Stocked"));
@@ -110,11 +110,14 @@ function Game()
     this.shipsList.push(new Ship(15000, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(14750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
     this.shipsList.push(new Ship(1400, 1100, "Afid01", "Boofeln Widget Corporation", "basic-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(17000, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(18750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
 
     this.shipsList.push(new Ship(1000, 0, "Afid01", "Player", "simple-missile", false, "Standard", "Scarce"));
-    //this.shipsList.push(new Ship(7000, 800, "Afid01", "Player", "simple", false, "Standard", false));
+    this.shipsList.push(new Ship(500, 0, "Afid01", "Player", "simple", false, "Standard", false));
     this.shipsList.push(new Ship(0, 1000, "Afid01", "Player", "basic", false, "Standard", false));
-    //this.shipsList.push(new Ship(6000, 1000, "Afid01", "Player", "basic-missile", false, "Standard", "Some"));
+    this.shipsList.push(new Ship(0, 500, "Afid01", "Player", "basic-missile", false, "Standard", "Some"));
+    this.shipsList.push(new Ship(0, -750, "Afid01", "Player", "simple", false, "Advanced", false));
 
         //Projectiles List
     this.projectilesList = [];

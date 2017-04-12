@@ -215,6 +215,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             {
                 this.ammunition = [itemize("M1Missile", 5)]
             }
+            else if (ammo == "Doom")
+            {
+                this.ammunition = [itemize("M1Missile", 10)]
+            }
 
             //sounds
             this.shieldingSound = new Audio("sounds/shieldsUp.wav");
