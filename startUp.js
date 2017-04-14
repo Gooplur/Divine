@@ -18,6 +18,7 @@ function imageSoundLoading()
 function Game()
 {
     var self = this;
+    this.state = "Divine"; //This determines which game is playing and what is paused.
 
     //These are the X and Y coords that represent the center of the screens view into the game world.
     this.viewX = 0;
@@ -76,11 +77,15 @@ function Game()
     this.shiftKey = false;
     this.spaceKey = false;
         //Other Sensing Flags
+    this.click = false;
+    this.unclick = false;
     this.mouseX = 0;
     this.mouseY = 0;
     this.MX = 0;
     this.MY = 0;
     this.gameJustStarted = true;
+        //Menu Variables
+    this.draggedItem = false;
         //Option Menu Toggles
     this.toggleFleetStatus = true; //show entire fleet power and integrity or none.
     this.toggleSelfStatus = true; //shows player driven ships power and integrity or not.
@@ -112,6 +117,7 @@ function Game()
     this.shipsList.push(new Ship(1400, 1100, "Afid01", "Boofeln Widget Corporation", "basic-missile", false, "Standard", "Good"));
     this.shipsList.push(new Ship(17000, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(18750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(20000, 3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
 
     this.shipsList.push(new Ship(1000, 0, "Afid01", "Player", "simple-missile", false, "Standard", "Scarce"));
     this.shipsList.push(new Ship(500, 0, "Afid01", "Player", "simple", false, "Standard", false));
@@ -170,6 +176,8 @@ function Game()
             document.addEventListener("keydown", keyPressSensing);
             document.addEventListener("keyup", keyReleaseSensing);
             game.c.addEventListener("mousemove", mouseSensing);
+            document.addEventListener("click", mouseClick);
+            document.addEventListener("mouseup", mouseRelease);
         }
         //navigator
         navigator();
@@ -186,14 +194,20 @@ function Game()
         background();
 
         //activators
-        self.shipListActivator();
-        self.projectileListActivator();
+        if (self.state == "Divine")
+        {
+            self.shipListActivator();
+            self.projectileListActivator();
+        }
         self.drawAll();
 
         game.x.restore();
         //GAME WORLD COORD STUFF ^^^^
 
-        requestAnimationFrame(self.gameLoop, self.c);
+        if (self.state == "Divine" || self.state == "DivinePaused" || self.state == "DivinePausedByPlayer")
+        {
+            requestAnimationFrame(self.gameLoop, self.c);
+        }
     };
 }
 

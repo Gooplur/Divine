@@ -198,3 +198,15 @@ function mouseSensing(event)
     game.MX = game.viewX + game.mouseX - 1/2 * game.c.width;
     game.MY = game.viewY + game.mouseY - 1/2 * game.c.height;
 }
+
+function mouseClick()
+{
+    game.click = true;
+    //game.unclick = false; //this is still here as a warning... DO NOT SET UNCLICK TO FALSE ON CLICK!
+}
+
+function mouseRelease()
+{
+    game.unclick = true;
+    game.click = false;
+}

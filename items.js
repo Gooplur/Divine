@@ -9,6 +9,9 @@
         this.part = null;
         this.type = null;
         this.manufacturer = "unknown";
+        this.maxStack = 1;
+        this.selected = false;
+        this.dragged = false;
 
         //Define All Items
 
@@ -54,6 +57,7 @@
         if (name == "M1Missile")
         {
             this.utility = "ammunition";
+            this.maxStack = 20;
         }
 
 
@@ -61,12 +65,12 @@
         if (this.utility == "part")
         {
             //Forms a Part type object.
-            return {name: this.name, quantity: this.quantity, part: this.part, utility: this.utility, manufacturer: this.manufacturer};
+            return {name: this.name, quantity: this.quantity, part: this.part, utility: this.utility, manufacturer: this.manufacturer, maxStack: this.maxStack, selected: this.selected, dragged: this.dragged};
         }
         else if (this.utility == "ammunition")
         {
             //Forms an Ammunition type object.
-            return {name: this.name, quantity: this.quantity, utility: this.utility, manufacturer: this.manufacturer};
+            return {name: this.name, quantity: this.quantity, utility: this.utility, manufacturer: this.manufacturer, maxStack: this.maxStack, selected: this.selected, dragged: this.dragged};
         }
 
     }
