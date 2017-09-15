@@ -106,7 +106,8 @@ function Game()
     this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(0, 0, "Disk01", "Player", "basic", true, "Advanced", "Stocked"));
 
-    //this.shipsList.push(new Ship(-1000, 500, "Disk01", "UIR", "simple", false, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(-1000, 500, "Disk01", "UIR", "basic", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(-1000, 500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(10000, 500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Advanced", "Good"));
     this.shipsList.push(new Ship(9000, -200, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
     this.shipsList.push(new Ship(14000, 1500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
@@ -119,10 +120,10 @@ function Game()
     this.shipsList.push(new Ship(18750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
     this.shipsList.push(new Ship(20000, 3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
 
-    this.shipsList.push(new Ship(1000, 0, "Afid01", "Player", "simple-missile", false, "Standard", "Scarce"));
-    this.shipsList.push(new Ship(500, 0, "Afid01", "Player", "simple", false, "Standard", false));
-    this.shipsList.push(new Ship(0, 1000, "Afid01", "Player", "basic", false, "Standard", false));
-    this.shipsList.push(new Ship(0, 500, "Afid01", "Player", "basic-missile", false, "Standard", "Some"));
+    //this.shipsList.push(new Ship(1000, 0, "Afid01", "Player", "simple-missile", false, "Standard", "Scarce"));
+    //this.shipsList.push(new Ship(500, 0, "Afid01", "Player", "simple", false, "Standard", false));
+    //this.shipsList.push(new Ship(0, 1000, "Afid01", "Player", "basic", false, "Standard", false));
+    //this.shipsList.push(new Ship(0, 500, "Afid01", "Player", "basic-missile", false, "Standard", "Some"));
 
         //Projectiles List
     this.projectilesList = [];
@@ -337,8 +338,8 @@ function line(X, Y, X2, Y2, Colour, thickness, discombobulated, rotation, alpha)
     game.x.lineWidth = thickness;
     if (discombobulated != true)
     {
-        game.x.moveTo(game.viewX - X + 1/2 * game.c.width, game.viewY - Y + 1/2 * game.c.height);
-        game.x.lineTo(game.viewX - X2 + 1/2 * game.c.width, game.viewY - Y2 + 1/2 * game.c.height);
+        game.x.moveTo( X - game.viewX, Y - game.viewY);
+        game.x.lineTo( X2 - game.viewX, Y2 - game.viewY);
     }
     else
     {

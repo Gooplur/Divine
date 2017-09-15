@@ -156,7 +156,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.shieldsMAX = 150; //the total capacity of the ships shielding systems.
             this.rechargeMAX = 5; //the rate at which shields recharge in the ships best condition.
             this.recharge = this.rechargeMAX;
-            this.powerMAX = 1000; //the total power capacity that the ship has.
+            this.powerMAX = 3000; //the total power capacity that the ship has.
             this.radarRange = 12000;
             this.cargoMAX = 25; //the total amount of cargo that the ship can carry.
             this.speedMAX = 30; //ships maximum potential speed
@@ -299,6 +299,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.poweringSound = new Audio("sounds/powerOn.wav");
             this.explosionSound = new Audio("sounds/muffledXPL.wav");
             this.idleSound = new Audio("sounds/hover.wav");
+            this.laserSound1 = new Audio("sounds/singleStream.wav");
         }
 
         //Predetermined Cargo
@@ -553,7 +554,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 }
             }
             //Draw Power and Integrity Bars for teammates.
-            if (this.faction == "Player" && game.toggleFleetStatus)
+            if (this.faction == "Player" && game.toggleFleetStatus && this.offline != true && this.power > 0)
             {
                 if (!this.player)
                 {
@@ -610,8 +611,16 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             {
                 this.targetRotation = Math.atan2(sxy[1] - this.Y, sxy[0] - this.X);
             }
-            this.X += Math.cos(this.targetRotation) * this.speed;
-            this.Y += Math.sin(this.targetRotation) * this.speed;
+            if (this.player == true)
+            {
+                this.X += Math.cos(this.targetRotation) * this.speed;
+                this.Y += Math.sin(this.targetRotation) * this.speed;
+            }
+            else
+            {
+                this.X += Math.cos(this.targetRotation - 1/2 * Math.PI) * this.speed;
+                this.Y += Math.sin(this.targetRotation - 1/2 * Math.PI) * this.speed;
+            }
         }
         else
         {
@@ -629,8 +638,16 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             {
                 this.targetRotation = Math.atan2(sxy[1] - this.Y, sxy[0] - this.X);
             }
-            this.X += Math.cos(this.targetRotation + Math.PI/2) * this.strafe;
-            this.Y += Math.sin(this.targetRotation + Math.PI/2) * this.strafe;
+            if (this.player == true)
+            {
+                this.X += Math.cos(this.targetRotation + Math.PI / 2) * this.strafe;
+                this.Y += Math.sin(this.targetRotation + Math.PI / 2) * this.strafe;
+            }
+            else
+            {
+                this.X += Math.cos(this.targetRotation) * this.strafe;
+                this.Y += Math.sin(this.targetRotation) * this.strafe;
+            }
         }
         else
         {
@@ -705,12 +722,13 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 game.oKey = false;
                 if (this.shieldingOnline == false && this.power > (this.rechargeCost + this.shieldingCost) * 10)
                 {
-                    playSound(this.shieldingSound, this.volume, 0, this.shieldingSound.duration);
+                    this.shieldingSound.play();
+                    playSound(this.shieldingSound, 1, 0, this.shieldingSound.duration);
                     this.shieldingOnline = true;
                 }
                 else if (this.shieldingOnline)
                 {
-                    playSound(this.shieldingSound, this.volume, false, false, -1);
+                    playSound(this.shieldingSound, this.volume, 0, this.shieldingSound.duration, -1);
                     this.shieldingOnline = false;
                 }
             }
@@ -1030,7 +1048,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 {
                                     this.aiQKey = true;
                                 }
-                                console.log(this.aiQKey);
+                                //console.log(this.aiQKey);
                                 this.aiSpaceKey = true;
                             }
 
@@ -1227,6 +1245,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         {
             if (this.destructionTime == 0)
             {
+                pauseSound(this.laserSound1);
+                pauseSound(this.laserSound2);
+                pauseSound(this.laserSound3);
+                pauseSound(this.accelSound);
                 pauseSound(this.idleSound);
                 playSound(this.explosionSound, this.volume, this.explosionSoundTime1, this.explosionSoundTime2);
                 this.destructionTime = new Date().getTime();
@@ -1509,16 +1531,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 }
                 else if (this.upgrades[i].name == "Disk01-F1SingleStream" && this.type == "Disk01" && this.upgrades[i].part == "turret")
                 {
-                    if (use == "drawBelow")
+                    if (use == "playerActivate" || use == "aiActivate")
                     {
                         if (this.turretPowered == true)
                         {
                             if (this.power >= this.weaponCost)
                             {
-                                //this.laserSound1.currentTime = 0;
-                                //playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("F1SingleStream", this.X + Math.cos(this.rotation) * (1 * this.speed), this.Y + Math.sin(this.rotation) * (1 * this.speed), this, 0));
-
+                                //sound for this type of laser is played by the projectile itself.
+                                game.projectilesList.push(new Projectile("F1SingleStream", this.X, this.Y, this, 0, 0, 0));
                             }
                         }
                     }

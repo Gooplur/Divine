@@ -66,13 +66,31 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             {
                 this.speed = 0;
                 this.range = 1000;
-                this.damage = 0.25;
+                this.damage = 0.5;
                 this.phasing = false;
                 this.streamFixed = false;
                 this.streamType = "normal";
                 this.style = "singleStream";
-                this.zIndex = 2;
+                this.zIndex = 0;
             }
+        }
+    };
+
+    this.agenda = function() //This is for projectile types that constantly regulate action based on preset projectile specific conditions.
+    {
+        if (this.type == "F1SingleStream")
+        {
+            this.target = this.nearestEnemy();
+            if (this.distanceTo(this.target) <= this.range)
+            {
+                playSound(who.laserSound1, who.laserSound1Time2 * 3/8, who.laserSound1Time2 * 6/8);
+                this.streamFixed = true;
+            }
+            else
+            {
+                who.laserSound1.pause();
+            }
+            this.singleStream();
         }
     };
 
@@ -93,9 +111,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.target = this.nearestEnemy();
                 if (this.distanceTo(this.target) <= this.range)
                 {
-                    line(this.X, this.Y, this.target.X, this.target.Y, "red", 3, true, 0, 0.65);
-                    this.streamFixed = true;
+                    line(this.X, this.Y, this.target.X, this.target.Y, "red", 3, false, 0, 0.65);
                 }
+                game.projectilesList.splice(game.projectilesList.indexOf(this), 1);
             }
         }
     };
@@ -117,7 +135,6 @@ function Projectile(type, x, y, who, rotation, adX, adY)
 
                 who.power -= who.weaponCost;
             }
-            game.projectilesList.splice(game.projectilesList.indexOf(this), 1);
         }
     };
 
@@ -127,7 +144,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         var nearDist = false;
         for (var i = 0; i < game.shipsList.length; i++)
         {
-            console.log(game.shipsList[i]);
+            //console.log(game.shipsList[i]);
             if (game.shipsList[i].faction != who.faction && this.distanceTo(game.shipsList[i]) <= who.radarRange)
             {
                 if (nearDist == false)
@@ -279,7 +296,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             this.project();
             //this.drawProjectile();
             this.projectileCollision();
-            this.singleStream();
+            this.agenda();
             //console.log(this.distanceTo(game.shipsList[1]));
         }
     };
