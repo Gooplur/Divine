@@ -17,6 +17,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.EMP = 0;
     this.phasing = false;
     this.style = "normal";
+    this.radius = 0;
     //rotating projectiles only
     this.targetRotation = this.rotation;
     this.turnSpeed = 1/9 * Math.PI;
@@ -36,6 +37,11 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.volume = 0.75;
     this.explosionSoundTime1 = 0;
     this.explosionSoundTime2 = this.explosionSound.duration;
+
+    //Animate function variables
+    this.anim = 0; //the tics that count up that progress an animation.
+    this.animLoop = 0; //the number of times each animation completes itself.
+
     this.defineProjectileStats = function()
     {
         if (this.activateProjectile)
@@ -72,6 +78,36 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.streamType = "normal";
                 this.style = "singleStream";
                 this.zIndex = 0;
+            }
+            else if (this.type == "PlasmaticSeeker")
+            {
+                this.trackSpeed = 45;
+                this.speed = who.speed + this.trackSpeed;
+                this.range = 9000;
+                this.damage = 840;
+                this.phasing = false;
+                this.tracking = true;
+                this.explodes = true;
+                this.explosionSound = new Audio("sounds/missileXPL.wav");
+                this.explosionStyle = [11, 5, 9, ["#00ff00", "#99ff33", "#99ff99"]];
+                this.turnSpeed = 4/100 * Math.PI;
+                this.trackWait = 1.4;
+            }
+            else if (this.type == "PlasmaLaser")
+            {
+                this.speed = who.speed + 45;
+                this.range = 2000;
+                this.damage = 45;
+                this.phasing = false;
+                this.radius = 1;
+            }
+            else if (this.type == "PlasmaBlast")
+            {
+                this.speed = who.speed + 49;
+                this.range = 2600;
+                this.damage = 490;
+                this.phasing = false;
+                this.radius = 12;
             }
         }
     };
@@ -114,6 +150,20 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                     line(this.X, this.Y, this.target.X, this.target.Y, "red", 3, false, 0, 0.65);
                 }
                 game.projectilesList.splice(game.projectilesList.indexOf(this), 1);
+            }
+            else if (this.type == "PlasmaticSeeker")
+            {
+                draw(divineKitA, 207, 3, 6, 21, this.X - 1/2 * 6 * 1.6, this.Y - 1/2 * 21 * 1.6, 6 * 1.6, 21 * 1.6, this.rotation - 1/2 * Math.PI, false, 1, 0, 0);
+            }
+            else if (this.type == "PlasmaLaser")
+            {
+                //draw(); //the list should contain the fields in the draw function in the same order.
+                this.animate(0.10, [[divineKitA, 170, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 178, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 184, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
+            }
+            else if (this.type == "PlasmaBlast")
+            {
+                //draw(); //the list should contain the fields in the draw function in the same order.
+                this.animate(0.10, [[divineKitA, 144, 7, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 161, 7, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 179, 8, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
             }
         }
     };
@@ -226,6 +276,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         else
         {
             amt -= target.shields;
+            target.shields = 0;
             target.energy -= amt;
         }
     };
@@ -263,7 +314,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             {
                 if (game.shipsList[i].faction != who.faction)
                 {
-                    if (this.distanceTo(game.shipsList[i]) < game.shipsList[i].size)
+                    if (this.distanceTo(game.shipsList[i]) - this.radius < game.shipsList[i].size)
                     {
                         this.dealDamageTo(game.shipsList[i]);
                         if (this.phasing == false)
@@ -286,6 +337,19 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 }
             }
         }
+    };
+
+    this.animate = function(rate, list)
+    {
+        this.anim += rate;
+        if (Math.floor(this.anim) >= list.length)
+        {
+            this.anim = 0;
+            this.animLoop += 1;
+        }
+
+        var i = Math.floor(this.anim);
+        draw(list[i][0], list[i][1], list[i][2], list[i][3], list[i][4], list[i][5], list[i][6], list[i][7], list[i][8], list[i][9], list[i][10], list[i][11], list[i][12], list[i][13]);
     };
 
     this.process = function()

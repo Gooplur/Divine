@@ -9,9 +9,16 @@ function imageSoundLoading()
     divineStarterPack.src = ("images/divineStarterPack.png");
     window.divineStarterPack = divineStarterPack;
 
+    var divineKitA = new Image();
+    divineKitA.src = ("images/divineKitA.png");
+    window.divineKitA = divineKitA;
+
     divineStarterPack.onload = function()
     {
-        startGame();
+        divineKitA.onload = function()
+        {
+            startGame();
+        };
     };
 }
 
@@ -103,10 +110,13 @@ function Game()
     }
         //Ships List
     this.shipsList = [];
-    this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", true, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(0, 0, "Disk01", "Player", "basic", true, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(0, 0, "Mantis09", "Player", "simple-missile", true, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(1000, 0, "Mantis09", "Player", "basic-missile", true, "Standard", "Scarce"));
 
     //this.shipsList.push(new Ship(-1000, 500, "Disk01", "UIR", "basic", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(14000, -300, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Advanced", "Doom"));
     this.shipsList.push(new Ship(-1000, 500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(10000, 500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Advanced", "Good"));
     this.shipsList.push(new Ship(9000, -200, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));

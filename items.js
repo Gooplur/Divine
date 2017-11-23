@@ -40,6 +40,18 @@
             this.part = "shielding";
             this.manufacturer = "Grevner Technologies";
         }
+        else if (name == "CosmosShields")
+        {
+            this.utility = "part";
+            this.part = "shielding";
+            this.manufacturer = "Grevner Technologies";
+        }
+        else if (name == "JadeDragonShields")
+        {
+            this.utility = "part";
+            this.part = "shielding";
+            this.manufacturer = "霸权";
+        }
         else if (name == "Disk01-F1SingleStream")
         {
             this.utility = "part";
@@ -52,12 +64,45 @@
             this.part = "turret";
             this.manufacturer = "은하";
         }
+        else if (name == "Mantis09-PlasmaCannon")
+        {
+            this.utility = "part";
+            this.part = "mainguns";
+            this.manufacturer = "은하";
+        }
+        else if (name == "Mantis09-PlasmaBlasters")
+        {
+            this.utility = "part";
+            this.part = "mainguns";
+            this.manufacturer = "은하";
+        }
+        else if (name == "Mantis09-PlasmaAccelerator")
+        {
+            this.utility = "part";
+            this.part = "boosters";
+            this.manufacturer = "은하";
+        }
 
         //Ammunition
         if (name == "M1Missile")
         {
             this.utility = "ammunition";
             this.maxStack = 20;
+        }
+        else if (name == "PlasmaticSeeker")
+        {
+            this.utility = "ammunition";
+            this.maxStack = 10;
+        }
+        else if (name == "PlasmaBomb")
+        {
+            this.utility = "ammunition";
+            this.maxStack = 2;
+        }
+        else if (name == "DecoyCore")
+        {
+            this.utility = "ammunition";
+            this.maxStack = 12;
         }
 
 

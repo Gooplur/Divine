@@ -173,10 +173,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.weaponCost = 0.25;
             this.explosionStyle = [25, 22, 30, ["red", "yellow", "orange"]];
             this.shieldsColour = "blue";
-            this.boostSpeed = 31;
-            this.boostAccel = 4.25;
+            this.boostSpeed = 34;
+            this.boostAccel = 4.5;
             this.boostHandle = 1.05/100 * Math.PI;
-            this.boostStrafe = 11;
+            this.boostStrafe = 12;
             this.boostCost = 1;
 
             if (upgrade == "Standard")
@@ -300,6 +300,87 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.explosionSound = new Audio("sounds/muffledXPL.wav");
             this.idleSound = new Audio("sounds/hover.wav");
             this.laserSound1 = new Audio("sounds/singleStream.wav");
+        }
+        else if (this.type == "Mantis09") //TODO add this new ship and change its stats
+        {
+            this.size = 48;
+            this.integrityMAX = 90; //the amount of damage the physical ship can take before total destruction.
+            this.shieldsMAX = 400; //the total capacity of the ships shielding systems.
+            this.rechargeMAX = 7; //the rate at which shields recharge in the ships best condition.
+            this.recharge = this.rechargeMAX;
+            this.powerMAX = 6400; //the total power capacity that the ship has.
+            this.radarRange = 18000;
+            this.cargoMAX = 20; //the total amount of cargo that the ship can carry.
+            this.speedMAX = 49; //ships maximum potential speed
+            this.accelerationMAX = 7;//max speed up/slow down rate
+            this.acceleration = this.accelerationMAX;
+            this.handlingMAX = 5/100 * Math.PI; //max turn speed
+            this.handling = this.handlingMAX;
+            this.strafable = true;
+            this.strafeMAX = 23;
+            this.shieldingCost = 0.2;
+            this.rechargeCost = 0.4;
+            this.accelerationCost = 0.25;
+            this.handlingCost = 0.05;
+            this.weaponCost = 1;
+            this.explosionStyle = [25, 22, 30, ["#003300", "#66ff99", "#339966"]];
+            this.shieldsColour = "#669900";
+            this.boostSpeed = 52;
+            this.boostAccel = 8;
+            this.boostHandle = 6/100 * Math.PI;
+            this.boostStrafe = 25;
+            this.boostCost = 0.55;
+
+            if (upgrade == "Standard")
+            {
+                this.upgrades = [itemize("Mantis09-PlasmaBlasters", 1)];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [itemize("Mantis09-PlasmaCannon", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("JadeDragonShields", 1)];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = [itemize("PlasmaticSeeker", 4)];
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = [itemize("PlasmaticSeeker", 6)];
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = [itemize("PlasmaticSeeker", 10)];
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = [itemize("PlasmaticSeeker", 20)];
+            }
+            else if (ammo == "Doom")
+            {
+                this.ammunition = [itemize("PlasmaticSeeker", 40)];
+            }
+
+            //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
+            this.explosionSound = new Audio("sounds/heavyXPL.wav");
+            this.accelSound = new Audio("sounds/accl.mp3");
+            this.accelSoundTime1 = 0.2;
+            this.accelSoundTime2 = 1.1;
+            this.laserSound1 = new Audio("sounds/lightLas.wav");
+            this.laserSound2 = new Audio("sounds/missileLaunch.wav");
         }
 
         //Predetermined Cargo
@@ -519,7 +600,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     }
                     this.accessUpgrades("drawAbove");
                 }
-                if (this.type == "Disk01")
+                else if (this.type == "Disk01")
                 {
                     this.accessUpgrades("drawBelow");
                     if (this.cloaking == false)
@@ -550,6 +631,37 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             draw(divineStarterPack, 183, 163, 32, 32, this.X, this.Y, 32, 32, 0, false, 1, 0, 0);
                         }
                     }
+                    this.accessUpgrades("drawAbove");
+                }
+                else if (this.type == "Mantis09")
+                {
+                    this.accessUpgrades("drawBelow");
+                    if (this.speedAlteration == false)
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitA, 7, 11, 60, 64, 60, 64, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 60, 64, this.X, this.Y, 60 * 2, 64 * 2, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitA, 7, 11, 60, 64, this.X, this.Y, 60 * 2, 64 * 2, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitA, 72, 11, 60, 64, 60, 64, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 60, 64, this.X, this.Y, 60 * 2, 64 * 2, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitA, 72, 11, 60, 64, this.X, this.Y, 60 * 2, 64 * 2, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
                     this.accessUpgrades("drawAbove");
                 }
             }
@@ -1376,6 +1488,24 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         this.rechargeUP = 5;
                     }
                 }
+                else if (this.upgrades[i].name == "CosmosShields" && this.upgrades[i].part == "shielding")
+                {
+                    if (use == "bonus")
+                    {
+                        this.shieldsColourUP = "white";
+                        this.shieldsUP = 360;
+                        this.rechargeUP = 4;
+                    }
+                }
+                else if (this.upgrades[i].name == "JadeDragonShields" && this.upgrades[i].part == "shielding")
+                {
+                    if (use == "bonus")
+                    {
+                        this.shieldsColourUP = "#003300";
+                        this.shieldsUP = 200;
+                        this.rechargeUP = 6;
+                    }
+                }
                 else if (this.upgrades[i].name == "Afid01-M1Launcher" && this.type == "Afid01" && this.upgrades[i].part == "mainguns")
                 {
                     if (use == "drawAbove")
@@ -1541,6 +1671,224 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 game.projectilesList.push(new Projectile("F1SingleStream", this.X, this.Y, this, 0, 0, 0));
                             }
                         }
+                    }
+                }
+                else if (this.type == "Mantis09")
+                {
+                    this.sidegunsRate = 4; //these sideguns come with this ship and are inseparable from its base structure.
+                    if (use == "playerActivate")
+                    {
+                        if (this.sidegunsPowered == true && game.qKey && new Date().getTime() - this.sidegunsStoreTime >= this.sidegunsRate * 1000)
+                        {
+                            this.sidegunsStoreTime = new Date().getTime();
+                            game.qKey = false;
+                            var hasAmmoToShoot = false;
+                            for (var a = 0; a < this.ammunition.length; a++)
+                            {
+                                if (this.ammunition[a].name == "PlasmaticSeeker" && this.ammunition[a].quantity >= 2)
+                                {
+                                    this.ammunition[a].quantity -= 2;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (hasAmmoToShoot)
+                            {
+                                if (this.power >= this.weaponCost)
+                                {
+                                    this.power -= this.weaponCost;
+                                    this.laserSound2.currentTime = 0;
+                                    playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                    game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 2.7) * 56, this.Y + Math.sin((this.rotation - Math.PI) -2.7) * 56, this, this.rotation - 1/2 * Math.PI));
+                                    game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 0.414) * 43, this.Y + Math.sin((this.rotation - Math.PI) - 0.414) * 43, this, this.rotation - 1/2 * Math.PI));
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.sidegunsPowered == true && this.aiQKey && new Date().getTime() - this.sidegunsStoreTime >= this.sidegunsRate * 1000)
+                        {
+                            this.sidegunsStoreTime = new Date().getTime();
+                            this.aiQKey = false;
+                            var hasAmmoToShoot = false;
+                            for (var a = 0; a < this.ammunition.length; a++)
+                            {
+                                if (this.ammunition[a].name == "PlasmaticSeeker" && this.ammunition[a].quantity >= 2)
+                                {
+                                    this.ammunition[a].quantity -= 2;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (hasAmmoToShoot)
+                            {
+                                if (this.power >= this.weaponCost)
+                                {
+                                    this.power -= this.weaponCost;
+                                    this.laserSound2.currentTime = 0;
+                                    playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                    game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 2.7) * 56, this.Y + Math.sin((this.rotation - Math.PI) -2.7) * 56, this, this.rotation - 1/2 * Math.PI));
+                                    game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 0.414) * 43, this.Y + Math.sin((this.rotation - Math.PI) - 0.414) * 43, this, this.rotation - 1/2 * Math.PI));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Mantis09-PlasmaBlasters" && this.type == "Mantis09" && this.upgrades[i].part == "mainguns")
+                {
+                    if (use == "drawAbove")
+                    {
+                        this.maingunsRate = 0.7;
+                        if (this.aiSpaceKey || this.spaceKey)
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineKitA, 170, 74, 16, 17, 16, 17, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 16, 17, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 48, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 48, 16 * 2, 17 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                            else
+                            {
+                                draw(divineKitA, 170, 74, 16, 17, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 48, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 48, 16 * 2, 17 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineKitA, 145, 74, 16, 17, 16, 17, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 16, 17, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 48, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 48, 16 * 2, 17 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                            else
+                            {
+                                draw(divineKitA, 145, 74, 16, 17, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 48, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 48, 16 * 2, 17 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+                            if (this.power >= (this.weaponCost * 2))
+                            {
+                                this.power -= (this.weaponCost * 2);
+                                this.laserSound1.currentTime = 0;
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+                            if (this.power >= (this.weaponCost * 2))
+                            {
+                                this.power -= (this.weaponCost * 2);
+                                this.laserSound1.currentTime = 0;
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Mantis09-PlasmaCannon" && this.type == "Mantis09" && this.upgrades[i].part == "mainguns")
+                {
+                    if (use == "drawAbove")
+                    {
+                        this.maingunsRate = 2.6;
+                        if (this.aiSpaceKey || this.spaceKey)
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineKitA, 153, 33, 9, 13, 9, 13, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 9, 13, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 58, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 58, 9 * 2, 13 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                            else
+                            {
+                                draw(divineKitA, 153, 33, 9, 13, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 58, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 58, 9 * 2, 13 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineKitA, 144, 33, 9, 13, 9, 13, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 9, 13, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 58, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 58, 9 * 2, 13 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                            else
+                            {
+                                draw(divineKitA, 144, 33, 9, 13, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 58, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 58, 9 * 2, 13 * 2, this.rotation, false, 1, 0, 0);
+                            }
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+                            if (this.power >= (this.weaponCost * 5))
+                            {
+                                this.power -= (this.weaponCost * 5);
+                                this.laserSound1.currentTime = 0;
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 7 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 7 / 16) * 32, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiSpaceKey = false;
+                            if (this.power >= (this.weaponCost * 5))
+                            {
+                                this.power -= (this.weaponCost * 5);
+                                this.laserSound1.currentTime = 0;
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 7 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 7 / 16) * 32, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                else if (this.upgrades[i].name == "Mantis09-PlasmaAccelerator" && this.type == "Mantis09" && this.upgrades[i].part == "boosters")
+                {
+                    if (use == "drawAbove")
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitA, 145, 50, 16, 17, 16, 17, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 16, 17, this.X, this.Y, 16 * 2, 17 * 2, this.rotation, false, 1, 0, 19.5);
+                        }
+                        else
+                        {
+                            draw(divineKitA, 145, 50, 16, 17, this.X, this.Y, 16 * 2, 17 * 2, this.rotation, false, 1, 0, 19.5);
+                        }
+                    }
+                    if (use == "bonus")
+                    {
+                        this.boostSpeedUP = 14;
+                        this.speedUP = 2;
+                        this.accelerationUP = 0.5;
+                        this.boostAccelUP = 2.5;
+                        this.handlingUP = (0.1 / 100) * Math.PI * 2;
+                        this.boostHandleUP = (1 / 100) * Math.PI * 2;
                     }
                 }
             }
