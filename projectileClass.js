@@ -99,7 +99,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.range = 2000;
                 this.damage = 45;
                 this.phasing = false;
-                this.radius = 1;
+                this.radius = 3;
             }
             else if (this.type == "PlasmaBlast")
             {
