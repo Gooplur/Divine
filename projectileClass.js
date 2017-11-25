@@ -145,8 +145,8 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.phasing = true;
                 this.growth = 5;
                 this.radius = 5;
-                this.growthRate = 4;
-                this.growthMAX = 840;
+                this.growthRate = 5;
+                this.growthMAX = 900;
             }
         }
     };
@@ -206,12 +206,12 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             else if (this.type == "PlasmaLaser")
             {
                 //draw(); //the list should contain the fields in the draw function in the same order.
-                this.animate(0.10, [[divineKitA, 170, 53, 6, 10, this.X, this.Y, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 178, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 184, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
+                this.animate(0.10, [[divineKitA, 170, 53, 6, 10, this.X, this.Y, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 178, 53, 6, 10, this.X, this.Y, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 184, 53, 6, 10, this.X, this.Y, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
             }
             else if (this.type == "PlasmaBlast")
             {
                 //draw(); //the list should contain the fields in the draw function in the same order.
-                this.animate(0.10, [[divineKitA, 144, 7, 15, 15, this.X, this.Y, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 161, 7, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 179, 8, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
+                this.animate(0.10, [[divineKitA, 144, 7, 15, 15, this.X, this.Y, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 161, 7, 15, 15, this.X, this.Y, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 179, 8, 15, 15, this.X, this.Y, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
             }
             else if (this.type == "TrineumSeeker")
             {

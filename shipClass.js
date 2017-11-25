@@ -2018,7 +2018,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             {
                                 this.power -= (this.weaponCost * 5);
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 7 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 7 / 16) * 32, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 32, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }
@@ -2032,7 +2032,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             {
                                 this.power -= (this.weaponCost * 5);
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 7 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 7 / 16) * 32, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 32, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }
