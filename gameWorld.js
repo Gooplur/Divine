@@ -42,3 +42,55 @@ function alterGame()
     }
 }
 
+function shipConverter(bool)
+{
+    if (bool) //turns ships into items.
+    {
+        var toBeConverted = [];
+        for (var i = 0; i < game.shipsList.length; i++)
+        {
+            if (game.shipsList[i].faction == "Player" && !game.shipsList[i].player)
+            {
+                toBeConverted.push(i);
+            }
+        }
+
+        for (var i = 0; i < toBeConverted.length; i++)
+        {
+            var shippy = game.shipsList[toBeConverted[i]];
+            game.shipConverterList.push(itemize(shippy.type, 1, [shippy.power, shippy.shields, shippy.integrity, shippy.upgrades, shippy.cargoBay, shippy.ammunition, shippy.brain]));
+        }
+        for (var i = toBeConverted.length - 1; i > -1; i--)
+        {
+            game.shipsList.splice(toBeConverted[i], 1);
+        }
+    }
+    else //turns shipItems into ships
+    {
+        for (var i = 0; i < game.shipConverterList.length; i++)
+        {
+            var shippy = game.shipConverterList[i];
+            var shipBuild;
+
+            if (game.shipConverterList.extra != false)
+            {
+                shipBuild = new Ship(game.interCoords[0], game.interCoords[1], shippy.name, "Player", shippy.AI, false, false, false, false);
+                //[shippy.power, shippy.shields, shippy.integrity, shippy.upgrades, shippy.cargoBay, shippy.ammunition];
+                shipBuild.power = shippy.extra[0];
+                shipBuild.shields = shippy.extra[1];
+                shipBuild.integrity = shippy.extra[2];
+                shipBuild.upgrades = shippy.extra[3];
+                shipBuild.cargoBay = shippy.extra[4];
+                shipBuild.ammunition = shippy.extra[5];
+                shipBuild.brain = shippy.extra[6];
+            }
+            else
+            {
+                shipBuild = new Ship(game.interCoords[0], game.interCoords[1], shippy.name, "Player", shippy.AI, false, shippy.upgrade, shippy.ammo, shippy.cargo);
+            }
+            game.shipsList.push(shipBuild);
+        }
+        game.shipConverterList = [];
+    }
+}
+

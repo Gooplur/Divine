@@ -85,6 +85,9 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.sidegunsPowered = true;
     this.maingunsPowered = true;
     this.turretPowered = true;
+    //HUD (ship menus)
+    this.hudColor = "lightBlue";
+    this.hudBGColor = "darkGrey";
 
     //upgrade bonuses to default stats
     this.shieldsUP = 0;
@@ -181,15 +184,15 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
             if (upgrade == "Standard")
             {
-                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1)];
             }
             else if (upgrade == "Advanced")
             {
-                this.upgrades = [itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-Boosters", 1), itemize("RedStarShields", 1), itemize("Afid01-F1SentryGun", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-Boosters", 1), itemize("RedStarShields", 1), itemize("Afid01-F1SentryGun", 1)];
             }
             else if (upgrade == "Basic")
             {
-                this.upgrades = [];
+                this.upgrades = [itemize("CORE", 1)];
             }
             else
             {
@@ -197,6 +200,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.upgrades = upgrade;
                 }
+                this.upgrades.unshift(itemize("CORE", 1));
             }
 
             if (ammo == "Scarce")
@@ -259,15 +263,15 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
             if (upgrade == "Standard")
             {
-                this.upgrades = [itemize("Disk01-F1SingleStream", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Disk01-F1SingleStream", 1)];
             }
             else if (upgrade == "Advanced")
             {
-                this.upgrades = [itemize("Disk01-F1SingleStream", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Disk01-F1SingleStream", 1)];
             }
             else if (upgrade == "Basic")
             {
-                this.upgrades = [];
+                this.upgrades = [itemize("CORE", 1)];
             }
             else
             {
@@ -275,6 +279,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.upgrades = upgrade;
                 }
+                this.upgrades.unshift(itemize("CORE", 1));
             }
 
             if (ammo == "Scarce")
@@ -301,7 +306,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.idleSound = new Audio("sounds/hover.wav");
             this.laserSound1 = new Audio("sounds/singleStream.wav");
         }
-        else if (this.type == "Mantis09") //TODO add this new ship and change its stats
+        else if (this.type == "Mantis09")
         {
             this.size = 48;
             this.integrityMAX = 90; //the amount of damage the physical ship can take before total destruction.
@@ -323,7 +328,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.accelerationCost = 0.25;
             this.handlingCost = 0.05;
             this.weaponCost = 1;
-            this.explosionStyle = [25, 22, 30, ["#003300", "#66ff99", "#339966"]];
+            this.explosionStyle = [35, 22, 30, ["#003300", "#66ff99", "#339966"]];
             this.shieldsColour = "#669900";
             this.boostSpeed = 52;
             this.boostAccel = 8;
@@ -333,15 +338,15 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
             if (upgrade == "Standard")
             {
-                this.upgrades = [itemize("Mantis09-PlasmaBlasters", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Mantis09-PlasmaBlasters", 1)];
             }
             else if (upgrade == "Advanced")
             {
-                this.upgrades = [itemize("Mantis09-PlasmaCannon", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("JadeDragonShields", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Mantis09-PlasmaCannon", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("JadeDragonShields", 1)];
             }
             else if (upgrade == "Basic")
             {
-                this.upgrades = [];
+                this.upgrades = [itemize("CORE", 1)];
             }
             else
             {
@@ -349,6 +354,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.upgrades = upgrade;
                 }
+                this.upgrades.unshift(itemize("CORE", 1));
             }
 
             if (ammo == "Scarce")
@@ -382,6 +388,88 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.laserSound1 = new Audio("sounds/lightLas.wav");
             this.laserSound2 = new Audio("sounds/missileLaunch.wav");
         }
+        else if (this.type == "Majestad")
+        {
+            this.size = 150;
+            this.integrityMAX = 1000; //the amount of damage the physical ship can take before total destruction.
+            this.shieldsMAX = 6500; //the total capacity of the ships shielding systems.
+            this.rechargeMAX = 25; //the rate at which shields recharge in the ships best condition.
+            this.recharge = this.rechargeMAX;
+            this.powerMAX = 90000; //the total power capacity that the ship has.
+            this.radarRange = 65000;
+            this.cargoMAX = 100; //the total amount of cargo that the ship can carry.
+            this.speedMAX = 80; //ships maximum potential speed
+            this.accelerationMAX = 4;//max speed up/slow down rate
+            this.acceleration = this.accelerationMAX;
+            this.handlingMAX = 1/100 * Math.PI; //max turn speed
+            this.handling = this.handlingMAX;
+            this.strafable = true;
+            this.strafeMAX = 6;
+            this.shieldingCost = 0.5;
+            this.rechargeCost = 1;
+            this.accelerationCost = 1;
+            this.handlingCost = 0.1;
+            this.weaponCost = 15;
+            this.explosionStyle = [100, 32, 45, ["#3366cc", "#3399ff", "#66ccff"]];
+            this.shieldsColour = "#003399";
+            this.boostSpeed = 100;
+            this.boostAccel = 10;
+            this.boostHandle = 0.5/100 * Math.PI;
+            this.boostStrafe = 12;
+            this.boostCost = 5;
+
+            if (upgrade == "Standard")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumDisseminator", 1)];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumDisseminator", 1)];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumRay", 1)];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+                this.upgrades.unshift(itemize("CORE", 1));
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = [itemize("TrineumSeeker", 2)];
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = [itemize("TrineumSeeker", 4)];
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = [itemize("TrineumSeeker", 8)];
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = [itemize("TrineumSeeker", 14)];
+            }
+            else if (ammo == "Doom")
+            {
+                this.ammunition = [itemize("TrineumSeeker", 20)];
+            }
+
+            //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
+            this.explosionSound = new Audio("sounds/heavyXPL.wav");
+            this.accelSound = new Audio("sounds/accl.mp3");
+            this.accelSoundTime1 = 0.2;
+            this.accelSoundTime2 = 1.1;
+            this.laserSound1 = new Audio("sounds/lightLas.wav");
+            this.laserSound2 = new Audio("sounds/missileLaunch.wav");
+        }
 
         //Predetermined Cargo
         if (typeof(cargoHold) != "undefined" && cargoHold != false)
@@ -403,6 +491,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         this.handlingUP = 0;
         this.strafeUP = 0;
         this.boostStrafeUP = 0;
+        this.canRechargeInCombat = false;
         this.accessUpgrades("bonus");
     };
 
@@ -494,6 +583,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     //MANDATE SHIP STATS
     this.mandateStats = function()
     {
+        this.cargo = this.cargoBay.length;
         //To Do with off Line
         if (this.offline == true)
         {
@@ -662,6 +752,37 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     }
                     //circle(true, this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
                     //circle(true, this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    this.accessUpgrades("drawAbove");
+                }
+                else if (this.type == "Majestad")
+                {
+                    this.accessUpgrades("drawBelow");
+                    if (this.speedAlteration == false)
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitB, 11, 95, 43, 108, 43, 108, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 43, 108, this.X, this.Y, 43 * 5.2, 108 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitB, 11, 95, 43, 108, this.X, this.Y, 43 * 5.2, 108 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitB, 56, 95, 43, 108, 43, 108, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 43, 108, this.X, this.Y, 43 * 5.2, 108 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitB, 56, 95, 43, 108, this.X, this.Y, 43 * 5.2, 108 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 26.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 26.5 / 80) * -120, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 53.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 53.5 / 80) * -120, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
                     this.accessUpgrades("drawAbove");
                 }
             }
@@ -855,6 +976,62 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.rechargeShield = true;
                 }
             }
+            if (game.iKey == true)
+            {
+                game.iKey = false;
+                game.interInventory = true;
+                game.interInv1 = this.cargoBay;
+                game.interInv2 = game.interEmptyList;
+                game.interContext = "Inventory";
+                game.interInvCargoMAX1 = this.cargoMAX;
+            }
+            if (game.uKey == true)
+            {
+                game.uKey = false;
+                game.interInventory = true;
+                game.interInv1 = this.cargoBay;
+                game.interInv2 = this.upgrades;
+                game.interContext = "Upgrade";
+                game.interInvCargoMAX1 = this.cargoMAX;
+            }
+            if (game.yKey == true)
+            {
+                game.yKey = false;
+                game.interInventory = true;
+                game.interInv1 = this.cargoBay;
+                game.interInv2 = this.ammunition;
+                game.interContext = "Ammunition";
+                game.interInvCargoMAX1 = this.cargoMAX;
+            }
+            if (game.kKey == true)
+            {
+                game.kKey = false;
+                game.interInventory = true;
+                game.interInv1 = this.cargoBay;
+                game.interInv2 = game.interEmptyList;
+                game.interContext = "Repair";
+                game.interInvCargoMAX1 = this.cargoMAX;
+            }
+
+            if (game.tabKey == true)
+            {
+                game.tabKey = false;
+                if (game.coordinates)
+                {
+                    game.coordinates = false;
+                }
+                else if (this.power > 0)
+                {
+                    game.coordinates = true;
+                }
+            }
+            //tell the game my coordinates
+            if (this.power > 0)
+            {
+                game.playerX = this.X;
+                game.playerY = this.Y;
+                game.playerHUDColor = this.hudColor;
+            }
 
             //Toggle Power to Weapons on/off
             if (game.lKey == true)
@@ -960,7 +1137,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 else if (game.aKey == false && game.dKey == false)
                 {
                     this.speedAlteration = false;
-                    this.accelSound.pause();
+                    pauseSound(this.accelSound);
                 }
             }
 
@@ -1072,7 +1249,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 else if (this.aiAKey == false && this.aiDKey == false)
                 {
                     this.speedAlteration = false;
-                    this.accelSound.pause();
+                    pauseSound(this.accelSound);
                 }
             }
 
@@ -1357,6 +1534,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         {
             if (this.destructionTime == 0)
             {
+                game.coordinates = false;
                 pauseSound(this.laserSound1);
                 pauseSound(this.laserSound2);
                 pauseSound(this.laserSound3);
@@ -1370,10 +1548,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 this.player = false;
                 game.mode = "navigator";
             }
+
             explosion(this.X, this.Y, this.explosionStyle[0], this.explosionStyle[1], this.explosionStyle[2], this.explosionStyle[3]);
             this.offline = true;
             if (new Date().getTime() - this.destructionTime > this.destructDuration * 1000 && this.destructionTime != 0)
             {
+                //drop cargo upon deletion
+                game.sceneryList.push(new Scenery(this.X, this.Y, "cargohold", this.cargoBay, this.cargoMAX)); //this.cargoBay
+                //delete this ship
                 for (var i = 0; i < game.shipsList.length; i++)
                 {
                     if (game.shipsList[i] === this)
@@ -1416,7 +1598,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             if (this.power >= (this.weaponCost * 2))
                             {
                                 this.power -= (this.weaponCost * 2);
-                                this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
                                 game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
@@ -1432,7 +1613,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             if (this.power >= (this.weaponCost * 2))
                             {
                                 this.power -= (this.weaponCost * 2);
-                                this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 11.5, this, this.rotation - Math.PI / 2));
                                 game.projectilesList.push(new Projectile("F1Laser", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 12.25, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 11.5, this, this.rotation - Math.PI / 2));
@@ -1440,7 +1620,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
-                else if (this.upgrades[i].name == "Afid01-Boosters" && this.type == "Afid01" && this.upgrades[i].part == "boosters")
+                if (this.upgrades[i].name == "Afid01-Boosters" && this.type == "Afid01" && this.upgrades[i].part == "boosters")
                 {
                     if (use == "drawAbove")
                     {
@@ -1479,7 +1659,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         this.boostHandleUP = (0.5 / 100) * Math.PI * 2;
                     }
                 }
-                else if (this.upgrades[i].name == "RedStarShields" && this.upgrades[i].part == "shielding")
+                if (this.upgrades[i].name == "RedStarShields" && this.upgrades[i].part == "shielding")
                 {
                     if (use == "bonus")
                     {
@@ -1488,7 +1668,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         this.rechargeUP = 5;
                     }
                 }
-                else if (this.upgrades[i].name == "CosmosShields" && this.upgrades[i].part == "shielding")
+                if (this.upgrades[i].name == "CosmosShields" && this.upgrades[i].part == "shielding")
                 {
                     if (use == "bonus")
                     {
@@ -1497,7 +1677,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         this.rechargeUP = 4;
                     }
                 }
-                else if (this.upgrades[i].name == "JadeDragonShields" && this.upgrades[i].part == "shielding")
+                if (this.upgrades[i].name == "JadeDragonShields" && this.upgrades[i].part == "shielding")
                 {
                     if (use == "bonus")
                     {
@@ -1506,7 +1686,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         this.rechargeUP = 6;
                     }
                 }
-                else if (this.upgrades[i].name == "Afid01-M1Launcher" && this.type == "Afid01" && this.upgrades[i].part == "mainguns")
+                if (this.upgrades[i].name == "Afid01-M1Launcher" && this.type == "Afid01" && this.upgrades[i].part == "mainguns")
                 {
                     if (use == "drawAbove")
                     {
@@ -1545,7 +1725,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 if (this.power >= this.weaponCost)
                                 {
                                     this.power -= this.weaponCost;
-                                    this.laserSound1.currentTime = 0;
                                     playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
                                     game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 1.95) * 27, this.Y + Math.sin(this.rotation - Math.PI / 1.95) * 27, this, this.rotation - Math.PI / 2));
                                 }
@@ -1577,7 +1756,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 if (this.power >= this.weaponCost)
                                 {
                                     this.power -= this.weaponCost;
-                                    this.laserSound1.currentTime = 0;
                                     playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
                                     game.projectilesList.push(new Projectile("M1Missile", this.X + Math.cos(this.rotation - Math.PI / 2) * 27, this.Y + Math.sin(this.rotation - Math.PI / 2) * 27, this, this.rotation - Math.PI / 2));
                                 }
@@ -1585,7 +1763,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
-                else if (this.upgrades[i].name == "Afid01-F1SentryGun" && this.type == "Afid01" && this.upgrades[i].part == "turret")
+                if (this.upgrades[i].name == "Afid01-F1SentryGun" && this.type == "Afid01" && this.upgrades[i].part == "turret")
                 {
                     if (use == "drawAbove")
                     {
@@ -1623,7 +1801,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 if (this.power >= (this.weaponCost * 2))
                                 {
                                     this.power -= (this.weaponCost * 2);
-                                    this.laserSound1.currentTime = 0;
                                     playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                     game.projectilesList.push(new Projectile("F1Laser", this.X  - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.cos(this.rotation + this.turretRot1 - Math.PI * 0 / 16) * 10, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.sin(this.rotation + this.turretRot1 - Math.PI * 0 / 16) * 10, this, this.rotation + this.turretRot1));
                                 }
@@ -1651,7 +1828,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 if (this.power >= (this.weaponCost * 2))
                                 {
                                     this.power -= (this.weaponCost * 2);
-                                    this.laserSound1.currentTime = 0;
                                     playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                     game.projectilesList.push(new Projectile("F1Laser", this.X  - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16, this, this.rotation + this.turretRot1));
                                 }
@@ -1659,7 +1835,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
-                else if (this.upgrades[i].name == "Disk01-F1SingleStream" && this.type == "Disk01" && this.upgrades[i].part == "turret")
+                if (this.upgrades[i].name == "Disk01-F1SingleStream" && this.type == "Disk01" && this.upgrades[i].part == "turret")
                 {
                     if (use == "playerActivate" || use == "aiActivate")
                     {
@@ -1673,7 +1849,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
-                else if (this.type == "Mantis09")
+                if (this.upgrades[i].name == "CORE" && this.type == "Mantis09")
                 {
                     this.sidegunsRate = 4; //these sideguns come with this ship and are inseparable from its base structure.
                     if (use == "playerActivate")
@@ -1701,7 +1877,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 if (this.power >= this.weaponCost)
                                 {
                                     this.power -= this.weaponCost;
-                                    this.laserSound2.currentTime = 0;
                                     playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
                                     game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 2.7) * 56, this.Y + Math.sin((this.rotation - Math.PI) -2.7) * 56, this, this.rotation - 1/2 * Math.PI));
                                     game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 0.414) * 43, this.Y + Math.sin((this.rotation - Math.PI) - 0.414) * 43, this, this.rotation - 1/2 * Math.PI));
@@ -1734,7 +1909,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 if (this.power >= this.weaponCost)
                                 {
                                     this.power -= this.weaponCost;
-                                    this.laserSound2.currentTime = 0;
                                     playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
                                     game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 2.7) * 56, this.Y + Math.sin((this.rotation - Math.PI) -2.7) * 56, this, this.rotation - 1/2 * Math.PI));
                                     game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 0.414) * 43, this.Y + Math.sin((this.rotation - Math.PI) - 0.414) * 43, this, this.rotation - 1/2 * Math.PI));
@@ -1782,7 +1956,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             if (this.power >= (this.weaponCost * 2))
                             {
                                 this.power -= (this.weaponCost * 2);
-                                this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, this, this.rotation - Math.PI / 2));
                                 game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, this, this.rotation - Math.PI / 2));
@@ -1798,7 +1971,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             if (this.power >= (this.weaponCost * 2))
                             {
                                 this.power -= (this.weaponCost * 2);
-                                this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, this, this.rotation - Math.PI / 2));
                                 game.projectilesList.push(new Projectile("PlasmaLaser", this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, this, this.rotation - Math.PI / 2));
@@ -1845,7 +2017,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             if (this.power >= (this.weaponCost * 5))
                             {
                                 this.power -= (this.weaponCost * 5);
-                                this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 7 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 7 / 16) * 32, this, this.rotation - Math.PI / 2));
                             }
@@ -1860,14 +2031,13 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             if (this.power >= (this.weaponCost * 5))
                             {
                                 this.power -= (this.weaponCost * 5);
-                                this.laserSound1.currentTime = 0;
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("PlasmaBlast", this.X + Math.cos(this.rotation - Math.PI * 7 / 16) * 32, this.Y  + Math.sin(this.rotation - Math.PI * 7 / 16) * 32, this, this.rotation - Math.PI / 2));
                             }
                         }
                     }
                 }
-                else if (this.upgrades[i].name == "Mantis09-PlasmaAccelerator" && this.type == "Mantis09" && this.upgrades[i].part == "boosters")
+                if (this.upgrades[i].name == "Mantis09-PlasmaAccelerator" && this.type == "Mantis09" && this.upgrades[i].part == "boosters")
                 {
                     if (use == "drawAbove")
                     {
@@ -1891,6 +2061,228 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         this.boostHandleUP = (1 / 100) * Math.PI * 2;
                     }
                 }
+                if (this.upgrades[i].name == "CORE" && this.type == "Majestad")
+                {
+                    this.sidegunsRate = 10; //these sideguns come with this ship and are inseparable from its base structure.
+                    if (use == "playerActivate")
+                    {
+                        if (this.sidegunsPowered == true && game.qKey && new Date().getTime() - this.sidegunsStoreTime >= this.sidegunsRate * 1000)
+                        {
+                            this.sidegunsStoreTime = new Date().getTime();
+                            game.qKey = false;
+                            var hasAmmoToShoot = false;
+                            for (var a = 0; a < this.ammunition.length; a++)
+                            {
+                                if (this.ammunition[a].name == "TrineumSeeker" && this.ammunition[a].quantity >= 2)
+                                {
+                                    this.ammunition[a].quantity -= 2;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (hasAmmoToShoot)
+                            {
+                                if (this.power >= this.weaponCost)
+                                {
+                                    this.power -= this.weaponCost;
+                                    playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                    game.projectilesList.push(new Projectile("TrineumSeeker", this.X + Math.cos(this.rotation - Math.PI * 26.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 26.5 / 80) * -120, this, this.rotation - 1/2 * Math.PI));
+                                    game.projectilesList.push(new Projectile("TrineumSeeker", this.X + Math.cos(this.rotation - Math.PI * 53.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 53.5 / 80) * -120, this, this.rotation - 1/2 * Math.PI));
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.sidegunsPowered == true && this.aiQKey && new Date().getTime() - this.sidegunsStoreTime >= this.sidegunsRate * 1000)
+                        {
+                            this.sidegunsStoreTime = new Date().getTime();
+                            this.aiQKey = false;
+                            var hasAmmoToShoot = false;
+                            for (var a = 0; a < this.ammunition.length; a++)
+                            {
+                                if (this.ammunition[a].name == "TrineumSeeker" && this.ammunition[a].quantity >= 2)
+                                {
+                                    this.ammunition[a].quantity -= 2;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (hasAmmoToShoot)
+                            {
+                                if (this.power >= this.weaponCost)
+                                {
+                                    this.power -= this.weaponCost;
+                                    playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                    game.projectilesList.push(new Projectile("TrineumSeeker", this.X + Math.cos(this.rotation - Math.PI * 26.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 26.5 / 80) * -120, this, this.rotation - 1/2 * Math.PI));
+                                    game.projectilesList.push(new Projectile("TrineumSeeker", this.X + Math.cos(this.rotation - Math.PI * 53.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 53.5 / 80) * -120, this, this.rotation - 1/2 * Math.PI));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Majestad-TrineumDisseminator" && this.type == "Majestad" && this.upgrades[i].part == "mainguns")
+                {
+                    if (use == "drawAbove")
+                    {
+                        this.maingunsRate = 12;
+
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitB, 146, 204, 11, 11, 11, 11, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 11, 11, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 276, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 276, 11 * 5.2, 11 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitB, 146, 204, 11, 11, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 276, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 276, 11 * 5.2, 11 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+                            if (this.power >= (this.weaponCost * 8))
+                            {
+                                this.power -= (this.weaponCost * 8);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.05));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.05));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.1));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.1));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.15));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.15));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.2));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.2));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.25));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.25));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.3));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.3));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.35));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.35));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.4));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.4));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.45));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.45));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.5));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.5));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiSpaceKey = false;
+                            if (this.power >= (this.weaponCost * 8))
+                            {
+                                this.power -= (this.weaponCost * 8);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.05));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.05));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.1));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.1));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.15));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.15));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.2));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.2));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.25));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.25));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.3));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.3));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.35));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.35));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.4));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.4));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.45));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.45));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 + 0.5));
+                                game.projectilesList.push(new Projectile("TrineumBlast", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 270, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 270, this, this.rotation - Math.PI / 2 - 0.5));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Majestad-TrineumRay" && this.type == "Majestad" && this.upgrades[i].part == "mainguns")
+                {
+                    if (use == "drawAbove")
+                    {
+                        this.maingunsRate = 9;
+
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitB, 202, 203, 11, 11, 11, 11, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 11, 11, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 294, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 294, 11 * 5.2, 11 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitB, 202, 203, 11, 11, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 294, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 294, 11 * 5.2, 11 * 5.2, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+                            if (this.power >= (this.weaponCost * 2))
+                            {
+                                this.power -= (this.weaponCost * 2);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("TrineumWave", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 290, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 290, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiSpaceKey = false;
+                            if (this.power >= (this.weaponCost * 2))
+                            {
+                                this.power -= (this.weaponCost * 2);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("TrineumWave", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 290, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 290, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    //trade gear with teammates
+    this.transfer = function()
+    {
+        for (var i = 0; i < game.shipsList.length; i++)
+        {
+            if (game.shipsList[i] !== this && game.shipsList[i].player)
+            {
+                if (distance(this, game.shipsList[i]) <= 110)
+                {
+                    if (game.eKey)
+                    {
+                        game.eKey = false;
+                        game.interInventory = true;
+                        game.interInv1 = game.shipsList[i].cargoBay;
+                        game.interInv2 = this.cargoBay;
+                        game.interContext = "Transfer";
+                        game.interInvCargoMAX1 = game.shipsList[i].cargoMAX;
+                        game.interInvCargoMAX2 = this.cargoMAX;
+                    }
+                }
             }
         }
     };
@@ -1911,6 +2303,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.turnOnOffShip();
             if (this.power > 0 && this.offline == false)
             {
+                this.transfer();
                 this.rotationSystem();
                 this.systemControls();
                 this.recharging();
@@ -1920,6 +2313,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 //Exit Ship View
                 if (game.tildKey == true)
                 {
+                    game.coordinates = false;
                     game.tildKey = false;
                     this.player = false;
                     game.mode = "navigator";

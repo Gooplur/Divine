@@ -86,6 +86,26 @@ function keyPressSensing(event)
     {
         game.rKey = true;
     }
+    if (key == 69)
+    {
+        game.eKey = true;
+    }
+    if (key == 73)
+    {
+        game.iKey = true;
+    }
+    if (key == 85)
+    {
+        game.uKey = true;
+    }
+    if (key == 89)
+    {
+        game.yKey = true;
+    }
+    if (key == 75)
+    {
+        game.kKey = true;
+    }
     if (key == 16)
     {
         game.shiftKey = true;
@@ -93,6 +113,10 @@ function keyPressSensing(event)
     if (key == 32)
     {
         game.spaceKey = true;
+    }
+    if (key == 9)
+    {
+        game.tabKey = true;
     }
 }
 
@@ -180,6 +204,26 @@ function keyReleaseSensing(event)
     {
         game.rKey = false;
     }
+    if (key == 69)
+    {
+        game.eKey = false;
+    }
+    if (key == 73)
+    {
+        game.iKey = false;
+    }
+    if (key == 85)
+    {
+        game.uKey = false;
+    }
+    if (key == 89)
+    {
+        game.yKey = false;
+    }
+    if (key == 75)
+    {
+        game.kKey = false;
+    }
     if (key == 16)
     {
         game.shiftKey = false;
@@ -187,6 +231,10 @@ function keyReleaseSensing(event)
     if (key == 32)
     {
         game.spaceKey = false;
+    }
+    if (key == 9)
+    {
+        game.tabKey = false;
     }
 }
 

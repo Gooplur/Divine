@@ -27,7 +27,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     //tracking projectiles only
     this.tracking = false;
     this.launchTime = new Date().getTime();
-    this.trackWait = 0.15;
+    this.trackWait = 0.3;
     this.trackSpeed = 14;
     this.tracked = false;
     //exploding projectiles only
@@ -37,6 +37,11 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.volume = 0.75;
     this.explosionSoundTime1 = 0;
     this.explosionSoundTime2 = this.explosionSound.duration;
+    //growing projectiles
+    this.grower = false;
+    this.growth = 1;
+    this.growthRate = 0.1;
+    this.growthMAX = 10;
 
     //Animate function variables
     this.anim = 0; //the tics that count up that progress an animation.
@@ -89,7 +94,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.tracking = true;
                 this.explodes = true;
                 this.explosionSound = new Audio("sounds/missileXPL.wav");
-                this.explosionStyle = [11, 5, 9, ["#00ff00", "#99ff33", "#99ff99"]];
+                this.explosionStyle = [14, 6, 10, ["#00ff00", "#99ff33", "#99ff99"]];
                 this.turnSpeed = 4/100 * Math.PI;
                 this.trackWait = 1.4;
             }
@@ -109,11 +114,54 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.phasing = false;
                 this.radius = 12;
             }
+            else if (this.type == "TrineumSeeker")
+            {
+                this.trackSpeed = 75;
+                this.speed = who.speed + this.trackSpeed;
+                this.range = 25000;
+                this.damage = 1800;
+                this.phasing = false;
+                this.tracking = true;
+                this.explodes = true;
+                this.explosionSound = new Audio("sounds/missileXPL.wav");
+                this.explosionStyle = [20, 8, 12, ["#3366cc", "#3399ff", "#66ccff"]];
+                this.turnSpeed = 10/100 * Math.PI;
+                this.trackWait = 1.4;
+            }
+            else if (this.type == "TrineumBlast")
+            {
+                this.speed = who.speed + 66;
+                this.range = 5000;
+                this.damage = 140;
+                this.phasing = true;
+                this.radius = 16;
+            }
+            else if (this.type == "TrineumWave")
+            {
+                this.grower = true;
+                this.speed = who.speed + 29;
+                this.range = 3600;
+                this.damage = 8;
+                this.phasing = true;
+                this.growth = 5;
+                this.radius = 5;
+                this.growthRate = 4;
+                this.growthMAX = 840;
+            }
         }
     };
 
     this.agenda = function() //This is for projectile types that constantly regulate action based on preset projectile specific conditions.
     {
+        //general
+            //GROWER - if a projectile is supposed to grow or shrink in size throughout its lifespan
+        if (this.grower)
+        {
+            this.growth += this.growthRate;
+            this.radius = Math.min(this.growth, this.growthMAX);
+        }
+
+        //type specific
         if (this.type == "F1SingleStream")
         {
             this.target = this.nearestEnemy();
@@ -140,7 +188,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             }
             else if (this.type == "M1Missile")
             {
-                draw(divineStarterPack, 117, 12, 26, 7, this.X - 1/2 * 12, this.Y - 1/2 * 26, 26, 7, this.rotation, false, 1, 0, 0);
+                draw(divineStarterPack, 117, 12, 26, 7, this.X, this.Y, 26, 7, this.rotation, false, 1, 0, 0);
             }
             else if (this.type == "F1SingleStream")
             {
@@ -153,17 +201,30 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             }
             else if (this.type == "PlasmaticSeeker")
             {
-                draw(divineKitA, 207, 3, 6, 21, this.X - 1/2 * 6 * 1.6, this.Y - 1/2 * 21 * 1.6, 6 * 1.6, 21 * 1.6, this.rotation - 1/2 * Math.PI, false, 1, 0, 0);
+                draw(divineKitA, 207, 3, 6, 21, this.X, this.Y, 6 * 1.6, 21 * 1.6, this.rotation - 1/2 * Math.PI, false, 1, 0, 0);
             }
             else if (this.type == "PlasmaLaser")
             {
                 //draw(); //the list should contain the fields in the draw function in the same order.
-                this.animate(0.10, [[divineKitA, 170, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 178, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 184, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
+                this.animate(0.10, [[divineKitA, 170, 53, 6, 10, this.X, this.Y, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 178, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 184, 53, 6, 10, this.X - 1/2 * 6 * 1.7, this.Y - 1/2 * 10 * 1.7, 6 * 1.7, 10 * 1.7, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
             }
             else if (this.type == "PlasmaBlast")
             {
                 //draw(); //the list should contain the fields in the draw function in the same order.
-                this.animate(0.10, [[divineKitA, 144, 7, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 161, 7, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 179, 8, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
+                this.animate(0.10, [[divineKitA, 144, 7, 15, 15, this.X, this.Y, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 161, 7, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0], [divineKitA, 179, 8, 15, 15, this.X - 1/2 * 15 * 1.8, this.Y - 1/2 * 15 * 1.8, 15 * 1.8, 15 * 1.8, this.rotation - 1/2 * Math.PI, false, 0.85, 0, 0]]);
+            }
+            else if (this.type == "TrineumSeeker")
+            {
+                draw(divineKitB, 130, 87, 10, 28, this.X, this.Y, 10 * 3.6, 28 * 3.6, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
+            }
+            else if (this.type == "TrineumBlast")
+            {
+                //draw(); //the list should contain the fields in the draw function in the same order.
+                draw(divineKitB, 184, 198, 8, 21, this.X, this.Y, 8 * 3.4, 21 * 3.4, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
+            }
+            else if (this.type == "TrineumWave")
+            {
+                circle(true, this.X, this.Y, this.radius, 0, 2*Math.PI, "#66ccff", false, false, false, 0, 0.4);
             }
         }
     };
@@ -354,7 +415,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
 
     this.process = function()
     {
-        if (this.tracking && who.faction != "Player" || ifInScreenDraw(this.X, this.Y, 5) || game.togglePerformance == false)
+        if (this.tracking && who.faction != "Player" || ifInScreenDraw(this.X, this.Y, this.radius * 2) || game.togglePerformance == false)
         {
             this.defineProjectileStats();
             this.project();

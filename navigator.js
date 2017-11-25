@@ -39,13 +39,26 @@ function navigator()
         if (game.tildKey)
         {
             game.tildKey = false;
+
+            var allyLocator = [];
             for (var i = 0; i < game.shipsList.length; i++)
             {
                 if (game.shipsList[i].faction == "Player")
                 {
-                    game.shipsList[i].player = true;
-                    break;
+                    allyLocator.push(i);
                 }
+            }
+
+            if (game.navToggle >= allyLocator.length)
+            {
+                game.navToggle = 0;
+            }
+
+
+            if (allyLocator.length > 0)
+            {
+                game.shipsList[allyLocator[game.navToggle]].player = true;
+                game.navToggle += 1;
             }
         }
     }
