@@ -156,7 +156,7 @@ function Game()
     this.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "simple-missile", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple-missile", true, "Basic", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "basic-missile", true, "Basic", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "basic-missile", false, "Standard", "Scarce"));
 
     this.shipsList.push(new Ship(-1000, 500, "Disk01", "UIR", "basic", false, "Advanced", "Stocked"));
