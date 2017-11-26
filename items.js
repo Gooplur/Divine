@@ -115,7 +115,7 @@
             this.utility = "part";
             this.part = "mainguns";
             this.manufacturer = "Alturatec";
-            this.price = 25000;
+            this.price = 45000;
         }
 
         //Core

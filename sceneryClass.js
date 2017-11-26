@@ -185,8 +185,10 @@ function Scenery(X, Y, type, list, extra)
                     }
                 }
             }
-            //keeps the cargohold's menu open while it is in use
-
+            else
+            {
+                this.flag = false;
+            }
         }
     };
 }
