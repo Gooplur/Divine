@@ -200,7 +200,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.upgrades = upgrade;
                 }
-                this.upgrades.unshift(itemize("CORE", 1));
             }
 
             if (ammo == "Scarce")
@@ -279,7 +278,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.upgrades = upgrade;
                 }
-                this.upgrades.unshift(itemize("CORE", 1));
             }
 
             if (ammo == "Scarce")
@@ -354,7 +352,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.upgrades = upgrade;
                 }
-                this.upgrades.unshift(itemize("CORE", 1));
             }
 
             if (ammo == "Scarce")
@@ -436,7 +433,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.upgrades = upgrade;
                 }
-                this.upgrades.unshift(itemize("CORE", 1));
             }
 
             if (ammo == "Scarce")
