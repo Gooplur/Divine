@@ -148,7 +148,7 @@ function Game()
         //Scenery List (asteroids, cargo holds, etc.)
     this.sceneryList = [];
     this.sceneryList.push(new Scenery(25000, -25000, "planet", [itemize("Freshwater", 20), itemize("Power Core", 7), itemize("Repair Kit", 16), itemize("M1Missile", 35), itemize("PlasmaticSeeker", 6), itemize("TrineumSeeker", 10)], "Aztlan"));
-    this.sceneryList.push(new Scenery(-13266, -41523, "planet", [itemize("Afid01", 1), itemize("Afid01", 1), itemize("Afid01", 1), itemize("Afid01", 1), itemize("Afid01", 1), itemize("Afid01", 1), itemize("Afid01", 1), itemize("Afid01", 1), itemize("Disk01", 1), itemize("Disk01", 1), itemize("Disk01", 1), itemize("Mantis09", 1)], "Kurm"));
+    this.sceneryList.push(new Scenery(-13266, -41523, "planet", [itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Disk01", 1, false), itemize("Disk01", 1, false), itemize("Disk01", 1, false), itemize("Mantis09", 1, false)], "Kurm"));
     this.sceneryList.push(new Scenery(-19898, -37713, "planet", [], "Dorshun"));
 
         //Ships List
@@ -156,7 +156,7 @@ function Game()
     this.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "simple-missile", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "basic-missile", true, "Basic", "Stocked"));
+    this.shipsList.push(new Ship(-13266, -41523, "Majestad", "Player", "basic-missile", true, "Basic", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "basic-missile", false, "Standard", "Scarce"));
 
     this.shipsList.push(new Ship(-1000, 500, "Disk01", "UIR", "basic", false, "Advanced", "Stocked"));

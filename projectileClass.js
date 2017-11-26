@@ -141,7 +141,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.grower = true;
                 this.speed = who.speed + 29;
                 this.range = 2500;
-                this.damage = 24;
+                this.damage = 22;
                 this.phasing = true;
                 this.growth = 5;
                 this.radius = 5;

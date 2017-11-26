@@ -154,16 +154,16 @@ function Scenery(X, Y, type, list, extra)
                                 //shop
                                 if (game.eKey)
                                 {
-                                    shipConverter(true);
                                     game.eKey = false;
                                     game.interInventory = true;
-                                    game.interInv1 = game.shipConverterList;
                                     game.interInv2 = this.contents;
                                     game.interContext = "Shipyard";
                                     game.interInvCargoMAX1 = game.shipsList[i].cargoMAX;
                                     game.interBuyRate = 0.5; //what percentage shops will pay for your goods.
                                     game.interSellRate = 1; //what percentage shops will sell there goods at.
                                     game.interCoords = [this.X, this.Y];
+                                    shipConverter(true);
+                                    game.interInv1 = game.shipConverterList;
                                 }
                             }
                             else
