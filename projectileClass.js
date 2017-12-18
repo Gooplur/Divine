@@ -7,6 +7,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.zIndex = 0;
     this.X = x;
     this.Y = y;
+    this.quien = who;
     this.type = type;
     this.activateProjectile = true;
     this.rotation = rotation;
@@ -17,7 +18,16 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.EMP = 0;
     this.phasing = false;
     this.style = "normal";
-    this.radius = 0;
+    this.radius = 0.1;
+    this.shipInteract = true; //determines if this projectile can affect ships
+    //destructable projectiles
+    this.integrity = 10;
+    this.destructible = false;
+    //Projectile effects on other projectiles
+    this.projectilePhasing = true; //does a projectile delete upon interaction with another projectile
+    this.projectileInteract = false; //determines if this projectile can affect other projectiles
+    this.projectileDistortion = false; //does the projectile alter the rotation of other projectiles
+    this.field = 0.1; //this is like radius but against projectiles
     //rotating projectiles only
     this.targetRotation = this.rotation;
     this.turnSpeed = 1/9 * Math.PI;
@@ -25,6 +35,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.streamFixed = false;
     this.streamType = "normal";
     //tracking projectiles only
+    this.targetProjectile = false; //if true this makes it so that the tracking projectile only targets destructible enemy projectiles. Otherwise ship targeting is enabled.
     this.tracking = false;
     this.launchTime = new Date().getTime();
     this.trackWait = 0.3;
@@ -42,6 +53,14 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.growth = 1;
     this.growthRate = 0.1;
     this.growthMAX = 10;
+    //distortion projectiles
+    this.distortResist = false;
+    this.distortion = false;
+    this.distort = 0;
+    this.distortTime = 0;
+
+    //effects
+    this.distorted = false;
 
     //Animate function variables
     this.anim = 0; //the tics that count up that progress an animation.
@@ -60,6 +79,22 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.damage = 5;
                 this.phasing = false;
             }
+            else if (this.type == "F2Laser")
+            {
+                this.speed = who.speed + 35;
+                this.range = 4750;
+                this.damage = 12;
+                this.phasing = false;
+                this.radius = 4;
+            }
+            else if (this.type == "F3Laser")
+            {
+                this.speed = who.speed + 40;
+                this.range = 5500;
+                this.damage = 19;
+                this.phasing = false;
+                this.radius = 8;
+            }
             else if (this.type == "M1Missile")
             {
                 this.trackSpeed = 22;
@@ -72,6 +107,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.explosionSound = new Audio("sounds/missileXPL.wav");
                 this.explosionStyle = [11, 5, 9, ["crimson", "orange", "red"]];
                 this.turnSpeed = 1/29 * Math.PI;
+                this.radius = 7;
+                this.integrity = 2;
+                this.destructible = true;
             }
             else if (this.type == "F1SingleStream")
             {
@@ -97,6 +135,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.explosionStyle = [14, 6, 10, ["#00ff00", "#99ff33", "#99ff99"]];
                 this.turnSpeed = 4/100 * Math.PI;
                 this.trackWait = 1.4;
+                this.radius = 12;
+                this.integrity = 8;
+                this.destructible = true;
             }
             else if (this.type == "PlasmaLaser")
             {
@@ -127,6 +168,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.explosionStyle = [20, 8, 12, ["#3366cc", "#3399ff", "#66ccff"]];
                 this.turnSpeed = 10/100 * Math.PI;
                 this.trackWait = 1.4;
+                this.radius = 22;
+                this.integrity = 20;
+                this.destructible = true;
             }
             else if (this.type == "TrineumBlast")
             {
@@ -147,6 +191,32 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.radius = 5;
                 this.growthRate = 10;
                 this.growthMAX = 840;
+            }
+            else if (this.type == "TrineumLaser")
+            {
+                this.speed = this.speed = who.speed + 40;
+                this.range = 3600;
+                this.damage = 14;
+                this.phasing = true;
+                this.radius = 3;
+                this.zIndex = 1;
+            }
+            else if (this.type == "EtherBlast")
+            {
+                this.speed = this.speed = who.speed + 51;
+                this.range = 4000;
+                this.damage = 22;
+                this.phasing = false;
+                this.radius = 5;
+                this.zIndex = 1;
+                this.distortion = true;
+                this.projectileInteract = true;
+                this.projectileDistortion = true;
+                this.distortTime = 6;
+                this.distortResist = true;
+                this.field = 80;
+
+                this.distort = -(250 + Math.random() * 300) / 100 * Math.PI;
             }
         }
     };
@@ -185,6 +255,14 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             if (this.type == "F1Laser")
             {
                 circle(true, this.X, this.Y, 2, 0, 2*Math.PI, "red", false, false, false, 0, 0.65);
+            }
+            else if (this.type == "F2Laser")
+            {
+                line(this.X, this.Y, this.X + Math.cos(this.rotation) * -9, this.Y + Math.sin(this.rotation) * -9, "#BA3B04", 2, false, 0, 0.65);
+            }
+            else if (this.type == "F3Laser")
+            {
+                line(this.X, this.Y, this.X + Math.cos(this.rotation) * -17, this.Y + Math.sin(this.rotation) * -17, "#8A1919", 2.5, false, 0, 0.65);
             }
             else if (this.type == "M1Missile")
             {
@@ -225,6 +303,16 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             else if (this.type == "TrineumWave")
             {
                 circle(true, this.X, this.Y, this.radius, 0, 2*Math.PI, "#66ccff", false, false, false, 0, 0.4);
+            }
+            else if (this.type == "TrineumLaser")
+            {
+                //draw(); //the list should contain the fields in the draw function in the same order.
+                draw(divineKitB, 140, 157, 5, 13, this.X, this.Y, 5 * 1.4, 13 * 1.4, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
+            }
+            else if (this.type == "EtherBlast")
+            {
+                //draw(); //the list should contain the fields in the draw function in the same order.
+                draw(divineKitC, 380, 365, 32, 31, this.X, this.Y, 32 * 0.25, 31 * 0.25, this.rotation + 1/2 * Math.PI, false, 0.44, 0, 0);
             }
         }
     };
@@ -274,12 +362,44 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         return nearShip;
     };
 
+    this.nearestEnemyProjectile = function()
+    {
+        var nearShip = {Y: who.Y + Math.sin(who.rotation - Math.PI) * 1000000, X: who.X + Math.cos(who.rotation - Math.PI) * 1000000};
+        var nearDist = false;
+        for (var i = 0; i < game.projectilesList.length; i++)
+        {
+            //console.log(game.shipsList[i]);
+            if (game.projectilesList[i].quien.faction != who.faction && this.distanceTo(game.projectilesList[i]) <= who.radarRange && game.projectilesList[i].destructible)
+            {
+                if (nearDist == false)
+                {
+                    nearShip = game.projectilesList[i];
+                    nearDist = this.distanceTo(game.projectilesList[i])
+                }
+                else if (nearDist > this.distanceTo(game.projectilesList[i]))
+                {
+                    nearShip = game.projectilesList[i];
+                    nearDist = this.distanceTo(game.projectilesList[i])
+                }
+            }
+        }
+
+        return nearShip;
+    };
+
     this.project = function()
     {
         if (this.tracking == true && this.launchTime + this.trackWait * 1000 <= new Date().getTime())
         {
             this.speed = this.trackSpeed;
-            this.tracked = this.nearestEnemy();
+            if (this.targetProjectile)
+            {
+                this.tracked = this.nearestEnemyProjectile();
+            }
+            else
+            {
+                this.tracked = this.nearestEnemy();
+            }
             self.targetRotation = Math.atan2(self.Y - this.tracked.Y, self.X - this.tracked.X) - Math.PI;
             this.projectileRotation();
         }
@@ -367,6 +487,45 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         }
     };
 
+    this.projectileInteraction = function()
+    {
+        for (var i = 0; i < game.projectilesList.length; i++)
+        {
+            if (game.projectilesList[i].quien.faction != who.faction)
+            {
+                if (this.distanceTo(game.projectilesList[i]) - this.field < game.projectilesList[i].radius)
+                {
+
+                    if (this.projectileDistortion)
+                    {
+                        if (!game.projectilesList[i].distortResist && !game.projectilesList[i].distorted)
+                        {
+                            game.projectilesList[i].rotation = Math.atan2(this.Y - game.projectilesList[i].Y, this.X - game.projectilesList[i].X) + Math.PI;
+                            game.projectilesList[i].turnSpeed = 0;
+                            game.projectilesList[i].distorted = true;
+                        }
+                    }
+                    if (this.projectilePhasing == false)
+                    {
+                        if (this.explodes)
+                        {
+                            playSound(this.explosionSound, this.volume, this.explosionSoundTime1, this.explosionSoundTime2);
+                            explosion(this.X, this.Y, this.explosionStyle[0], this.explosionStyle[1], this.explosionStyle[2], this.explosionStyle[3]);
+                        }
+                        for (var j = 0; j < game.projectilesList.length; j++)
+                        {
+                            if (game.projectilesList[j] === this)
+                            {
+                                game.projectilesList.splice(j, 1);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
     this.projectileCollision = function()
     {
         if (this.style == "normal")
@@ -378,6 +537,17 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                     if (this.distanceTo(game.shipsList[i]) - this.radius < game.shipsList[i].size)
                     {
                         this.dealDamageTo(game.shipsList[i]);
+
+                        if (this.distortion)
+                        {
+                            if (!game.shipsList[i].distortResistUP)
+                            {
+                                game.shipsList[i].rotation += (this.distort / game.shipsList[i].size);
+                                game.shipsList[i].handlingDebuffTime = this.distortTime;
+                                game.shipsList[i].handlingDebuffStore = new Date().getTime();
+                                game.shipsList[i].handlingDebuff = 0.01;
+                            }
+                        }
                         if (this.phasing == false)
                         {
                             if (this.explodes)
@@ -420,7 +590,14 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             this.defineProjectileStats();
             this.project();
             //this.drawProjectile();
-            this.projectileCollision();
+            if (this.projectileInteract)
+            {
+                this.projectileInteraction();
+            }
+            if (this.shipInteract)
+            {
+                this.projectileCollision();
+            }
             this.agenda();
             //console.log(this.distanceTo(game.shipsList[1]));
         }

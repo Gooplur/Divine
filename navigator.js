@@ -43,6 +43,7 @@ function navigator()
             var allyLocator = [];
             for (var i = 0; i < game.shipsList.length; i++)
             {
+                game.shipsList[i].player = false;
                 if (game.shipsList[i].faction == "Player")
                 {
                     allyLocator.push(i);

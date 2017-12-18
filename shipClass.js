@@ -29,6 +29,9 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.aiDKey = false;
     this.aiQKey = false;
     this.aiPhase = false; //what phase of the ai brain is this ship in?
+    this.aiTimer = 0;
+    this.aiEvent = {event1: false, event2: false};
+    this.aiTimerStore = new Date().getTime();
     this.aiTimer = new Date().getTime();
 
     //FACTION VARIABLES
@@ -102,6 +105,17 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.strafeUP = 0;
     this.boostStrafeUP = 0;
     this.canRechargeInCombat = false;
+
+    //current resistances
+    this.distortResistUP = false;
+
+    //base resistances
+    this.distortResist = false;
+
+    //Status effects
+    this.handlingDebuffTime = 0;
+    this.handlingDebuffStore = new Date().getTime();
+    this.handlingDebuff = 1;
 
     //UNIQUE SHIP STATS (stats that only some ships have)
     this.player = drive; //if this is true that means that the player is currently driving the ship.
@@ -368,11 +382,11 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
             else if (ammo == "Stocked")
             {
-                this.ammunition = [itemize("PlasmaticSeeker", 20)];
+                this.ammunition = [itemize("PlasmaticSeeker", 16), itemize("PlasmaticSeeker", 4)];
             }
             else if (ammo == "Doom")
             {
-                this.ammunition = [itemize("PlasmaticSeeker", 40)];
+                this.ammunition = [itemize("PlasmaticSeeker", 16), itemize("PlasmaticSeeker", 16), itemize("PlasmaticSeeker", 8)];
             }
 
             //sounds
@@ -389,7 +403,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         {
             this.size = 150;
             this.integrityMAX = 1000; //the amount of damage the physical ship can take before total destruction.
-            this.shieldsMAX = 6500; //the total capacity of the ships shielding systems.
+            this.shieldsMAX = 9000; //the total capacity of the ships shielding systems.
             this.rechargeMAX = 25; //the rate at which shields recharge in the ships best condition.
             this.recharge = this.rechargeMAX;
             this.powerMAX = 90000; //the total power capacity that the ship has.
@@ -414,18 +428,27 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.boostHandle = 0.5/100 * Math.PI;
             this.boostStrafe = 12;
             this.boostCost = 5;
+            this.turretRot1 = 0;
+            this.turret1Rate = 1;
+            this.turret1StoreTime = new Date().getTime();
+            this.turretRot2 = 0;
+            this.turret2Rate = 1;
+            this.turret2StoreTime = new Date().getTime();
+            this.turretRot3 = 0;
+            this.turret3Rate = 1;
+            this.turret3StoreTime = new Date().getTime();
 
             if (upgrade == "Standard")
             {
-                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumDisseminator", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumRay", 1)];
             }
             else if (upgrade == "Advanced")
             {
-                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumDisseminator", 1)];
+                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumDisseminator", 1), itemize("Majestad-TrineumBlasterSentryGuns", 1), itemize("Majestad-CelesteShields", 1)];
             }
             else if (upgrade == "Basic")
             {
-                this.upgrades = [itemize("CORE", 1), itemize("Majestad-TrineumRay", 1)];
+                this.upgrades = [itemize("CORE", 1)];
             }
             else
             {
@@ -449,11 +472,98 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
             else if (ammo == "Stocked")
             {
-                this.ammunition = [itemize("TrineumSeeker", 14)];
+                this.ammunition = [itemize("TrineumSeeker", 10), itemize("TrineumSeeker", 4)];
             }
             else if (ammo == "Doom")
             {
-                this.ammunition = [itemize("TrineumSeeker", 20)];
+                this.ammunition = [itemize("TrineumSeeker", 10), itemize("TrineumSeeker", 10)];
+            }
+
+            //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
+            this.explosionSound = new Audio("sounds/heavyXPL.wav");
+            this.accelSound = new Audio("sounds/accl.mp3");
+            this.accelSoundTime1 = 0.2;
+            this.accelSoundTime2 = 1.1;
+            this.laserSound1 = new Audio("sounds/lightLas.wav");
+            this.laserSound2 = new Audio("sounds/missileLaunch.wav");
+        }
+        else if (this.type == "Screecher")
+        {
+            this.size = 47;
+            this.integrityMAX = 150; //the amount of damage the physical ship can take before total destruction.
+            this.shieldsMAX = 350; //the total capacity of the ships shielding systems.
+            this.rechargeMAX = 8; //the rate at which shields recharge in the ships best condition.
+            this.recharge = this.rechargeMAX;
+            this.powerMAX = 8000; //the total power capacity that the ship has.
+            this.radarRange = 27000;
+            this.cargoMAX = 10; //the total amount of cargo that the ship can carry.
+            this.speedMAX = 60; //ships maximum potential speed
+            this.accelerationMAX = 11;//max speed up/slow down rate
+            this.acceleration = this.accelerationMAX;
+            this.handlingMAX = 7/100 * Math.PI; //max turn speed
+            this.handling = this.handlingMAX;
+            this.strafable = true;
+            this.strafeMAX = 5;
+            this.shieldingCost = 0.2;
+            this.rechargeCost = 0.4;
+            this.accelerationCost = 1;
+            this.handlingCost = 0.05;
+            this.weaponCost = 0.35;
+            this.explosionStyle = [35, 22, 30, ["#B42A01", "#6D0303", "#FF0000"]];
+            this.shieldsColour = "#4A2020";
+            this.boostSpeed = 90;
+            this.boostAccel = 15;
+            this.boostHandle = 0.1/100 * Math.PI;
+            this.boostStrafe = 1;
+            this.boostCost = 3;
+            this.turretRot1 = 0;
+            this.turret1Rate = 0.55;
+            this.turret1StoreTime = new Date().getTime();
+            this.turretRot2 = 0;
+            this.turret2Rate = 0.55;
+            this.turret2StoreTime = new Date().getTime();
+
+            if (upgrade == "Standard")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("Screecher-F3Lasers", 1), itemize("Screecher-F3SentryGuns", 1)];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("Screecher-EtherBlasters", 1), itemize("StabilizingParticleFogShield", 1), itemize("Screecher-EtherSentryGuns", 1)];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [itemize("CORE", 1)];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Doom")
+            {
+                this.ammunition = [];
             }
 
             //sounds
@@ -476,6 +586,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
     this.resetBonuses = function()
     {
+        //resistanceReset
+        this.distortResistUP = this.distortResist;
+
+        //bonusReset
         this.shieldsUP = 0;
         this.shieldsColourUP = "none";
         this.rechargeUP = 0;
@@ -489,6 +603,22 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         this.boostStrafeUP = 0;
         this.canRechargeInCombat = false;
         this.accessUpgrades("bonus");
+    };
+
+    this.effects = function()
+    {
+        //handling debuff
+        if (this.handlingDebuffTime > 0)
+        {
+            if (new Date().getTime() - this.handlingDebuffStore > 100)
+            {
+                this.handlingDebuffTime -= 0.1;
+            }
+        }
+        else
+        {
+            this.handlingDebuff = 1;
+        }
     };
 
     //GET SHIP STATS STATUS
@@ -556,11 +686,11 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     {
         if (game.shiftKey)
         {
-            return (this.boostHandle + this.boostHandleUP) * (this.integrity / this.integrityMAX);
+            return (this.boostHandle + this.boostHandleUP) * (this.integrity / this.integrityMAX) * this.handlingDebuff;
         }
         else
         {
-            return (this.handlingMAX + this.handlingUP) * (this.integrity / this.integrityMAX);
+            return (this.handlingMAX + this.handlingUP) * (this.integrity / this.integrityMAX) * this.handlingDebuff;
         }
     };
 
@@ -636,15 +766,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         else if (this.acceleration < 0)
         {
             this.acceleration = 0;
-        }
-
-        if (this.handling > this.getHandling())
-        {
-            this.handling = this.getHandling();
-        }
-        else if (this.handling < 0)
-        {
-            this.handling = 0;
         }
     };
 
@@ -777,7 +898,38 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             draw(divineKitB, 56, 95, 43, 108, this.X, this.Y, 43 * 5.2, 108 * 5.2, this.rotation, false, 1, 0, 0);
                         }
                     }
-                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 26.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 26.5 / 80) * -120, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    //circle(true, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1) * 10, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1) * 10, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 53.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 53.5 / 80) * -120, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    this.accessUpgrades("drawAbove");
+                }
+                else if (this.type == "Screecher")
+                {
+                    this.accessUpgrades("drawBelow");
+                    if (this.speedAlteration == false)
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitC, 9, 22, 236, 128, 236, 128, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 236, 128, this.X, this.Y, 236 * 1, 128 * 1, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitC, 9, 22, 236, 128, this.X, this.Y, 236 * 1, 128 * 1, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitC, 258, 21, 236, 128, 236, 128, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 236, 128, this.X, this.Y, 236 * 1, 128 * 1, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitC, 258, 21, 236, 128, this.X, this.Y, 236 * 1, 128 * 1, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 39.5, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 39.5, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
                     //circle(true, this.X + Math.cos(this.rotation - Math.PI * 53.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 53.5 / 80) * -120, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
                     this.accessUpgrades("drawAbove");
                 }
@@ -805,7 +957,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     {
         if (this.directionless != true)
         {
-            if (distBetweenAngles(this.targetRotation, this.rotation) > this.handling)
+            if (distBetweenAngles(this.targetRotation, this.rotation) > this.getHandling())
             {
                 var d = (this.targetRotation - this.rotation) % (2 * Math.PI);
                 if (d > Math.PI)
@@ -818,15 +970,65 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 }
                 if (d > 0)
                 {
-                    this.rotation = this.rotation + this.handling;
+                    this.rotation = this.rotation + this.getHandling();
                     this.power -= this.handlingCost / 1000000;
                 }
                 else
                 {
-                    this.rotation = this.rotation - this.handling;
+                    this.rotation = this.rotation - this.getHandling();
                     this.power -= this.handlingCost / 1000000;
                 }
                 this.rotation = this.rotation % (2 * Math.PI);
+            }
+            else if (distBetweenAngles(this.targetRotation, this.rotation) > (1/100 * Math.PI) && this.getHandling() > (1/100 * Math.PI))
+            {
+                var d = (this.targetRotation - this.rotation) % (2 * Math.PI);
+                if (d > Math.PI)
+                {
+                    d -= 2*Math.PI;
+                }
+                if (d < -Math.PI)
+                {
+                    d += 2*Math.PI;
+                }
+                if (d > 0)
+                {
+                    this.rotation = this.rotation + (1/100 * Math.PI);
+                    this.power -= this.handlingCost / 100000000;
+                }
+                else
+                {
+                    this.rotation = this.rotation - (1/100 * Math.PI);
+                    this.power -= this.handlingCost / 100000000;
+                }
+                this.rotation = this.rotation % (2 * Math.PI);
+            }
+            else if (distBetweenAngles(this.targetRotation, this.rotation) > (0.1/100 * Math.PI) && this.getHandling() > (0.1/100 * Math.PI))
+            {
+                var d = (this.targetRotation - this.rotation) % (2 * Math.PI);
+                if (d > Math.PI)
+                {
+                    d -= 2*Math.PI;
+                }
+                if (d < -Math.PI)
+                {
+                    d += 2*Math.PI;
+                }
+                if (d > 0)
+                {
+                    this.rotation = this.rotation + (0.1/100 * Math.PI);
+                    this.power -= this.handlingCost / 100000000;
+                }
+                else
+                {
+                    this.rotation = this.rotation - (0.1/100 * Math.PI);
+                    this.power -= this.handlingCost / 100000000;
+                }
+                this.rotation = this.rotation % (2 * Math.PI);
+            }
+            else if (this.getHandling() > 0)
+            {
+                this.rotation = this.targetRotation;
             }
         }
     };
@@ -1282,17 +1484,23 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
 
             //TARGETING FOR AI
-            if (this.brain == "basic" || this.brain == "basic-missile" || this.brain == "simple" || this.brain == "simple-missile")
+            if (this.brain == "basic" || this.brain == "basic-missile" || this.brain == "simple" || this.brain == "simple-missile" || this.brain == "swooper" || this.brain == "swooper-missile")
             {
                 this.targetClosestEnemy("ship");
             }
 
+            if (new Date().getTime() - this.aiTimerStore > 100)
+            {
+                this.aiTimerStore = new Date().getTime();
+                this.aiTimer += 0.1;
+            }
+
             //AI BRAINS
-            if (this.brain == "simple" || this.brain == "simple-missile")
+            if (this.brain == "swooper" || this.brain == "swooper-missile")
             {
                 if (this.target != "none")
                 {
-                    if (this.integrity / this.integrityMAX <= 0.9|| this.power / this.powerMAX < 0.25)
+                    if (this.integrity / this.integrityMAX <= 0.7 || this.power / this.powerMAX < 0.2) //run away
                     {
                         this.targetRotation = - Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
 
@@ -1314,7 +1522,116 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             this.aiSKey = true;
                         }
                     }
-                    else
+                    else //fight
+                    {
+                        if (this.distanceTo(this.target) < this.radarRange)
+                        {
+                            this.aiWKey = true;
+                            if (this.aiPhase == false)
+                            {
+                                this.aiShiftKey = true;
+                            }
+                            else
+                            {
+                                this.aiShiftKey = false;
+                            }
+                            this.aiSKey = false;
+
+                            if (this.aiPhase == false || this.aiPhase == "midway")
+                            {
+                                this.targetRotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
+                            }
+
+                            if (this.distanceTo(this.target) > 2200 && this.aiPhase == true || this.aiTimer > 3 && this.aiPhase == true)
+                            {
+                                this.aiPhase = "midway";
+                            }
+
+                            if (this.aiPhase == "midway")
+                            {
+                                if (this.brain == "swooper-missile")
+                                {
+                                    this.aiQKey = true;
+                                }
+
+                                if (distBetweenAngles(this.targetRotation, this.rotation) <= this.getHandling())
+                                {
+                                    this.aiPhase = false;
+                                }
+                            }
+
+                            if (this.distanceTo(this.target) < 10000 && this.aiPhase == false || this.distanceTo(this.target) < 10000 && this.aiPhase == "pushOn")
+                            {
+                                if (this.brain == "swooper-missile")
+                                {
+                                    this.aiQKey = true;
+                                }
+                                this.aiSpaceKey = true;
+
+                                if (this.distanceTo(this.target) < 500 && this.distanceTo(this.target) > 50 && this.aiEvent.event1 == false)
+                                {
+                                    this.aiEvent.event1 = true;
+                                    this.aiPhase = "pushOn";
+                                }
+                                else if (this.distanceTo(this.target) < 1000 && this.distanceTo(this.target) > 600 && this.aiEvent.event1 == true)
+                                {
+                                    this.aiEvent.event1 = false;
+                                    this.aiPhase = true;
+                                    this.aiSpaceKey = false;
+                                    this.aiTimerStore = new Date().getTime();
+                                    this.aiTimer = 0;
+                                    this.aiQKey = false;
+                                    var rnd = Math.random();
+                                    if (rnd <= 0.4)
+                                    {
+                                        this.targetRotation += 1/8 * Math.PI;
+                                    }
+                                    else if (rnd <= 0.8)
+                                    {
+                                        this.targetRotation -= 1/8 * Math.PI;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                this.aiQKey = false;
+                                this.aiSpaceKey = false;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+            }
+            else if (this.brain == "simple" || this.brain == "simple-missile")
+            {
+                if (this.target != "none")
+                {
+                    if (this.integrity / this.integrityMAX <= 0.9|| this.power / this.powerMAX < 0.25) //run away
+                    {
+                        this.targetRotation = - Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
+
+                        if (this.brain == "simple-missile")
+                        {
+                            this.aiQKey = true;
+                        }
+
+                        if (this.distanceTo(this.target) < this.target.radarRange)
+                        {
+                            this.aiWKey = true;
+                            if (this.strafable)
+                            {
+                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                            }
+                        }
+                        else
+                        {
+                            this.aiSKey = true;
+                        }
+                    }
+                    else //fight
                     {
                         if (this.aiPhase == false)
                         {
@@ -1550,6 +1867,26 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             if (new Date().getTime() - this.destructionTime > this.destructDuration * 1000 && this.destructionTime != 0)
             {
                 //drop cargo upon deletion
+
+                    //insert scrap into cargo upon destruction
+                var scrapPotential = (this.size / 15) * 5;
+                var scrapp = Math.round(Math.random() * scrapPotential);
+                var scrapStack = Math.floor(scrapp / 15);
+
+                if (scrapp % scrapStack != 0 && scrapStack != 0 && scrapp != 0)
+                {
+                    this.cargoBay.unshift(itemize("Scrap", scrapp % scrapStack));
+                }
+                else if (scrapp < 15 && scrapp > 0)
+                {
+                    this.cargoBay.unshift(itemize("Scrap", scrapp));
+                }
+
+                for (var ii = 0; ii < scrapStack; ii++)
+                {
+                    this.cargoBay.unshift(itemize("Scrap", 15));
+                }
+                    //this part actually creates the cargo hold scenery object.
                 game.sceneryList.push(new Scenery(this.X, this.Y, "cargohold", this.cargoBay, this.cargoMAX)); //this.cargoBay
                 //delete this ship
                 for (var i = 0; i < game.shipsList.length; i++)
@@ -2250,7 +2587,553 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             {
                                 this.power -= (this.weaponCost * 2);
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
-                                game.projectilesList.push(new Projectile("TrineumWave", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 290, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 290, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("TrineumWave", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 290, this.Y + Math.sin(this.rotation - Math.PI * 8 / 16) * 290, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Majestad-TrineumBlasterSentryGuns" && this.type == "Majestad" && this.upgrades[i].part == "turret")
+                {
+                    if (use == "drawAbove")
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            //turret 1
+                            var colorized = colorizedImage(divineKitB, 163, 203, 13, 13, 13, 13, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 13, 13, this.X, this.Y, 13 * 2, 13 * 2, this.rotation, false, 1, 50, -185);
+                            var colorized2 = colorizedImage(divineKitB, 151, 156, 12, 30, 12, 30, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 12, 30, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378, 12 * 2, 30 * 2, this.rotation + this.turretRot1, false, 1, 0, 0);
+
+                            //turret 2
+                            var colorized = colorizedImage(divineKitB, 163, 203, 13, 13, 13, 13, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 13, 13, this.X, this.Y, 13 * 2, 13 * 2, this.rotation, false, 1, -50, -185);
+                            var colorized2 = colorizedImage(divineKitB, 151, 156, 12, 30, 12, 30, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 12, 30, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378, 12 * 2, 30 * 2, this.rotation + this.turretRot2, false, 1, 0, 0);
+
+                            //turret 3
+                            var colorized = colorizedImage(divineKitB, 163, 203, 13, 13, 13, 13, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 13, 13, this.X, this.Y, 13 * 2, 13 * 2, this.rotation, false, 1, 0, 0);
+                            var colorized2 = colorizedImage(divineKitB, 151, 156, 12, 30, 12, 30, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 12, 30, this.X, this.Y, 12 * 2, 30 * 2, this.rotation + this.turretRot3, false, 1, 0, 0);
+
+                        }
+                        else
+                        {
+                            //turret 1
+                            draw(divineKitB, 163, 203, 13, 13, this.X, this.Y, 13 * 2, 13 * 2, this.rotation, false, 1, 50, -185);
+                            draw(divineKitB, 151, 156, 12, 30, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378, 12 * 2, 30 * 2, this.rotation + this.turretRot1, false, 1, 0, 0);
+
+                            //turret 2
+                            draw(divineKitB, 163, 203, 13, 13, this.X, this.Y, 13 * 2, 13 * 2, this.rotation, false, 1, -50, -185);
+                            draw(divineKitB, 151, 156, 12, 30, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378, 12 * 2, 30 * 2, this.rotation + this.turretRot2, false, 1, 0, 0);
+
+                            //turret 3
+                            draw(divineKitB, 163, 203, 13, 13, this.X, this.Y, 13 * 2, 13 * 2, this.rotation, false, 1, 0, 0);
+                            draw(divineKitB, 151, 156, 12, 30, this.X, this.Y, 12 * 2, 30 * 2, this.rotation + this.turretRot3, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot2 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot2 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot3 = Math.atan2(this.Y - this.sentryTarget.Y, this.X - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot3 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 + 1.306) * 24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 + 1.306) * 24, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 - 1.306) * -24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 - 1.306) * -24, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret2StoreTime >= this.turret2Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret2StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 + 1.306) * 24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 + 1.306) * 24, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 - 1.306) * -24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 - 1.306) * -24, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret3StoreTime >= this.turret3Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret3StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X - Math.cos(this.rotation + this.turretRot1 + 1.306) * 24, this.Y - Math.sin(this.rotation + this.turretRot1 + 1.306) * 24, this, this.rotation - 1/2 * Math.PI + this.turretRot3));
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X - Math.cos(this.rotation + this.turretRot1 - 1.306) * -24, this.Y - Math.sin(this.rotation + this.turretRot1 - 1.306) * -24, this, this.rotation - 1/2 * Math.PI + this.turretRot3));
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot2 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot2 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot3 = Math.atan2(this.Y - this.sentryTarget.Y, this.X - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot3 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 + 1.306) * 24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 + 1.306) * 24, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 - 1.306) * -24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 - 1.306) * -24, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret2StoreTime >= this.turret2Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret2StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 + 1.306) * 24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 + 1.306) * 24, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.cos(this.rotation + this.turretRot1 - 1.306) * -24, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 0.263963596) * 191.6378 - Math.sin(this.rotation + this.turretRot1 - 1.306) * -24, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret3StoreTime >= this.turret3Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret3StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X - Math.cos(this.rotation + this.turretRot1 + 1.306) * 24, this.Y - Math.sin(this.rotation + this.turretRot1 + 1.306) * 24, this, this.rotation - 1/2 * Math.PI + this.turretRot3));
+                                    game.projectilesList.push(new Projectile("TrineumLaser", this.X - Math.cos(this.rotation + this.turretRot1 - 1.306) * -24, this.Y - Math.sin(this.rotation + this.turretRot1 - 1.306) * -24, this, this.rotation - 1/2 * Math.PI + this.turretRot3));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Majestad-CelesteShields" && this.type == "Majestad" && this.upgrades[i].part == "shielding")
+                {
+                    if (use == "bonus")
+                    {
+                        this.shieldsColourUP = "#66ffff";
+                        this.shieldsUP = 1000;
+                        this.rechargeUP = 5;
+                    }
+                }
+                if (this.upgrades[i].name == "Screecher-F3Lasers" && this.type == "Screecher" && this.upgrades[i].part == "mainguns")
+                {
+                    if (use == "drawBelow")
+                    {
+                        this.maingunsRate = 0.44;
+
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitC, 384, 292, 85, 60, 85, 60, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 85, 60, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 8 / 16) * 34, 85, 60, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitC, 384, 292, 85, 60, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 8 / 16) * 34, 85, 60, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+                            if (this.power >= (this.weaponCost * 4))
+                            {
+                                this.power -= (this.weaponCost * 4);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 6 / 16) * 54, this.Y + Math.sin(this.rotation - Math.PI * 6 / 16) * 54, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 10 / 16) * 54, this.Y + Math.sin(this.rotation - Math.PI * 10 / 16) * 54, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 1.9 / 16) * 42.5, this.Y + Math.sin(this.rotation - Math.PI * 1.9 / 16) * 42.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 14.1 / 16) * 42.5, this.Y + Math.sin(this.rotation - Math.PI * 14.1 / 16) * 42.5, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiSpaceKey = false;
+                            if (this.power >= (this.weaponCost * 4))
+                            {
+                                this.power -= (this.weaponCost * 4);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 6 / 16) * 54, this.Y + Math.sin(this.rotation - Math.PI * 6 / 16) * 54, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 10 / 16) * 54, this.Y + Math.sin(this.rotation - Math.PI * 10 / 16) * 54, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 1.9 / 16) * 42.5, this.Y + Math.sin(this.rotation - Math.PI * 1.9 / 16) * 42.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - Math.PI * 14.1 / 16) * 42.5, this.Y + Math.sin(this.rotation - Math.PI * 14.1 / 16) * 42.5, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Screecher-EtherBlasters" && this.type == "Screecher" && this.upgrades[i].part == "mainguns")
+                {
+                    if (use == "drawBelow")
+                    {
+                        this.maingunsRate = 0.66;
+
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitC, 181, 214, 91, 66, 91, 66, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 91, 66, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 8 / 16) * 34, 91, 66, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitC, 181, 214, 91, 66, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 8 / 16) * 34, 91, 66, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+                            if (this.power >= (this.weaponCost * 19))
+                            {
+                                this.power -= (this.weaponCost * 19);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 4.6 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 4.6 / 16) * 34, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 11.4 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 11.4 / 16) * 34, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 39.5, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 39.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 39.5, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 39.5, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiSpaceKey = false;
+                            if (this.power >= (this.weaponCost * 19))
+                            {
+                                this.power -= (this.weaponCost * 19);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 4.6 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 4.6 / 16) * 34, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 11.4 / 16) * 34, this.Y + Math.sin(this.rotation - Math.PI * 11.4 / 16) * 34, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 0 / 16) * 39.5, this.Y + Math.sin(this.rotation - Math.PI * 0 / 16) * 39.5, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - Math.PI * 16 / 16) * 39.5, this.Y + Math.sin(this.rotation - Math.PI * 16 / 16) * 39.5, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "StabilizingParticleFogShield" && this.upgrades[i].part == "shielding")
+                {
+                    if (use == "bonus")
+                    {
+                        this.shieldsColourUP = "#B6B6B6";
+                        this.shieldsUP = 350;
+                        this.rechargeUP = 7;
+                        this.distortResistUP = true;
+                    }
+                }
+                if (this.upgrades[i].name == "Screecher-F3SentryGuns" && this.type == "Screecher" && this.upgrades[i].part == "turret")
+                {
+                    if (use == "drawAbove")
+                    {
+                        this.turret1Rate = 0.55;
+                        this.turret2Rate = 0.55;
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            //turret 1
+                            var colorized = colorizedImage(divineKitC, 187, 308, 20, 20, 20, 20, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, -50, 14);
+                            var colorized2 = colorizedImage(divineKitC, 156, 339, 86, 21, 86, 21, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+
+                            //turret 2
+                            var colorized = colorizedImage(divineKitC, 187, 308, 20, 20, 20, 20, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, 50, 14);
+                            var colorized2 = colorizedImage(divineKitC, 156, 339, 86, 21, 86, 21, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            //turret 1
+                            draw(divineKitC, 187, 308, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, -50, 14);
+                            draw(divineKitC, 156, 339, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+
+                            //turret 2
+                            draw(divineKitC, 187, 308, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, 50, 14);
+                            draw(divineKitC, 156, 339, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot2 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot2 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot1 + (7.825/16 * Math.PI)) * 1, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot1 + (7.825/16 * Math.PI)) * 1, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret2StoreTime >= this.turret2Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret2StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot2 + (7.825/16 * Math.PI)) * 1, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot2 + (7.825/16 * Math.PI)) * 1, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot2 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot2 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot1 + (7.825/16 * Math.PI)) * 1, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot1 + (7.825/16 * Math.PI)) * 1, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret2StoreTime >= this.turret2Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret2StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.2))
+                                {
+                                    this.power -= (this.weaponCost * 0.2);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("F3Laser", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot2 + (7.825/16 * Math.PI)) * 1, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot2 + (7.825/16 * Math.PI)) * 1, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Screecher-EtherSentryGuns" && this.type == "Screecher" && this.upgrades[i].part == "turret")
+                {
+                    if (use == "drawAbove")
+                    {
+                        this.turret1Rate = 0.66;
+                        this.turret2Rate = 0.66;
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            //turret 1
+                            var colorized = colorizedImage(divineKitC, 187, 308, 20, 20, 20, 20, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, -50, 14);
+                            var colorized2 = colorizedImage(divineKitC, 156, 370, 86, 21, 86, 21, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+
+                            //turret 2
+                            var colorized = colorizedImage(divineKitC, 187, 308, 20, 20, 20, 20, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, 50, 14);
+                            var colorized2 = colorizedImage(divineKitC, 156, 370, 86, 21, 86, 21, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            //turret 1
+                            draw(divineKitC, 187, 308, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, -50, 14);
+                            draw(divineKitC, 156, 370, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+
+                            //turret 2
+                            draw(divineKitC, 187, 308, 20, 20, this.X, this.Y, 20 * 0.85, 20 * 0.85, this.rotation, false, 1, 50, 14);
+                            draw(divineKitC, 156, 370, 86, 21, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232, 86 * 0.75, 21 * 0.75, this.rotation - 1/2 * Math.PI + this.turretRot1, false, 1, 0, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot2 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot2 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.5))
+                                {
+                                    this.power -= (this.weaponCost * 0.5);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot1 + (7.95/16 * Math.PI)) * -12, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot1 + (7.95/16 * Math.PI)) * -12, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret2StoreTime >= this.turret2Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret2StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.5))
+                                {
+                                    this.power -= (this.weaponCost * 0.5);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot2 + (7.95/16 * Math.PI)) * -12, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot2 + (7.95/16 * Math.PI)) * -12, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot2 = Math.atan2(this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.Y, this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - this.sentryTarget.X) - 1/2 * Math.PI - this.rotation; //this works!
+                            }
+                            else
+                            {
+                                this.turretRot2 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.5))
+                                {
+                                    this.power -= (this.weaponCost * 0.5);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot1 + (7.95/16 * Math.PI)) * -12, this.Y + Math.sin(this.rotation - 1/2 * Math.PI + 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot1 + (7.95/16 * Math.PI)) * -12, this, this.rotation - 1/2 * Math.PI + this.turretRot1));
+                                }
+                            }
+                            if (new Date().getTime() - this.turret2StoreTime >= this.turret2Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret2StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 0.5))
+                                {
+                                    this.power -= (this.weaponCost * 0.5);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("EtherBlast", this.X + Math.cos(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.cos(this.rotation + this.turretRot2 + (7.95/16 * Math.PI)) * -12, this.Y + Math.sin(this.rotation - 1/2 * Math.PI - 1.297788435) * -51.9232 - Math.sin(this.rotation + this.turretRot2 + (7.95/16 * Math.PI)) * -12, this, this.rotation - 1/2 * Math.PI + this.turretRot2));
+                                }
                             }
                         }
                     }
@@ -2295,6 +3178,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
             this.resetBonuses();
             this.mandateStats();
+            this.effects();
             //this.drawShip();
             this.turnOnOffShip();
             if (this.power > 0 && this.offline == false)

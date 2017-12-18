@@ -13,6 +13,13 @@ function Scenery(X, Y, type, list, extra)
     this.random = Math.random();
     this.extra = extra;
     this.flag = false;
+    //planet variables
+    this.pricing = {shop: [1, 1], shipyard: [1, 1], docking: 55};
+    this.shopContents = [];
+    this.shipyardContents = [];
+    this.dockingContents = [];
+    this.resetContentsTime = 0; //used in reseting shop contents after an elsewhere defined period of time.
+
     //cargohold variables
     this.contents = list;
 
@@ -128,17 +135,23 @@ function Scenery(X, Y, type, list, extra)
                             if (distance(this, game.shipsList[i]) <= 190)
                             {
                                 this.flag = true;
-                                //shop
+                                //menu
                                 if (game.eKey)
                                 {
                                     game.eKey = false;
-                                    game.interInventory = true;
-                                    game.interInv1 = game.shipsList[i].cargoBay;//game.shipsList[i].cargoBay;
-                                    game.interInv2 = this.contents;
-                                    game.interContext = "Shop";
-                                    game.interInvCargoMAX1 = game.shipsList[i].cargoMAX;
-                                    game.interBuyRate = 0.6; //what percentage shops will pay for your goods.
-                                    game.interSellRate = 1.2; //what percentage shops will sell there goods at.
+                                    game.planetMenu = true;
+                                    game.planetMenuList = ["shop", "shipyard", "docking"];
+                                    game.userShipLocator = i;
+                                    game.currentPlanetLocator = game.sceneryList.indexOf(this);
+                                    this.pricing = {shop: [0.6, 1.2], shipyard: [0.4, 1.1], docking: 55};
+
+                                    //Resets the contents of the shop and shipyard every hour
+                                    if (new Date().getTime() - this.resetContentsTime > 60 * (1000 * 60)) //the first number is a measurement of minutes
+                                    {
+                                        this.resetContentsTime = new Date().getTime();
+                                        this.shopContents = [itemize("Freshwater", 999), itemize("Freshwater", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 2), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 4), itemize("Power Core", 999), itemize("Power Core", 3), itemize("Repair Kit", 999), itemize("Repair Kit", 999), itemize("Repair Kit", 999), itemize("Repair Kit", 1), itemize("M1Missile", 999), itemize("M1Missile", 15), itemize("PlasmaticSeeker", 6), itemize("TrineumSeeker", 999)];
+                                        this.shipyardContents = [itemize("Majestad", 1, false), itemize("Majestad", 1, false), itemize("Majestad", 1, false)];
+                                    }
                                 }
                             }
                             else
@@ -151,19 +164,22 @@ function Scenery(X, Y, type, list, extra)
                             if (distance(this, game.shipsList[i]) <= 100)
                             {
                                 this.flag = true;
-                                //shop
+                                //menu
                                 if (game.eKey)
                                 {
                                     game.eKey = false;
-                                    game.interInventory = true;
-                                    game.interInv2 = this.contents;
-                                    game.interContext = "Shipyard";
-                                    game.interInvCargoMAX1 = game.shipsList[i].cargoMAX;
-                                    game.interBuyRate = 0.5; //what percentage shops will pay for your goods.
-                                    game.interSellRate = 1; //what percentage shops will sell there goods at.
-                                    game.interCoords = [this.X, this.Y];
-                                    shipConverter(true);
-                                    game.interInv1 = game.shipConverterList;
+                                    game.planetMenu = true;
+                                    game.planetMenuList = ["shipyard"];
+                                    game.userShipLocator = i;
+                                    game.currentPlanetLocator = game.sceneryList.indexOf(this);
+                                    this.pricing = {shop: [1, 1], shipyard: [0.5, 1], docking: 55};
+
+                                    //Resets the contents of the shop and shipyard every hour
+                                    if (new Date().getTime() - this.resetContentsTime > 60 * (1000 * 60)) //the first number is a measurement of minutes
+                                    {
+                                        this.resetContentsTime = new Date().getTime();
+                                        this.shipyardContents = [itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Afid01", 1, false), itemize("Disk01", 1, false), itemize("Disk01", 1, false), itemize("Disk01", 1, false), itemize("Mantis09", 1, false)];
+                                    }
                                 }
                             }
                             else
