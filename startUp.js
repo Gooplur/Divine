@@ -21,6 +21,10 @@ function imageSoundLoading()
     divineKitC.src = ("images/divineKitC.png");
     window.divineKitC = divineKitC;
 
+    var divineKitD = new Image();
+    divineKitD.src = ("images/divineKitD.png");
+    window.divineKitD = divineKitD;
+
     divineStarterPack.onload = function()
     {
         divineKitA.onload = function()
@@ -29,7 +33,10 @@ function imageSoundLoading()
             {
                 divineKitC.onload = function()
                 {
-                    startGame();
+                    divineKitD.onload = function()
+                    {
+                        startGame();
+                    };
                 };
             };
         };
@@ -150,11 +157,12 @@ function Game()
     //Lists
         //Star List
     this.starsList = [];
-    for (var j = -250; j < 500; j++)
+
+    for (var j = -100; j < 200; j++)
     {
-        for (var i = -250; i < 500; i++)
+        for (var i = -100; i < 200; i++)
         {
-            this.starsList.push([Math.random() * 400 - 200 * j, Math.random() * 400 - 200 * i, Math.random() * 3 + 1, Math.max(1, Math.random() + 0.15)]);
+            this.starsList.push([Math.random() * 2000 - 1000 * j, Math.random() * 2000 - 1000 * i, Math.random() * 3 + 1, Math.max(1, Math.random() + 0.15)]);
         }
     }
         //Scenery List (asteroids, cargo holds, etc.)
@@ -165,16 +173,29 @@ function Game()
 
         //Ships List
     this.shipsList = [];
-    this.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
+    //this.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
     this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "swooper", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "swooper", false, "Advanced", "Good"));
-    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple-missile", true, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "tank", false, "Advanced", "Good"));
+    //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "tank-missile", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "tank", true, "Advanced", "Stocked"));
+    //for (var i = 0; i < 2; i++)
+    //{
+    //    this.shipsList.push(new Ship(25000 - 2500 + 500 * i, -25000 - 2500 + 500 * i, "Screecher", "Player", "swooper", false, "Standard", "Good"));
+    //}
 
-    this.shipsList.push(new Ship(-8000, 4000, "Majestad", "Boofeln Widget Corporation", "simple", false, "Advanced", "Stocked"));
+    //for (var i = 0; i < 10; i++)
+    //{
+    //    this.shipsList.push(new Ship(0 - 2500 + 500 * i, 0 - 2500 + 500 * i, "Screecher", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+    //}
+    //for (var i = 0; i < 20; i++)
+    //{
+    //    this.shipsList.push(new Ship(-3000 - 2400 + 300 * i, 0 - 2400 + 300 * i, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+    //}
+    this.shipsList.push(new Ship(-9000, 9000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(-1300, -500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(7560, -250, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Advanced", "Doom"));
     this.shipsList.push(new Ship(-1000, 500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
@@ -189,16 +210,17 @@ function Game()
     this.shipsList.push(new Ship(8200, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(4750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
     this.shipsList.push(new Ship(6000, -3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
-    //this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "none", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "none", false, "Standard", "Good"));
 
-    this.shipsList.push(new Ship(-2500, 5500, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(2000, 2000, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(-2000, -2000, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Advanced", "Good"));
-    this.shipsList.push(new Ship(-2000, 2000, "Mantis09", "Boofeln Widget Corporation", "basic-missile", false, "Advanced", "Good"));
-    this.shipsList.push(new Ship(300, -200, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(100, 1500, "Mantis09", "Boofeln Widget Corporation", "basic-missile", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(-250, -500, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(900, -900, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(-10000, 10000, "Harbinger88", "Boofeln Widget Corporation", "simple", false, "Standard", "Stocked"));
+    //this.shipsList.push(new Ship(-2500, 5500, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(2000, 2000, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(-2000, -2000, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Advanced", "Good"));
+    //this.shipsList.push(new Ship(-2000, 2000, "Mantis09", "Boofeln Widget Corporation", "basic-missile", false, "Advanced", "Good"));
+    //this.shipsList.push(new Ship(300, -200, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(100, 1500, "Mantis09", "Boofeln Widget Corporation", "basic-missile", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(-250, -500, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(900, -900, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
 
         //Projectiles List
     this.projectilesList = [];
@@ -286,6 +308,7 @@ function Game()
         {
             self.shipListActivator();
             self.projectileListActivator();
+            clearDamagedByList();
             self.sceneryListActivator();
         }
         self.drawAll();
@@ -325,6 +348,17 @@ function startGame()
     game = new Game();
     game.gameLoop();
 
+}
+
+function clearDamagedByList()
+{
+    for (var i = 0; i < game.shipsList.length; i++)
+    {
+        if (game.shipsList[i].damagedBy.length > 20)
+        {
+            game.shipsList[i].damagedBy = [];
+        }
+    }
 }
 
 //ROTATION STUFF

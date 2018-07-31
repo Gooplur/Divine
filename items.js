@@ -24,6 +24,7 @@
         //maintenance variables
         this.charge = 0;
         this.repair = 0;
+        this.boost = 0;
 
         //Define All Items
 
@@ -62,7 +63,7 @@
             this.manufacturer = "Grevner Technologies";
             this.price = 5000;
             this.image = ["divineKitC", 101, 302, 37, 37, 1];
-            this.brand = ["divineKitC", 24, 286, 69, 50, 1.8];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
         }
         else if (this.name == "CosmosShields")
         {
@@ -71,7 +72,7 @@
             this.manufacturer = "Grevner Technologies";
             this.price = 5000;
             this.image = ["divineKitC", 101, 302, 37, 37, 1];
-            this.brand = ["divineKitC", 24, 286, 69, 50, 1.8];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
         }
         else if (this.name == "JadeDragonShields")
         {
@@ -217,6 +218,33 @@
             this.image = ["divineKitC", 0, 248, 73, 40, 1.05];
             this.brand = ["divineKitC", 75, 154, 49, 49, 2.3];
         }
+        else if (this.name == "Harbinger88-FusionLaunchers")
+        {
+            this.utility = "part";
+            this.part = "sideguns";
+            this.manufacturer = "Grevner Technologies";
+            this.price = 190000;
+            this.image = ["divineKitD", 365, 1, 76, 52, 1.2];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
+        }
+        else if (this.name == "Harbinger88-FusionCasters")
+        {
+            this.utility = "part";
+            this.part = "mainguns";
+            this.manufacturer = "Grevner Technologies";
+            this.price = 240000;
+            this.image = ["divineKitD", 747, 720, 69, 63, 1.15];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
+        }
+        else if (this.name == "Harbinger88-FusionCompactionCannon")
+        {
+            this.utility = "part";
+            this.part = "mainguns";
+            this.manufacturer = "Grevner Technologies";
+            this.price = 1000000;
+            this.image = ["divineKitD", 447, 695, 77, 87, 1.15];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
+        }
 
         //Core
         else if (this.name == "CORE")
@@ -268,6 +296,14 @@
             this.price = 1000;
             this.image = ["divineKitB", 131, 86, 8, 29, 2];
         }
+        else if (this.name == "FusionSeeker")
+        {
+            this.utility = "ammunition";
+            this.subUtility = "Missile";
+            this.maxStack = 4;
+            this.price = 40000;
+            this.image = ["divineKitD", 875, 472, 19, 93, 0.85];
+        }
 
         //Resource
         if (this.name == "Freshwater")
@@ -290,7 +326,7 @@
         {
             this.utility = "resource";
             this.maxStack = 15;
-            this.price = 10;
+            this.price = 100;
             this.description = "A jumbled mesh of warped, bent, and broken materials from a destroyed ship.";
             this.image = ["divineKitC", 451, 168, 50, 59, 1];
         }
@@ -307,18 +343,25 @@
         if (this.name == "Power Core")
         {
             this.utility = "maintenance";
-            this.maxStack = 4;
-            this.price = 65;
+            this.maxStack = 30;
+            this.price = 165;
             this.charge = 500;
             this.image = ["divineStarterPack", 118, 21, 7, 14, 2];
         }
         else if (this.name == "Repair Kit")
         {
             this.utility = "maintenance";
-            this.maxStack = 5;
+            this.maxStack = 10;
             this.price = 40;
             this.repair = 100;
             this.image = ["divineKitC", 2, 361, 67, 39, 1];
+        }
+        else if (this.name == "Shield Jumper")
+        {
+            this.utility = "maintenance";
+            this.maxStack = 4;
+            this.price = 250;
+            this.boost = 2000;
         }
 
         //Ship
@@ -368,6 +411,15 @@
             this.image = ["divineKitC", 9, 22, 236, 128, 0.75];
             this.brand = ["divineKitC", 75, 154, 49, 49, 2.3];
         }
+        else if (this.name == "Harbinger88")
+        {
+            this.utility = "ship";
+            this.type = "Capital Ship";
+            this.manufacturer = "Grevner Technologies";
+            this.price = 3000000;
+            this.image = ["divineKitD", 29, 127, 384, 556, 0.2];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
+        }
 
         //Set the quantity within reasonable bounds
         this.quantity = Math.min(this.quantity, this.maxStack);
@@ -391,7 +443,7 @@
         else if (this.utility == "maintenance")
         {
             //Forms a Resource type object.
-            return {name: this.name, quantity: this.quantity, utility: this.utility, description: this.description, maxStack: this.maxStack, price: this.price, charge: this.charge, repair: this.repair, selected: this.selected, dragged: this.dragged, image: this.image};
+            return {name: this.name, quantity: this.quantity, utility: this.utility, description: this.description, maxStack: this.maxStack, price: this.price, charge: this.charge, repair: this.repair, boost: this.boost, selected: this.selected, dragged: this.dragged, image: this.image};
         }
         else if (this.utility == "ship")
         {

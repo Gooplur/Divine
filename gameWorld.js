@@ -86,7 +86,9 @@ function shipConverter(bool)
             }
             else
             {
-                shipBuild = new Ship(game.interCoords[0], game.interCoords[1], shipply.name, "Player", shipply.AI, false, shipply.upgrade, shipply.ammo, shipply.cargo);
+                shipBuild = new Ship(game.interCoords[0], game.interCoords[1], shipply.name, "Player", shipply.AI, false, false, false, false);
+                var upgrd = [itemize("CORE", 1)];
+                shipBuild.upgrades = upgrd;
             }
             game.shipsList.push(shipBuild);
         }

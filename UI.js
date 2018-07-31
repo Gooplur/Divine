@@ -312,7 +312,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         game.x.textAlign = "left";
         game.x.font = fonter(14, "Arial");
         game.x.fillStyle = "white";
-        game.x.fillText("Power: " + Math.round(game.shipsList[playerShipNum].power) + " / " + Math.round(game.shipsList[playerShipNum].powerMAX) + "  Integrity: " + Math.round(game.shipsList[playerShipNum].integrity) +" / " + Math.round(game.shipsList[playerShipNum].integrityMAX), xxx(325 + 82.5), yyy(90));
+        game.x.fillText("Power: " + Math.round(game.shipsList[playerShipNum].power) + " / " + Math.round(game.shipsList[playerShipNum].powerMAX) + "  Integrity: " + Math.round(game.shipsList[playerShipNum].integrity) +" / " + Math.round(game.shipsList[playerShipNum].integrityMAX) + "  Shields: " + Math.round(game.shipsList[playerShipNum].shields) +" / " + Math.round(game.shipsList[playerShipNum].getShields()), xxx(325 + 82.5), yyy(90));
     }
 
     //Dividing Line
@@ -690,6 +690,56 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                         game.x.font = fonter(10, "Arial");
                         game.x.fillStyle = "white";
                         game.x.fillText("Charge: " + superList[i].charge, xxx(706 + 125), yyy(429));
+
+                        var doNext = true;
+
+                        //Price
+                        game.x.textAlign = "center";
+                        game.x.font = fonter(10, "Arial");
+                        game.x.fillStyle = "white";
+                        game.x.fillText("Base Value: " + superList[i].price, xxx(706 + 125), yyy(489));
+
+                        if (context == "Shop")
+                        {
+                            game.x.textAlign = "center";
+                            game.x.font = fonter(10, "Arial");
+                            game.x.fillStyle = "white";
+                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(529));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(569));
+                        }
+                        else
+                        {
+                            //Amount
+                            doNext = false;
+                            game.x.textAlign = "center";
+                            game.x.font = fonter(12, "Arial");
+                            game.x.fillStyle = "white";
+                            game.x.fillText(superList[i].quantity + " / " + superList[i].maxStack, xxx(706 + 125), yyy(549));
+                        }
+
+                        if (doNext)
+                        {
+                            //Amount
+                            game.x.textAlign = "center";
+                            game.x.font = fonter(12, "Arial");
+                            game.x.fillStyle = "white";
+                            game.x.fillText(superList[i].quantity + " / " + superList[i].maxStack, xxx(706 + 125), yyy(629));
+                        }
+                    }
+                    else if (superList[i].boost > 0)
+                    {
+                        game.x.textAlign = "left";
+                        game.x.font = fonter(10, "Arial");
+                        game.x.fillStyle = "white";
+                        game.x.fillText("Applying this to your ship in the maintenance menu", xxx(706 + 8), yyy(350));
+                        game.x.textAlign = "left";
+                        game.x.font = fonter(10, "Arial");
+                        game.x.fillStyle = "white";
+                        game.x.fillText("restores lost shielding.", xxx(706 + 8), yyy(369));
+                        game.x.textAlign = "center";
+                        game.x.font = fonter(10, "Arial");
+                        game.x.fillStyle = "white";
+                        game.x.fillText("Boost: " + superList[i].boost, xxx(706 + 125), yyy(429));
 
                         var doNext = true;
 
@@ -1345,6 +1395,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     {
                         game.shipsList[playerShipNum].power = Math.max(0, Math.min(game.shipsList[playerShipNum].powerMAX, game.shipsList[playerShipNum].power + game.draggedItem.charge));
                         game.shipsList[playerShipNum].integrity = Math.max(0, Math.min(game.shipsList[playerShipNum].integrityMAX, game.shipsList[playerShipNum].integrity + game.draggedItem.repair));
+                        game.shipsList[playerShipNum].shields = Math.max(0, Math.min(game.shipsList[playerShipNum].getShields(), game.shipsList[playerShipNum].shields + game.draggedItem.boost));
 
                         if (game.draggedItem.quantity > 1)
                         {

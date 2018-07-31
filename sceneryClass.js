@@ -97,6 +97,12 @@ function Scenery(X, Y, type, list, extra)
     {
         if (this.type == "cargohold")
         {
+            //delete when emptied
+            if (this.contents.length < 1)
+            {
+                game.sceneryList.splice(game.sceneryList.indexOf(this), 1);
+            }
+
             if (ifInScreenDraw(this.X, this.Y, 14.15))
             {
                 for (var i = 0; i < game.shipsList.length; i++)
@@ -149,7 +155,7 @@ function Scenery(X, Y, type, list, extra)
                                     if (new Date().getTime() - this.resetContentsTime > 60 * (1000 * 60)) //the first number is a measurement of minutes
                                     {
                                         this.resetContentsTime = new Date().getTime();
-                                        this.shopContents = [itemize("Freshwater", 999), itemize("Freshwater", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 2), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 4), itemize("Power Core", 999), itemize("Power Core", 3), itemize("Repair Kit", 999), itemize("Repair Kit", 999), itemize("Repair Kit", 999), itemize("Repair Kit", 1), itemize("M1Missile", 999), itemize("M1Missile", 15), itemize("PlasmaticSeeker", 6), itemize("TrineumSeeker", 999)];
+                                        this.shopContents = [itemize("Freshwater", 999), itemize("Freshwater", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 2), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 4), itemize("Power Core", 7), itemize("Repair Kit", 999), itemize("Repair Kit", 6), itemize("Shield Jumper", 3), itemize("M1Missile", 999), itemize("M1Missile", 15), itemize("PlasmaticSeeker", 6), itemize("TrineumSeeker", 999)];
                                         this.shipyardContents = [itemize("Majestad", 1, false), itemize("Majestad", 1, false), itemize("Majestad", 1, false)];
                                     }
                                 }

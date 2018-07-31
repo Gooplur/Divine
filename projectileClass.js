@@ -4,6 +4,7 @@
 function Projectile(type, x, y, who, rotation, adX, adY)
 {
     var self = this;
+    this.barcode = Math.random() * Math.random() * Math.random() + 4.545;
     this.zIndex = 0;
     this.X = x;
     this.Y = y;
@@ -20,6 +21,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.style = "normal";
     this.radius = 0.1;
     this.shipInteract = true; //determines if this projectile can affect ships
+    this.rapidDamaging = false; //if false the attack only hits once
     //destructable projectiles
     this.integrity = 10;
     this.destructible = false;
@@ -31,6 +33,8 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     //rotating projectiles only
     this.targetRotation = this.rotation;
     this.turnSpeed = 1/9 * Math.PI;
+    //spinning projectiles only
+    this.spin = 0;
     //single-stream only
     this.streamFixed = false;
     this.streamType = "normal";
@@ -41,6 +45,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.trackWait = 0.3;
     this.trackSpeed = 14;
     this.tracked = false;
+    this.targetSizeMin = 0;
     //exploding projectiles only
     this.explodes = false;
     this.explosionStyle = [5, "red", "orange", "yellow"];
@@ -58,6 +63,9 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.distortion = false;
     this.distort = 0;
     this.distortTime = 0;
+    //On-Death-Do-Something variables
+    this.doOnProjectEnd = false; //when the projectile reaches the end of its project range it does something.
+    this.doOnContact = false;
 
     //effects
     this.distorted = false;
@@ -157,6 +165,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             }
             else if (this.type == "TrineumSeeker")
             {
+                this.targetSizeMin = 40;
                 this.trackSpeed = 75;
                 this.speed = who.speed + this.trackSpeed;
                 this.range = 25000;
@@ -194,7 +203,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             }
             else if (this.type == "TrineumLaser")
             {
-                this.speed = this.speed = who.speed + 40;
+                this.speed = who.speed + 40;
                 this.range = 3600;
                 this.damage = 14;
                 this.phasing = true;
@@ -217,6 +226,73 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.field = 80;
 
                 this.distort = -(250 + Math.random() * 300) / 100 * Math.PI;
+            }
+            else if (this.type == "FusionSeeker")
+            {
+                this.targetSizeMin = 140;
+                this.trackSpeed = 110;
+                this.speed = who.speed + this.trackSpeed;
+                this.range = 110000;
+                this.damage = 60000;
+                this.phasing = false;
+                this.tracking = true;
+                this.explodes = true;
+                this.explosionSound = new Audio("sounds/missileXPL.wav");
+                this.explosionStyle = [400, 9, 75, ["#53116D", "#500296", "#3D0852"]];
+                this.turnSpeed = 1/8 * Math.PI;
+                this.trackWait = 1.2;
+                this.radius = 90;
+                this.integrity = 100;
+                this.destructible = true;
+            }
+            else if (this.type == "FusionSlice")
+            {
+                this.speed = who.speed + 100;
+                this.range = 13130;
+                this.damage = 6000;
+                this.phasing = true;
+                this.zIndex = 1;
+                this.radius = 150;
+                this.turnSpeed = 1/4 * Math.PI;
+                this.distortResist = true;
+                this.spin = Math.random() * 2 * Math.PI;
+            }
+            else if (this.type == "FusionBall")
+            {
+                this.speed = who.speed + 110;
+                this.range = 5500;
+                this.damage = 2600;
+                this.phasing = true;
+                this.zIndex = 1;
+                this.radius = 45;
+                this.distortResist = true;
+                this.spin = Math.random() * 2 * Math.PI;
+                this.doOnProjectEnd = "fusionExplosion";
+                this.explosionSound = new Audio("sounds/missileXPL.wav");
+                this.explosionStyle = [2000, 10, 100, ["#53116D", "#500296", "#3D0852"]];
+            }
+            else if (this.type == "FusionSpike")
+            {
+                this.speed = who.speed + 120;
+                this.range = 2000;
+                this.damage = 3000;
+                this.phasing = true;
+                this.zIndex = 1;
+                this.radius = 130;
+                this.distortResist = true;
+                this.doOnProjectEnd = "fusionExplosion2";
+                this.explosionSound = new Audio("sounds/missileXPL.wav");
+                this.explosionStyle = [660, 5, 70, ["#53116D", "#500296", "#3D0852"]];
+            }
+            else if (this.type == "FusionSpike2")
+            {
+                this.speed = who.speed + 120;
+                this.range = 4000;
+                this.damage = 2200;
+                this.phasing = true;
+                this.zIndex = 1;
+                this.radius = 100;
+                this.distortResist = true;
             }
         }
     };
@@ -314,6 +390,27 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 //draw(); //the list should contain the fields in the draw function in the same order.
                 draw(divineKitC, 380, 365, 32, 31, this.X, this.Y, 32 * 0.25, 31 * 0.25, this.rotation + 1/2 * Math.PI, false, 0.44, 0, 0);
             }
+            else if (this.type == "FusionSeeker")
+            {
+                draw(divineKitD, 877, 471, 17, 112, this.X, this.Y, 17 * 2.5, 112 * 2.5, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
+            }
+            else if (this.type == "FusionSlice")
+            {
+                this.spin += this.turnSpeed;
+                draw(divineKitD, 93, 12, 38, 35, this.X, this.Y, 38 * 4.5, 35 * 4.5, this.rotation + 1/2 * Math.PI + this.spin, false, 1, 0, 0);
+            }
+            else if (this.type == "FusionBall")
+            {
+                draw(divineKitD, 407, 757, 23, 22, this.X, this.Y, 23 * 4, 22 * 4, this.rotation + 1/2 * Math.PI + this.spin, false, 0.85, 0, 0);
+            }
+            else if (this.type == "FusionSpike")
+            {
+                draw(divineKitD, 355, 739, 10, 46, this.X, this.Y, 10 * 4.5, 46 * 4.5, this.rotation + 1/2 * Math.PI, false, 0.75, 0, 0);
+            }
+            else if (this.type == "FusionSpike2")
+            {
+                draw(divineKitD, 355, 739, 10, 46, this.X, this.Y, 10 * 3.8, 46 * 3.8, this.rotation + 1/2 * Math.PI, false, 0.65, 0, 0);
+            }
         }
     };
 
@@ -343,18 +440,21 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         var nearDist = false;
         for (var i = 0; i < game.shipsList.length; i++)
         {
-            //console.log(game.shipsList[i]);
-            if (game.shipsList[i].faction != who.faction && this.distanceTo(game.shipsList[i]) <= who.radarRange)
+            if (this.targetSizeMin <= game.shipsList[i].size)
             {
-                if (nearDist == false)
+                //console.log(game.shipsList[i]);
+                if (game.shipsList[i].faction != who.faction && this.distanceTo(game.shipsList[i]) <= who.radarRange)
                 {
-                    nearShip = game.shipsList[i];
-                    nearDist = this.distanceTo(game.shipsList[i])
-                }
-                else if (nearDist > this.distanceTo(game.shipsList[i]))
-                {
-                    nearShip = game.shipsList[i];
-                    nearDist = this.distanceTo(game.shipsList[i])
+                    if (nearDist == false)
+                    {
+                        nearShip = game.shipsList[i];
+                        nearDist = this.distanceTo(game.shipsList[i])
+                    }
+                    else if (nearDist > this.distanceTo(game.shipsList[i]))
+                    {
+                        nearShip = game.shipsList[i];
+                        nearDist = this.distanceTo(game.shipsList[i])
+                    }
                 }
             }
         }
@@ -413,6 +513,42 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         {
             if (this.distanceTraveled >= this.range)
             {
+                if (this.doOnProjectEnd == "fusionExplosion")
+                {
+                    playSound(this.explosionSound, this.volume, this.explosionSoundTime1, this.explosionSoundTime2);
+                    explosion(this.X, this.Y, this.explosionStyle[0], this.explosionStyle[1], this.explosionStyle[2], this.explosionStyle[3]);
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 0/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 1.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 3/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 4.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 6/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 7.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 9/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 10.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 12/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 13.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 15/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 16.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike",this.X, this.Y, this.quien, 18/18 * 2 * Math.PI, 0, 0));
+                }
+                else if (this.doOnProjectEnd == "fusionExplosion2")
+                {
+                    playSound(this.explosionSound, this.volume, this.explosionSoundTime1, this.explosionSoundTime2);
+                    explosion(this.X, this.Y, this.explosionStyle[0], this.explosionStyle[1], this.explosionStyle[2], this.explosionStyle[3]);
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 0/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 1.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 3/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 4.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 6/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 7.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 9/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 10.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 12/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 13.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 15/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 16.5/18 * 2 * Math.PI, 0, 0));
+                    game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 18/18 * 2 * Math.PI, 0, 0));
+                }
                 for (var i = 0; i < game.projectilesList.length; i++)
                 {
                     if (game.projectilesList[i] === this)
@@ -536,7 +672,27 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 {
                     if (this.distanceTo(game.shipsList[i]) - this.radius < game.shipsList[i].size)
                     {
-                        this.dealDamageTo(game.shipsList[i]);
+                        var doDamage = true;
+                        if (this.rapidDamaging == false && this.phasing) //this is so that phasing projectiles will not affect a target more than once
+                        {
+                            for (var l = 0; l < game.shipsList[i].damagedBy.length; l++)
+                            {
+                                if (game.shipsList[i].damagedBy[l] == this.barcode)
+                                {
+                                    doDamage = false;
+                                }
+                            }
+                        }
+
+                        if (doDamage)
+                        {
+                            this.dealDamageTo(game.shipsList[i]); //DAMAGE DEALT HERE
+
+                            if (this.rapidDamaging == false && this.phasing)
+                            {
+                                game.shipsList[i].damagedBy.push(this.barcode);
+                            }
+                        }
 
                         if (this.distortion)
                         {

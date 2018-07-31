@@ -26,6 +26,27 @@ function Xploder(xx, yy, size, colour)
             if (this.sz < size)
             {
                 this.sz += 0.25;
+
+                if (size >= 1500)
+                {
+                    this.sz += 30;
+                }
+                else if (size >= 900)
+                {
+                    this.sz += 25;
+                }
+                else if (size >= 500)
+                {
+                    this.sz += 12;
+                }
+                else if (size >= 200)
+                {
+                    this.sz += 4.75;
+                }
+                else if (size >= 100)
+                {
+                    this.sz += 0.75;
+                }
                 circle(true, xx, yy, this.sz, 0, 2*Math.PI, colour, false, "none", false, 0, Math.min(1, (this.sz / 2)/size));
             }
             else
