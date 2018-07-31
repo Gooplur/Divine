@@ -1087,7 +1087,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     }
                     for (var i = 0; i < game.shipsList.length; i++)
                     {
-                        if (game.shipsList[i] !== this && game.shipsList[i].cloaking != true)
+                        if (game.shipsList[i] !== this && game.shipsList[i].cloaking != true && game.shipsList[i].destructed != true)
                         {
                             var isAlly = false;
                             if (game.shipsList[i].faction == "Player")
