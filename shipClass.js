@@ -14,6 +14,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.targetRotation = 0;
     this.activateThisShip = true;
     this.destructionTime = 0;
+    this.barcode = (Math.random() + Math.random() + Math.random() + Math.random()) * (4 + 12 * Math.random());
 
     //functionality
     this.damagedBy = [];
@@ -1380,6 +1381,15 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 game.interContext = "Repair";
                 game.interInvCargoMAX1 = this.cargoMAX;
             }
+            if (game.jKey == true)
+            {
+                game.jKey = false;
+                game.aiMenu = true;
+                game.aiShip = this.barcode;
+                game.aiSelect = this.brain;
+                game.setAiSelect = true;
+            }
+
 
             if (game.tabKey == true)
             {
@@ -1654,7 +1664,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
 
             //TARGETING FOR AI
-            if (this.brain == "basic" || this.brain == "basic-missile" || this.brain == "simple" || this.brain == "simple-missile" || this.brain == "swooper" || this.brain == "swooper-missile" || this.brain == "tank" || this.brain == "tank-missile")
+            if (this.brain == "basic" || this.brain == "basic-missile" || this.brain == "simple" || this.brain == "simple-missile" || this.brain == "swooper" || this.brain == "swooper-missile" || this.brain == "tank" || this.brain == "tank-missile" || this.brain == "follower")
             {
                 this.targetClosestEnemy("ship");
             }
@@ -1666,7 +1676,136 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
 
             //AI BRAINS
-            if (this.brain == "tank" || this.brain == "tank-missile")
+            if (this.brain == "follower")
+            {
+                var leader = -1;
+                for (var i = 0; i < game.shipsList.length; i++)
+                {
+                    if (game.shipsList[i].team == this.team)
+                    {
+                        if (game.shipsList[i].player)
+                        {
+                            leader = game.shipsList[i];
+                            break;
+                        }
+                    }
+                }
+
+
+                var syze;
+                if (this.size > 300)
+                {
+                    syze = 300 + 1/4 * (this.size - 400);
+                }
+                else
+                {
+                    syze = this.size;
+                }
+                if (leader == -1)
+                {
+                    this.aiWKey = false;
+                    this.aiAKey = false;
+                    this.aiDKey = false;
+                    this.aiSKey = true;
+                    var dtt = this.distanceTo(this.target);
+                    if (dtt < this.radarRange)
+                    {
+                        this.targetRotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
+                        if (dtt <= 200 + syze * 55)
+                        {
+                            this.aiSpaceKey = true;
+                        }
+                        else
+                        {
+                            this.aiSpaceKey = false;
+                        }
+                    }
+                }
+                else
+                {
+                    var dtp = this.distanceTo(leader);
+                    var dtt = this.distanceTo(this.target);
+
+                    if (game.vKey == false)
+                    {
+                        this.aiSpaceKey = false;
+                        this.targetRotation = Math.atan2(this.Y - leader.Y, this.X - leader.X) - 1/2 * Math.PI;
+
+                        if (leader.speed > this.speed && dtp > (200 + 25 * syze))
+                        {
+                            this.aiWKey = true;
+                            this.aiSKey = false;
+                            this.aiAKey = false;
+                            this.aiDKey = false;
+                        }
+                        else if (leader.speed > this.speed && dtp < (200 + 25 * syze))
+                        {
+                            this.aiWKey = false;
+                            this.aiAKey = false;
+                            this.aiDKey = false;
+                            this.aiSKey = false;
+                        }
+                        else if (leader.speed < this.speed && dtp > (200 + 25 * syze))
+                        {
+                            this.aiWKey = false;
+                            this.aiAKey = false;
+                            this.aiDKey = false;
+                            this.aiSKey = false;
+                        }
+                        else if (leader.speed < this.speed && dtp < (200 + 25 * syze))
+                        {
+                            this.aiWKey = false;
+                            this.aiAKey = false;
+                            this.aiDKey = false;
+                            this.aiSKey = true;
+                        }
+                    }
+                    else
+                    {
+                        if (dtp < (300 + 30 * syze))
+                        {
+                            this.aiWKey = false;
+                            this.aiAKey = false;
+                            this.aiDKey = false;
+                            this.aiSKey = true;
+
+                            if (dtt < this.radarRange)
+                            {
+                                this.targetRotation = Math.atan2(this.Y - this.target.Y, this.X - this.target.X) - 1/2 * Math.PI;
+                                if (dtt <= 200 + syze * 55)
+                                {
+                                    this.aiSpaceKey = true;
+                                }
+                                else
+                                {
+                                    this.aiSpaceKey = false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            this.aiSpaceKey = false;
+                            this.targetRotation = Math.atan2(this.Y - leader.Y, this.X - leader.X) - 1/2 * Math.PI;
+                            if (leader.speed > this.speed || this.speed < 24)
+                            {
+                                this.aiWKey = true;
+                                this.aiSKey = false;
+                                this.aiAKey = false;
+                                this.aiDKey = false;
+                            }
+                            else if (leader.speed < this.speed)
+                            {
+                                this.aiWKey = false;
+                                this.aiAKey = false;
+                                this.aiDKey = false;
+                                this.aiSKey = false;
+                            }
+                        }
+                    }
+
+                }
+            }
+            else if (this.brain == "tank" || this.brain == "tank-missile")
             {
                 if (this.target != "none")
                 {

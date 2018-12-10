@@ -1466,6 +1466,253 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
     }
 }
 
+function aiList()
+{
+    game.state = "DivinePaused";
+    game.scale = 1;
+
+    if (game.setAiSelect == true)
+    {
+        game.setAiSelect = false;
+
+        for (var i = 0; i < game.aiList.length; i++)
+        {
+            if (game.aiList[i].ai == game.aiSelect)
+            {
+                game.aiList[i].selected = true;
+                break;
+            }
+        }
+    }
+
+    game.x.save();
+    game.x.translate(-1/2 * game.c.width, -1/2 * game.c.height);
+
+    //Main Box
+    game.x.beginPath();
+    game.x.fillStyle = "#18181A";
+    game.x.strokeStyle = "lightGrey";
+    game.x.lineWidth = 3;
+    game.x.rect(xxx(50), yyy(100), xxx(650), yyy(800));
+    game.x.fill();
+    game.x.stroke();
+
+    //Title
+    game.x.textAlign = "center";
+    game.x.font = fonter(30, "Arial");
+    game.x.fillStyle = "white";
+    game.x.fillText("Autopilot AI Selector", xxx(453), yyy(70));
+
+    //Description Box
+    game.x.beginPath();
+    game.x.fillStyle = "#18181A";
+    game.x.strokeStyle = "lightGrey";
+    game.x.lineWidth = 3;
+    game.x.rect(xxx(706), yyy(100), xxx(250), yyy(800));
+    game.x.fill();
+    game.x.stroke();
+
+    //scrollUp
+    if (game.mouseX > xxx(51) && game.mouseX < xxx(699) && game.mouseY > yyy(100) && game.mouseY < yyy(160))
+    {
+        game.x.beginPath();
+        game.x.fillStyle = "white";
+        game.x.strokeStyle = "#18181A";
+        game.x.lineWidth = 1;
+        game.x.rect(xxx(51), yyy(100), xxx(649), yyy(60));
+        game.x.fill();
+        game.x.stroke();
+
+        if (game.unclick)
+        {
+            game.unclick = false;
+            if (game.aiListScroll > 0)
+            {
+                game.aiListScroll -= 1;
+            }
+        }
+    }
+    else
+    {
+        game.x.beginPath();
+        game.x.fillStyle = "#18181A";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 1;
+        game.x.rect(xxx(51), yyy(100), xxx(649), yyy(60));
+        game.x.fill();
+        game.x.stroke();
+    }
+
+
+    //scrollDown
+    if (game.mouseX > xxx(51) && game.mouseX < xxx(699) && game.mouseY > yyy(840) && game.mouseY < yyy(900))
+    {
+        game.x.beginPath();
+        game.x.fillStyle = "white";
+        game.x.strokeStyle = "#18181A";
+        game.x.lineWidth = 1;
+        game.x.rect(xxx(51), yyy(840), xxx(649), yyy(60));
+        game.x.fill();
+        game.x.stroke();
+
+        if (game.unclick)
+        {
+            game.unclick = false;
+            if (game.aiListScroll < (game.aiList.length - 1))
+            {
+                game.aiListScroll += 1;
+            }
+        }
+    }
+    else
+    {
+        game.x.beginPath();
+        game.x.fillStyle = "#18181A";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 1;
+        game.x.rect(xxx(51), yyy(840), xxx(649), yyy(60));
+        game.x.fill();
+        game.x.stroke();
+    }
+
+    for (var i = game.aiListScroll; i < Math.min(14, game.aiList.length); i++)
+    {
+        game.x.beginPath();
+        game.x.fillStyle = "#18181A";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 1;
+        game.x.rect(xxx(51), yyy(160 + (32 * (i - game.aiListScroll))), xxx(649), yyy(30));
+        game.x.fill();
+        game.x.stroke();
+
+        if (game.mouseX > xxx(51) && game.mouseX < xxx(699) && game.mouseY > yyy(160 + (32 * (i - game.aiListScroll))) && game.mouseY < yyy(160 + 30  + (32 * (i - game.aiListScroll))) && game.unclick)
+        {
+            game.unclick = false;
+            if (game.aiList[i].selected == false)
+            {
+                for (var j = 0; j < game.aiList.length; j++)
+                {
+                    game.aiList[j].selected = false;
+                }
+                game.aiList[i].selected = true;
+                game.aiSelect = game.aiList[i].ai;
+            }
+            else
+            {
+                game.aiList[i].selected = false;
+                game.aiSelect = "none";
+            }
+        }
+
+        //Item Name
+        game.x.textAlign = "left";
+        game.x.font = fonter(10, "Arial");
+        if (game.aiList[i].selected == false)
+        {
+            game.x.fillStyle = "white";
+        }
+        else
+        {
+            game.x.fillStyle = "orange";
+        }
+        game.x.fillText(game.aiList[i].name, xxx(56), yyy(160 + 21 + 32 * (i - game.aiListScroll)));
+
+        if (game.aiList[i].selected == true)
+        {
+            //name
+            game.x.textAlign = "center";
+            game.x.font = fonter(14, "Arial");
+            game.x.fillStyle = "white";
+            game.x.fillText(game.aiList[i].name, xxx(706 + 125), yyy(136));
+
+            //ai description
+            var xPos = 0;
+            var yPos = 0;
+            var thisto = 0;
+            for (var k = 0; k < game.aiList[i].description.length; k++)
+            {
+                game.x.textAlign = "left";
+                game.x.font = fonter(10, "Arial");
+                game.x.fillStyle = "white";
+                game.x.fillText(game.aiList[i].description[k], xxx(706 + 8 + xPos), yyy(350 + yPos));
+                thisto = game.aiList[i].description[k];
+
+                if (thisto == " " || thisto == "f" || thisto == "r")
+                {
+                    xPos += 4;
+                }
+                else if (thisto == "t")
+                {
+                    xPos += 3.5;
+                }
+                else if (thisto == "i")
+                {
+                    xPos += 3;
+                }
+                else if (thisto == "j" || thisto == "l" || thisto == "'" || thisto == "," || thisto == ".")
+                {
+                    xPos += 2.7;
+                }
+                else if (thisto == "s")
+                {
+                    xPos += 5;
+                }
+                else if (thisto == "m" || thisto == "w" || thisto == "A")
+                {
+                    xPos += 8;
+                }
+                else if (thisto == "o" || thisto == "a" || thisto == "t" || thisto == "n" || thisto == "e")
+                {
+                    xPos += 5.5
+                }
+                else
+                {
+                    xPos += 6;
+                }
+
+                if (xPos > 232)
+                {
+                    if (game.aiList[i].description[k] != "-" && game.aiList[i].description[k] != " " && game.aiList[i].description[k + 1] != " " && game.aiList[i].description[k + 1] != "." && game.aiList[i].description[k + 1] != "!" && game.aiList[i].description[k + 1] != "?" && game.aiList[i].description[k + 1] != ")" && game.aiList[i].description[k + 1] != "," && game.aiList[i].description[k + 1] != ";" && game.aiList[i].description[k + 1] != "'" && game.aiList[i].description[k + 1] != "-")
+                    {
+                        game.x.textAlign = "left";
+                        game.x.font = fonter(10, "Arial");
+                        game.x.fillStyle = "white";
+                        game.x.fillText("-", xxx(706 + 8 + xPos), yyy(350 + yPos));
+                    }
+                    xPos = 0;
+                    yPos += 19;
+                }
+            }
+        }
+    }
+
+    game.x.restore();
+
+    if (game.eKey)
+    {
+        for (var i = 0; i < game.aiList.length; i++)
+        {
+            if (game.aiList[i].selected)
+            {
+                game.aiList[i].selected = false;
+                break;
+            }
+        }
+        game.eKey = false;
+        game.state = "Divine";
+        game.aiMenu = false;
+        for (var i = 0; i < game.shipsList.length; i++)
+        {
+            if (game.shipsList[i].barcode == game.aiShip)
+            {
+                game.shipsList[i].brain = game.aiSelect;
+                break;
+            }
+        }
+        game.aiShip = -1;
+    }
+}
+
 //screen positioning out of 1000 as standard for width and height.
 function xxx(inputX)
 {

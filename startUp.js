@@ -106,6 +106,23 @@ function Game()
     this.interSellRate = 1; //what percentage shops will sell there goods at.
     this.interDockingFee = 55;
     this.interCoords = [0, 0];
+    this.aiMenu = false;
+    this.aiList =
+        [
+            {name: "Tank", ai: "tank", selected: false, description: "A slow moving support ai designed for battleships"},
+            {name: "Tank-Missile", ai: "tank-missile", selected: false, description: "A slow moving support ai designed for battleships that permits the use of missiles."},
+            {name: "Swooper", ai: "swooper", selected: false, description: "A fighter ai that directs ships to swoop in and out of combat firing upon the enemy."},
+            {name: "Swooper-Missile", ai: "swooper-missile", selected: false, description: "A fighter ai that directs ships to swoop in and out of combat firing upon the enemy; this ai permits the use of missiles."},
+            {name: "Basic", ai: "basic", selected: false, description: "An ai that directs ships to strafe in a circle around their target."},
+            {name: "Basic-Missile", ai: "basic-missile", selected: false, description: "An ai that directs ships to strafe in a circle around their target; this ai permits the use of missiles."},
+            {name: "Simple", ai: "simple", selected: false, description: "An ai that directs ships to charge towards their target, pass them, then open fire from a stationary vantage point."},
+            {name: "Simple-Missile", ai: "simple-missile", selected: false, description: "An ai that directs ships to charge towards their target, pass them, then open fire from a stationary vantage point; this ai permits the use of missiles."},
+            {name: "Follower", ai: "follower", selected: false, description: "An ai that directs ships to either stay still and shoot nearby enemies, or follow the player. The player can hold the V-Key in order to turn the follower's attention towards attacking enemy ships."}
+        ];
+    this.aiListScroll = 0;
+    this.aiSelect = "none";
+    this.aiShip = -1;
+    this.setAiSelect = false;
 
     //shipItem to Ship Converter List (changes ship items into real ships)
     this.shipConverterList = [];
@@ -136,6 +153,8 @@ function Game()
     this.uKey = false;
     this.yKey = false;
     this.kKey = false;
+    this.jKey = false;
+    this.vKey = false;
     this.shiftKey = false;
     this.spaceKey = false;
     this.tabKey = false;
@@ -177,11 +196,11 @@ function Game()
     //this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "swooper", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "tank", false, "Advanced", "Good"));
+    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Good"));
     //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "tank-missile", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "tank", true, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", true, "Advanced", "Stocked"));
     //for (var i = 0; i < 2; i++)
     //{
     //    this.shipsList.push(new Ship(25000 - 2500 + 500 * i, -25000 - 2500 + 500 * i, "Screecher", "Player", "swooper", false, "Standard", "Good"));
@@ -321,6 +340,10 @@ function Game()
         else if (self.planetMenu)
         {
             planetMenu(self.planetMenuList);
+        }
+        else if (self.aiMenu)
+        {
+            aiList();
         }
 
         game.x.restore();

@@ -32,7 +32,7 @@ function alterGame()
     }
 
     //game volume +/-
-    if (game.plusKey == true)
+    if (game.plusKey == true) //TODO re-purpose these buttons for ship toggling
     {
         game.masterVolume = Math.min(1, game.masterVolume + 0.005);
     }
@@ -89,6 +89,7 @@ function shipConverter(bool)
                 shipBuild = new Ship(game.interCoords[0], game.interCoords[1], shipply.name, "Player", shipply.AI, false, false, false, false);
                 var upgrd = [itemize("CORE", 1)];
                 shipBuild.upgrades = upgrd;
+                shipBuild.brain = "follower";
             }
             game.shipsList.push(shipBuild);
         }
