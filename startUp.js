@@ -157,6 +157,8 @@ function Game()
     this.kKey = false;
     this.jKey = false;
     this.vKey = false;
+    this.xKey = false;
+    this.zKey = false;
     this.shiftKey = false;
     this.spaceKey = false;
     this.tabKey = false;
@@ -198,8 +200,8 @@ function Game()
     //this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Good"));
+    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
+    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
     //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));

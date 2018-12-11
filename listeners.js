@@ -114,6 +114,14 @@ function keyPressSensing(event)
     {
         game.vKey = true;
     }
+    if (key == 88)
+    {
+        game.xKey = true;
+    }
+    if (key == 90)
+    {
+        game.zKey = true;
+    }
     if (key == 16)
     {
         game.shiftKey = true;
@@ -239,6 +247,14 @@ function keyReleaseSensing(event)
     if (key == 86)
     {
         game.vKey = false;
+    }
+    if (key == 88)
+    {
+        game.xKey = false;
+    }
+    if (key == 90)
+    {
+        game.zKey = false;
     }
     if (key == 16)
     {

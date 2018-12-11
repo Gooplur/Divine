@@ -289,6 +289,14 @@
             this.price = 3600;
             this.image = ["divineKitA", 172, 34, 9, 10, 2.4];
         }
+        else if (this.name == "VorcadiumBomb")
+        {
+            this.utility = "ammunition";
+            this.subUtility = "Bomb";
+            this.maxStack = 3;
+            this.price = 19000;
+            this.image = ["divineKitC", 95, 215, 23, 28, 1.9];
+        }
         else if (this.name == "DecoyCore")
         {
             this.utility = "ammunition";

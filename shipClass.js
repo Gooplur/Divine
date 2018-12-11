@@ -88,6 +88,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.maingunsStoreTime = new Date().getTime();
     this.turret1Rate = 0.45;
     this.turret1StoreTime = new Date().getTime();
+    this.bombRate = 6;
+    this.bombStoreTime = new Date().getTime();
     //turning off individual parts of the ship
     this.sidegunsPowered = true;
     this.maingunsPowered = true;
@@ -112,9 +114,13 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
     //current resistances
     this.distortResistUP = false;
+    this.stickyResistUP = false;
+    this.transferResistUP = false;
 
     //base resistances
     this.distortResist = false;
+    this.stickyResist = false;
+    this.transferResist = false;
 
     //Status effects
     this.handlingDebuffTime = 0;
@@ -640,15 +646,15 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             }
             else if (ammo == "Good")
             {
-                this.ammunition = [];
+                this.ammunition = [itemize("VorcadiumBomb", 1)];
             }
             else if (ammo == "Stocked")
             {
-                this.ammunition = [];
+                this.ammunition = [itemize("VorcadiumBomb", 2)];
             }
             else if (ammo == "Doom")
             {
-                this.ammunition = [];
+                this.ammunition = [itemize("VorcadiumBomb", 3)];
             }
 
             //sounds
@@ -766,6 +772,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     {
         //resistanceReset
         this.distortResistUP = this.distortResist;
+        this.stickyResistUP = this.stickyResist;
+        this.transferResistUP = this.transferResist;
 
         //bonusReset
         this.shieldsUP = 0;
@@ -3422,6 +3430,76 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                     playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                     game.projectilesList.push(new Projectile("TrineumLaser", this.X - Math.cos(this.rotation + this.turretRot1 + 1.306) * 24, this.Y - Math.sin(this.rotation + this.turretRot1 + 1.306) * 24, this, this.rotation - 1/2 * Math.PI + this.turretRot3));
                                     game.projectilesList.push(new Projectile("TrineumLaser", this.X - Math.cos(this.rotation + this.turretRot1 - 1.306) * -24, this.Y - Math.sin(this.rotation + this.turretRot1 - 1.306) * -24, this, this.rotation - 1/2 * Math.PI + this.turretRot3));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "CORE") //BOMB / MINE / TRAP / ETC (most bombs go here)
+                {
+                    this.bombRate = 6; //these sideguns come with this ship and are inseparable from its base structure.
+                    if (use == "playerActivate")
+                    {
+                        if (this.offline == false && game.xKey && new Date().getTime() - this.bombStoreTime >= this.bombRate * 1000)
+                        {
+                            this.bombStoreTime = new Date().getTime();
+                            game.xKey = false;
+                            var hasAmmoToShoot = false;
+                            var shootWhat = "none";
+                            for (var a = 0; a < this.ammunition.length; a++)
+                            {
+                                if (this.ammunition[a].name == "VorcadiumBomb" && this.ammunition[a].quantity >= 1)
+                                {
+                                    shootWhat = this.ammunition[a].name;
+                                    this.ammunition[a].quantity -= 1;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (shootWhat != "none")
+                            {
+                                if (hasAmmoToShoot)
+                                {
+                                    if (shootWhat == "VorcadiumBomb")
+                                    {
+                                        game.projectilesList.push(new Projectile("VorcadiumBomb", this.X, this.Y, this, Math.random() * 2*Math.PI));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.sidegunsPowered == true && this.aiQKey && new Date().getTime() - this.sidegunsStoreTime >= this.sidegunsRate * 1000)
+                        {
+                            this.sidegunsStoreTime = new Date().getTime();
+                            this.aiQKey = false;
+                            var hasAmmoToShoot = false;
+                            for (var a = 0; a < this.ammunition.length; a++)
+                            {
+                                if (this.ammunition[a].name == "PlasmaticSeeker" && this.ammunition[a].quantity >= 2)
+                                {
+                                    this.ammunition[a].quantity -= 2;
+                                    if (this.ammunition[a].quantity <= 0)
+                                    {
+                                        this.ammunition.splice(a, 1);
+                                    }
+                                    hasAmmoToShoot = true;
+                                    break;
+                                }
+                            }
+                            if (hasAmmoToShoot)
+                            {
+                                if (this.power >= this.weaponCost)
+                                {
+                                    this.power -= this.weaponCost;
+                                    playSound(this.laserSound2, this.laserSound2Time1, this.laserSound2Time2);
+                                    game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 2.7) * 56, this.Y + Math.sin((this.rotation - Math.PI) -2.7) * 56, this, this.rotation - 1/2 * Math.PI));
+                                    game.projectilesList.push(new Projectile("PlasmaticSeeker", this.X + Math.cos((this.rotation - Math.PI) - 0.414) * 43, this.Y + Math.sin((this.rotation - Math.PI) - 0.414) * 43, this, this.rotation - 1/2 * Math.PI));
                                 }
                             }
                         }

@@ -22,6 +22,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.radius = 0.1;
     this.shipInteract = true; //determines if this projectile can affect ships
     this.rapidDamaging = false; //if false the attack only hits once
+    this.target = "none";
     //destructable projectiles
     this.integrity = 10;
     this.destructible = false;
@@ -46,6 +47,21 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.trackSpeed = 14;
     this.tracked = false;
     this.targetSizeMin = 0;
+    //bombs only
+    this.isbomb = false;
+    this.bombType = "motion"; //"timed", "sticky"
+    this.fuse = 0;
+    this.fuseTime = new Date().getTime();
+    this.sticker = "none";
+    this.boom = false; //this flag tells whether the bomb's explosion animation can start or not.
+    this.kaboom = false; //this is the flag that determines when the bomb deals surround damage to enemies.
+    this.bombAbility = "none";
+    this.bombDelete = true; //to delete the bomb automatically after the damage is registered
+    this.booms = 0; //to determine the number of miniature explosions inside of a bigger one
+    this.boomSize = 1; //to determine the size of the explosion animation
+    this.boomPeek = false; //this is a bomb animating variable that can be freely used
+    this.bombRadius = 800;
+    this.bombAll = false; //this determines whether the bomb hurts allies and friends or not
     //exploding projectiles only
     this.explodes = false;
     this.explosionStyle = [5, "red", "orange", "yellow"];
@@ -304,6 +320,22 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.radius = 19;
                 this.distortResist = true;
             }
+            else if (this.type == "VorcadiumBomb")
+            {
+                this.isbomb = true;
+                this.speed = 0;
+                this.range = 1100;
+                this.damage = 1111;
+                this.zIndex = 1;
+                this.radius = 50;
+                this.distortResist = true;
+                this.bombType = "motion";
+                this.bombAbility = "vorcadium";
+                this.bombDelete = false; //to delete the bomb automatically after the damage is registered
+                this.booms = 8; //to determine the number of miniature explosions inside of a bigger one
+                this.boomSize = 0.6; //to determine the size of the explosion animation
+                this.bombRadius = 800;
+            }
         }
     };
 
@@ -315,6 +347,94 @@ function Projectile(type, x, y, who, rotation, adX, adY)
         {
             this.growth += this.growthRate;
             this.radius = Math.min(this.growth, this.growthMAX);
+        }
+            //BOMB
+        if (this.isbomb)
+        {
+            this.style = "bomb";
+            if (this.kaboom == true) //the bomb exploded. This deals damage for bombs that deal surround damage (which is most of them, I assume)
+            {
+                for (var i = 0; i < game.shipsList.length; i++)
+                {
+                    if (game.shipsList[i].faction != this.quien.faction || this.bombAll)
+                    {
+                        if (this.distanceTo(game.shipsList[i]) <= this.range)
+                        {
+                            if (this.bombAbility == "vorcadium")
+                            {
+                                if (game.shipsList[i].transferResistUP == false)
+                                {
+                                    game.shipsList[i].X += 1450 - (2900 * Math.random());
+                                    game.shipsList[i].Y += 1450 - (2900 * Math.random());
+                                    game.shipsList[i].rotation = Math.random() * 2 * Math.PI;
+                                }
+                            }
+                            this.dealDamageTo(game.shipsList[i]);
+                        }
+                    }
+                }
+                this.kaboom = "over";
+                if (this.bombDelete == true)
+                {
+                    game.projectilesList.splice(game.projectilesList.indexOf(this), 1);
+                }
+            }
+
+            if (this.bombType == "sticky")
+            {
+                if (this.sticker == "none")
+                {
+                    this.target = this.nearestEnemy();
+                    if (this.distanceTo(this.target) <= this.radius + this.target.size * 0.9 && this.target.stickyResistUP == false)
+                    {
+                        this.sticker = this.target;
+                        this.stickyX = this.sticker.X;
+                        this.stickyY = this.sticker.Y;
+                    }
+                }
+                else
+                {
+                    this.X += (this.stickyX - this.sticker.X);
+                    this.Y += (this.stickyY - this.sticker.Y);
+
+                    if (new Date().getTime() - this.fuseTime > 100)
+                    {
+                        this.fuseTime = new Date().getTime();
+                        this.fuse -= 0.1;
+                    }
+
+                    if (this.fuse <= 0)
+                    {
+                        this.boom = true;
+                    }
+                }
+            }
+            if (this.bombType == "motion")
+            {
+                this.target = this.nearestEnemy();
+                if (this.distanceTo(this.target) <= this.bombRadius)
+                {
+                    this.boom = true;
+                }
+            }
+            else if (this.bombType == "timed")
+            {
+                if (new Date().getTime() - this.fuseTime > 100)
+                {
+                    this.fuseTime = new Date().getTime();
+                    this.fuse -= 0.1;
+                }
+
+                if (this.fuse <= 0)
+                {
+                    this.boom = true;
+                }
+            }
+
+            if (this.bombDelete == "delete")
+            {
+                game.projectilesList.splice(game.projectilesList.indexOf(this), 1);
+            }
         }
 
         //type specific
@@ -424,6 +544,47 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             else if (this.type == "FusionSpike3")
             {
                 draw(divineKitD, 355, 739, 10, 46, this.X, this.Y, 10 * 1.2, 46 * 1.2, this.rotation + 1/2 * Math.PI, false, 0.6, 0, 0);
+            }
+            else if (this.type == "VorcadiumBomb")
+            {
+                if (this.boom == true)
+                {
+                    if (this.kaboom != "over")
+                    {
+                        this.kaboom = true;
+                    }
+
+                    if (this.boomSize >= 29)
+                    {
+                        this.boomPeek = true;
+                    }
+
+                    if (this.boomPeek == false)
+                    {
+
+                        this.boomSize += 0.5;
+                        for (var i = 0; i < this.booms; i++)
+                        {
+                            draw(divineKitC, 422, 362, 36, 38, this.X + 60 - (120 * Math.random()), this.Y + 60 - (120 * Math.random()), 36 * this.boomSize, 38 * this.boomSize, 2 * Math.PI * Math.random(), false, 0.7, 0, 0);
+                        }
+                    }
+                    else
+                    {
+                        draw(divineKitC, 422, 362, 36, 38, this.X + 60 - (120 * Math.random()), this.Y + 60 - (120 * Math.random()), 36 * this.boomSize * 1.55, 38 * this.boomSize * 1.55, 2 * Math.PI * Math.random(), false, 0.88, 0, 0);
+                        if (this.boomSize < 0.6)
+                        {
+                            this.bombDelete = "delete";
+                        }
+                        else
+                        {
+                            this.boomSize -= 1.5;
+                        }
+                    }
+                }
+                else
+                {
+                    draw(divineKitC, 95, 215, 23, 29, this.X, this.Y, 23 * 2.2, 29 * 2.2, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
+                }
             }
         }
     };
