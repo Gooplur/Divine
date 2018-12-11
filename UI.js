@@ -323,6 +323,48 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
     game.x.lineWidth = 2;
     game.x.stroke();
 
+    if (game.mouseX <= xxx(750) && game.mouseX >= xxx(50))
+    {
+        if (game.mouseX < xxx(375))
+        {
+            if (game.wKey)
+            {
+                game.wKey = false;
+                if (game.interInvScroll1 > 0)
+                {
+                    game.interInvScroll1 -= 1;
+                }
+            }
+            else if (game.sKey)
+            {
+                game.sKey = false;
+                if (game.interInvScroll1 < list1.length - 1)
+                {
+                    game.interInvScroll1 += 1;
+                }
+            }
+        }
+        else if (game.mouseX > xxx(375))
+        {
+            if (game.wKey)
+            {
+                game.wKey = false;
+                if (game.interInvScroll2 > 0)
+                {
+                    game.interInvScroll2 -= 1;
+                }
+            }
+            else if (game.sKey)
+            {
+                game.sKey = false;
+                if (game.interInvScroll2 < list2.length - 1)
+                {
+                    game.interInvScroll2 += 1;
+                }
+            }
+        }
+    }
+
     //Description Box
     game.x.beginPath();
     game.x.fillStyle = "#18181A";
@@ -841,7 +883,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
     }
 
     //Draggable Item Boxes LIST1
-    for (var i = 0; i < list1.length; i++)
+    for (var i = game.interInvScroll1; i < list1.length; i++)
     {
         //Item Main Box
         if (list1[i].dragged == false)
@@ -850,7 +892,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             game.x.fillStyle = "#18181A";
             game.x.strokeStyle = "lightGrey";
             game.x.lineWidth = 1;
-            game.x.rect(xxx(51), yyy(100 + 32 * i), xxx(324), yyy(30));
+            game.x.rect(xxx(51), yyy(100 + 32 * (i - game.interInvScroll1)), xxx(324), yyy(30));
             game.x.fill();
             game.x.stroke();
 
@@ -865,7 +907,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             {
                 game.x.fillStyle = "orange";
             }
-            game.x.fillText(list1[i].name, xxx(56), yyy(100 + 21 + 32 * i));
+            game.x.fillText(list1[i].name, xxx(56), yyy(100 + 21 + 32 * (i - game.interInvScroll1)));
 
             //Item Quantity
             game.x.textAlign = "right";
@@ -878,7 +920,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             {
                 game.x.fillStyle = "orange";
             }
-            game.x.fillText("x " + list1[i].quantity, xxx(370), yyy(100 + 21 + 32 * i));
+            game.x.fillText("x " + list1[i].quantity, xxx(370), yyy(100 + 21 + 32 * (i - game.interInvScroll1)));
         }
         else //if the item is being dragged original slot looks void.
         {
@@ -886,13 +928,13 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             game.x.fillStyle = "lightGrey";
             game.x.strokeStyle = "lightGrey";
             game.x.lineWidth = 1;
-            game.x.rect(xxx(51), yyy(100 + 32 * i), xxx(324), yyy(30));
+            game.x.rect(xxx(51), yyy(100 + 32 * (i - game.interInvScroll1)), xxx(324), yyy(30));
             game.x.fill();
             game.x.stroke();
         }
 
         //Item Selecting
-        if (game.shiftKey != true && game.unclick && game.mouseX > xxx(51) && game.mouseX < xxx(51 + 319) && game.mouseY > yyy(100) + yyy(32) * i && game.mouseY < yyy(100 + 32) + yyy(32) * i)
+        if (game.shiftKey != true && game.unclick && game.mouseX > xxx(51) && game.mouseX < xxx(51 + 319) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll1) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll1))
         {
             game.unclick = false;
             if (list1[i].selected == false)
@@ -920,7 +962,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         }
 
         //Item Click-to-Drag
-        if (game.shiftKey == true && game.mouseX > xxx(51) && game.mouseX < xxx(51 + 319) && game.mouseY > yyy(100) + yyy(32) * i && game.mouseY < yyy(100 + 32) + yyy(32) * i)
+        if (game.shiftKey == true && game.mouseX > xxx(51) && game.mouseX < xxx(51 + 319) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll1) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll1))
         {
             var isOneAlreadyDragged = false;
             for (j = 0; j < list1.length; j++)
@@ -946,7 +988,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         }
     }
     //Draggable Item Boxes LIST2
-    for (var i = 0; i < list2.length; i++)
+    for (var i = game.interInvScroll2; i < list2.length; i++)
     {
         //Item Main Box
         if (list2[i].dragged == false)
@@ -955,7 +997,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             game.x.fillStyle = "#18181A";
             game.x.strokeStyle = "lightGrey";
             game.x.lineWidth = 1;
-            game.x.rect(xxx(51 + 324), yyy(100 + 32 * i), xxx(324), yyy(30));
+            game.x.rect(xxx(51 + 324), yyy(100 + 32 * (i - game.interInvScroll2)), xxx(324), yyy(30));
             game.x.fill();
             game.x.stroke();
 
@@ -970,7 +1012,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             {
                 game.x.fillStyle = "orange";
             }
-            game.x.fillText(list2[i].name, xxx(56 + 324), yyy(100 + 21 + 32 * i));
+            game.x.fillText(list2[i].name, xxx(56 + 324), yyy(100 + 21 + 32 * (i - game.interInvScroll2)));
 
             //Item Quantity
             game.x.textAlign = "right";
@@ -983,7 +1025,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             {
                 game.x.fillStyle = "orange";
             }
-            game.x.fillText("x " + list2[i].quantity, xxx(370 + 324), yyy(100 + 21 + 32 * i));
+            game.x.fillText("x " + list2[i].quantity, xxx(370 + 324), yyy(100 + 21 + 32 * (i - game.interInvScroll2)));
         }
         else //if the item is being dragged original slot looks void.
         {
@@ -991,13 +1033,13 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             game.x.fillStyle = "lightGrey";
             game.x.strokeStyle = "lightGrey";
             game.x.lineWidth = 1;
-            game.x.rect(xxx(51 + 324), yyy(100 + 32 * i), xxx(324), yyy(30));
+            game.x.rect(xxx(51 + 324), yyy(100 + 32 * (i - game.interInvScroll2)), xxx(324), yyy(30));
             game.x.fill();
             game.x.stroke();
         }
 
         //Item Selecting
-        if (game.shiftKey != true && game.unclick && game.mouseX > xxx(51 + 324) && game.mouseX < xxx(51 + 319 + 324) && game.mouseY > yyy(100) + yyy(32) * i && game.mouseY < yyy(100 + 32) + yyy(32) * i)
+        if (game.shiftKey != true && game.unclick && game.mouseX > xxx(51 + 324) && game.mouseX < xxx(51 + 319 + 324) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll2) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll2))
         {
             game.unclick = false;
             if (list2[i].selected == false)
@@ -1025,7 +1067,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         }
 
         //Item Click-to-Drag
-        if (game.shiftKey == true && game.mouseX > xxx(51 + 324) && game.mouseX < xxx(51 + 319 + 324) && game.mouseY > yyy(100) + yyy(32) * i && game.mouseY < yyy(100 + 32) + yyy(32) * i)
+        if (game.shiftKey == true && game.mouseX > xxx(51 + 324) && game.mouseX < xxx(51 + 319 + 324) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll2) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll2))
         {
             var isOneAlreadyDragged = false;
             for (j = 0; j < list2.length; j++)
@@ -1097,7 +1139,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             if (game.mouseX > xxx(50) && game.mouseX < xxx(50 + 324) && game.mouseY > yyy(100) && game.mouseY < yyy(900))
             {
                 var allowed = true;
-                var listNum = Math.round((game.mouseY - yyy(100)) / yyy(32));
+                //var listNum = Math.round((game.mouseY - yyy(100)) / yyy(32));
+                var listNum = Math.round((game.mouseY - yyy(100)) / yyy(32)) + game.interInvScroll1;
                 var listHost = list1;
 
                 //Find out which list the item is from
@@ -1261,7 +1304,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             else if (game.mouseX > xxx(50 + 324) && game.mouseX < xxx(50 + 324 + 324) && game.mouseY > yyy(100) && game.mouseY < yyy(900))
             {
                 var allowed = true;
-                var listNum = Math.round((game.mouseY - yyy(100)) / yyy(32));
+                //var listNum = Math.round((game.mouseY - yyy(100)) / yyy(32));
+                var listNum = Math.round((game.mouseY - yyy(100)) / yyy(32)) + game.interInvScroll2;
                 var listHost = list2;
 
                 //Find out which list the item is from
@@ -1470,6 +1514,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         game.state = "Divine";
         game.interInventory = false;
         game.planetMenu = false;
+        game.interInvScroll1 = 0;
+        game.interInvScroll2 = 0;
         if (context == "Shipyard" || context == "Docking")
         {
             shipConverter(false);
@@ -1554,7 +1600,6 @@ function aiList()
         game.x.stroke();
     }
 
-
     //scrollDown
     if (game.mouseX > xxx(51) && game.mouseX < xxx(699) && game.mouseY > yyy(840) && game.mouseY < yyy(900))
     {
@@ -1586,7 +1631,7 @@ function aiList()
         game.x.stroke();
     }
 
-    for (var i = game.aiListScroll; i < Math.min(14, game.aiList.length); i++)
+    for (var i = game.aiListScroll; i < game.aiList.length; i++)
     {
         game.x.beginPath();
         game.x.fillStyle = "#18181A";

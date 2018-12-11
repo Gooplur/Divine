@@ -98,6 +98,8 @@ function Game()
     this.interInventory = false;
     this.interInv1 = [];
     this.interInv2 = [];
+    this.interInvScroll1 = 0;
+    this.interInvScroll2 = 0;
     this.interContext = "none";
     this.interInvCargoMAX1 = 1;
     this.interInvCargoMAX2 = 1;
@@ -576,7 +578,26 @@ function distance(esto, eso)
 
 function ifInScreenDraw(x, y, size)
 {
-    if (x - xxx(size * game.scale) < (game.viewX + 2/3 * (game.c.width / game.scale)) && x + xxx(size * game.scale) > (game.viewX - 2/3 * (game.c.width / game.scale)) && y - yyy(size * game.scale) < (game.viewY + 2/3 * (game.c.height / game.scale)) && y + yyy(size * game.scale) > (game.viewY - 2/3 * (game.c.height / game.scale)))
+    var szScaledX;
+    if (game.scale >= 1)
+    {
+        szScaledX = xxx(size) * game.scale;
+    }
+    else
+    {
+        szScaledX = xxx(size) / game.scale;
+    }
+    var szScaledY;
+    if (game.scale >= 1)
+    {
+        szScaledY = xxx(size) * game.scale;
+    }
+    else
+    {
+        szScaledY = xxx(size) / game.scale;
+    }
+
+    if (x - szScaledX < (game.viewX + 2/3 * (game.c.width / game.scale)) && x + szScaledX > (game.viewX - 2/3 * (game.c.width / game.scale)) && y - szScaledY < (game.viewY + 2/3 * (game.c.height / game.scale)) && y + szScaledY > (game.viewY - 2/3 * (game.c.height / game.scale)))
     {
         return true;
     }

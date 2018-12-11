@@ -2405,7 +2405,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     var upGrdzScrpNum2 = Math.floor(Math.random() * this.upgrades.length);
                     if (this.upgrades[upGrdzScrpNum2].name != "CORE" && upGrdzScrpNum != upGrdzScrpNum2)
                     {
-                        this.cargoBay.unshift(this.upgrades[upgrdzscrpnum2]);
+                        this.cargoBay.unshift(this.upgrades[upGrdzScrpNum2]);
                     }
                 }
                 else if (salvjLuck > 0.55)
