@@ -294,6 +294,16 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.radius = 100;
                 this.distortResist = true;
             }
+            else if (this.type == "FusionSpike3") //shot by fighter ships
+            {
+                this.speed = who.speed + 80;
+                this.range = 2900;
+                this.damage = 80;
+                this.phasing = true;
+                this.zIndex = 1;
+                this.radius = 19;
+                this.distortResist = true;
+            }
         }
     };
 
@@ -410,6 +420,10 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             else if (this.type == "FusionSpike2")
             {
                 draw(divineKitD, 355, 739, 10, 46, this.X, this.Y, 10 * 3.8, 46 * 3.8, this.rotation + 1/2 * Math.PI, false, 0.65, 0, 0);
+            }
+            else if (this.type == "FusionSpike3")
+            {
+                draw(divineKitD, 355, 739, 10, 46, this.X, this.Y, 10 * 1.2, 46 * 1.2, this.rotation + 1/2 * Math.PI, false, 0.6, 0, 0);
             }
         }
     };

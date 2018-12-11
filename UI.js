@@ -1220,31 +1220,38 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                 if (allowed)
                 {
                     var doMinus = false;
+
                     if (listNum >= list1.length)
                     {
-                        list1.splice(listNum, 0, game.draggedItem);
-                    }
-                    else if (list1[listNum].name == game.draggedItem.name && list1[listNum].quantity + game.draggedItem.quantity <= list1[listNum].maxStack)
-                    {
-                        list1[listNum].quantity += game.draggedItem.quantity;
-                    }
-                    else if (list1[listNum].name == game.draggedItem.name && list1[listNum].quantity + game.draggedItem.quantity > list1[listNum].maxStack)
-                    {
-                        doMinus = true;
-                    }
-                    else
-                    {
-                        list1.splice(listNum, 0, game.draggedItem);
-                    }
-
-                    if (doMinus)
-                    {
-                        game.draggedItem.quantity -= (list1[listNum].maxStack - list1[listNum].quantity);
-                        list1[listNum].quantity = list1[listNum].maxStack;
-                    }
-                    else
-                    {
+                        list1.push(game.draggedItem);
                         listHost.splice(listHost.indexOf(game.draggedItem), 1);
+                    }
+                    else if (list1[listNum].dragged == false)
+                    {
+
+                        if (list1[listNum].name == game.draggedItem.name && list1[listNum].quantity + game.draggedItem.quantity <= list1[listNum].maxStack)
+                        {
+                            list1[listNum].quantity += game.draggedItem.quantity;
+                        }
+                        else if (list1[listNum].name == game.draggedItem.name && list1[listNum].quantity + game.draggedItem.quantity > list1[listNum].maxStack)
+                        {
+                            doMinus = true;
+                        }
+                        else
+                        {
+                            list1.splice(listNum, 0, game.draggedItem);
+                        }
+
+                        if (doMinus)
+                        {
+                            var cauntidadDeRestar = (list1[listNum].maxStack - list1[listNum].quantity);
+                            game.draggedItem.quantity -= cauntidadDeRestar;
+                            list1[listNum].quantity = list1[listNum].maxStack;
+                        }
+                        else
+                        {
+                            listHost.splice(listHost.indexOf(game.draggedItem), 1);
+                        }
                     }
                 }
 
@@ -1415,29 +1422,33 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     var doMinus = false;
                     if (listNum >= list2.length)
                     {
-                        list2.splice(listNum, 0, game.draggedItem);
-                    }
-                    else if (list2[listNum].name == game.draggedItem.name && list2[listNum].quantity + game.draggedItem.quantity <= list2[listNum].maxStack)
-                    {
-                        list2[listNum].quantity += game.draggedItem.quantity;
-                    }
-                    else if (list2[listNum].name == game.draggedItem.name && list2[listNum].quantity + game.draggedItem.quantity > list2[listNum].maxStack)
-                    {
-                        doMinus = true;
-                    }
-                    else
-                    {
-                        list2.splice(listNum, 0, game.draggedItem);
-                    }
-
-                    if (doMinus)
-                    {
-                        game.draggedItem.quantity -= (list2[listNum].maxStack - list2[listNum].quantity);
-                        list2[listNum].quantity = list2[listNum].maxStack;
-                    }
-                    else
-                    {
+                        list2.push(game.draggedItem);
                         listHost.splice(listHost.indexOf(game.draggedItem), 1);
+                    }
+                    else if (list2[listNum].dragged == false)
+                    {
+                        if (list2[listNum].name == game.draggedItem.name && list2[listNum].quantity + game.draggedItem.quantity <= list2[listNum].maxStack)
+                        {
+                            list2[listNum].quantity += game.draggedItem.quantity;
+                        }
+                        else if (list2[listNum].name == game.draggedItem.name && list2[listNum].quantity + game.draggedItem.quantity > list2[listNum].maxStack)
+                        {
+                            doMinus = true;
+                        }
+                        else
+                        {
+                            list2.splice(listNum, 0, game.draggedItem);
+                        }
+
+                        if (doMinus)
+                        {
+                            game.draggedItem.quantity -= (list2[listNum].maxStack - list2[listNum].quantity);
+                            list2[listNum].quantity = list2[listNum].maxStack;
+                        }
+                        else
+                        {
+                            listHost.splice(listHost.indexOf(game.draggedItem), 1);
+                        }
                     }
                 }
 

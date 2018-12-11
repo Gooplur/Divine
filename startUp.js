@@ -200,7 +200,8 @@ function Game()
     this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Good"));
     //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", true, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", true, "Standard", "Stocked"));
     //for (var i = 0; i < 2; i++)
     //{
     //    this.shipsList.push(new Ship(25000 - 2500 + 500 * i, -25000 - 2500 + 500 * i, "Screecher", "Player", "swooper", false, "Standard", "Good"));
@@ -229,7 +230,10 @@ function Game()
     this.shipsList.push(new Ship(8200, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(4750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
     this.shipsList.push(new Ship(6000, -3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "none", false, "Standard", "Good"));
+
+    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Advanced", "Good"));
+    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
 
     //this.shipsList.push(new Ship(-10000, 10000, "Harbinger88", "Boofeln Widget Corporation", "simple", false, "Standard", "Stocked"));
     //this.shipsList.push(new Ship(-2500, 5500, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
@@ -572,7 +576,7 @@ function distance(esto, eso)
 
 function ifInScreenDraw(x, y, size)
 {
-    if (x < game.viewX + 2/3 * (game.c.width / game.scale) + size * game.scale && x > game.viewX - 2/3 * (game.c.width / game.scale) - size * game.scale && y < game.viewY + 2/3 * (game.c.height / game.scale) + size * game.scale && y > game.viewY - 2/3 * (game.c.height / game.scale) - size * game.scale)
+    if (x - xxx(size) < (game.viewX + 2/3 * (game.c.width / game.scale)) && x + xxx(size) > (game.viewX - 2/3 * (game.c.width / game.scale)) && y - yyy(size) < (game.viewY + (size / game.scale) + 2/3 * (game.c.height / game.scale)) && y + yyy(size) > (game.viewY - 2/3 * (game.c.height / game.scale)))
     {
         return true;
     }

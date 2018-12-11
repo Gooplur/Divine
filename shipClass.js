@@ -179,7 +179,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.recharge = this.rechargeMAX;
             this.powerMAX = 3000; //the total power capacity that the ship has.
             this.radarRange = 12000;
-            this.cargoMAX = 25; //the total amount of cargo that the ship can carry.
+            this.cargoMAX = 6; //the total amount of cargo that the ship can carry.
             this.speedMAX = 30; //ships maximum potential speed
             this.accelerationMAX = 4;//max speed up/slow down rate
             this.acceleration = this.accelerationMAX;
@@ -251,6 +251,87 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.laserSound1 = new Audio("sounds/lightLas.wav");
             this.laserSound2 = new Audio("sounds/missileLaunch.wav");
         }
+        else if (this.type == "MinionC32")
+        {
+            this.size = 55;
+            this.integrityMAX = 135; //the amount of damage the physical ship can take before total destruction.
+            this.shieldsMAX = 300; //the total capacity of the ships shielding systems.
+            this.rechargeMAX = 6; //the rate at which shields recharge in the ships best condition.
+            this.recharge = this.rechargeMAX;
+            this.powerMAX = 2500; //the total power capacity that the ship has.
+            this.radarRange = 15000;
+            this.cargoMAX = 8; //the total amount of cargo that the ship can carry.
+            this.speedMAX = 20; //ships maximum potential speed
+            this.accelerationMAX = 2.5;//max speed up/slow down rate
+            this.acceleration = this.accelerationMAX;
+            this.handlingMAX = 1/100 * Math.PI; //max turn speed
+            this.handling = this.handlingMAX;
+            this.strafable = true;
+            this.strafeMAX = 4;
+            this.shieldingCost = 0.15;
+            this.rechargeCost = 0.3;
+            this.accelerationCost = 0.3;
+            this.handlingCost = 0.01;
+            this.weaponCost = 0.2;
+            this.explosionStyle = [25, 22, 33, ["#53116D", "#500296", "#3D0852"]];
+            this.shieldsColour = "#34116D";
+            this.boostSpeed = 29;
+            this.boostAccel = 5;
+            this.boostHandle = 0.5/100 * Math.PI;
+            this.boostStrafe = 6;
+            this.boostCost = 4;
+
+            if (upgrade == "Standard")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("MinionC32-FusionSentryGun", 1)];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("MinionC32-FusionSentryGun", 1), itemize("RedStarShields", 1)];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [itemize("CORE", 1)];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Doom")
+            {
+                this.ammunition = [];
+            }
+
+            //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
+            this.explosionSound = new Audio("sounds/heavyXPL.wav");
+            this.accelSound = new Audio("sounds/accl.mp3");
+            this.accelSoundTime1 = 0.2;
+            this.accelSoundTime2 = 1.1;
+            this.laserSound1 = new Audio("sounds/lightLas.wav");
+            this.laserSound2 = new Audio("sounds/missileLaunch.wav");
+        }
         else if (this.type == "Disk01")
         {
             this.size = 16;
@@ -262,7 +343,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.recharge = this.rechargeMAX;
             this.powerMAX = 500; //the total power capacity that the ship has.
             this.radarRange = 8000;
-            this.cargoMAX = 10; //the total amount of cargo that the ship can carry.
+            this.cargoMAX = 3; //the total amount of cargo that the ship can carry.
             this.speedMAX = 25; //ships maximum potential speed
             this.accelerationMAX = 25;//max speed up/slow down rate
             this.acceleration = this.accelerationMAX;
@@ -331,7 +412,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.recharge = this.rechargeMAX;
             this.powerMAX = 6400; //the total power capacity that the ship has.
             this.radarRange = 18000;
-            this.cargoMAX = 20; //the total amount of cargo that the ship can carry.
+            this.cargoMAX = 12; //the total amount of cargo that the ship can carry.
             this.speedMAX = 49; //ships maximum potential speed
             this.accelerationMAX = 7;//max speed up/slow down rate
             this.acceleration = this.accelerationMAX;
@@ -412,7 +493,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.recharge = this.rechargeMAX;
             this.powerMAX = 90000; //the total power capacity that the ship has.
             this.radarRange = 65000;
-            this.cargoMAX = 100; //the total amount of cargo that the ship can carry.
+            this.cargoMAX = 50; //the total amount of cargo that the ship can carry.
             this.speedMAX = 80; //ships maximum potential speed
             this.accelerationMAX = 4;//max speed up/slow down rate
             this.acceleration = this.accelerationMAX;
@@ -589,7 +670,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.recharge = this.rechargeMAX;
             this.powerMAX = 1000000; //the total power capacity that the ship has.
             this.radarRange = 300000;
-            this.cargoMAX = 500; //the total amount of cargo that the ship can carry.
+            this.cargoMAX = 300; //the total amount of cargo that the ship can carry.
             this.speedMAX = 120; //ships maximum potential speed
             this.accelerationMAX = 5;//max speed up/slow down rate
             this.acceleration = this.accelerationMAX;
@@ -855,15 +936,6 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         {
             this.power = 0;
         }
-
-        if (this.acceleration > this.getAcceleration())
-        {
-            this.acceleration = this.getAcceleration();
-        }
-        else if (this.acceleration < 0)
-        {
-            this.acceleration = 0;
-        }
     };
 
     //DRAW SHIPS
@@ -900,6 +972,35 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         else
                         {
                             draw(divineStarterPack, 65, 11, 36, 51, this.X, this.Y, 36, 51, this.rotation, false, 1, -1, -5);
+                        }
+                    }
+                    this.accessUpgrades("drawAbove");
+                }
+                if (this.type == "MinionC32")
+                {
+                    this.accessUpgrades("drawBelow");
+                    if (this.speedAlteration == false)
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitD, 83, 684, 80, 117, 80, 117, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 80, 117, this.X, this.Y, 80, 117, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitD, 83, 684, 80, 117, this.X, this.Y, 80, 117, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitD, 171, 684, 80, 117, 80, 117, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 80, 117, this.X, this.Y, 80, 117, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitD, 83, 684, 80, 117, this.X, this.Y, 80, 117, this.rotation, false, 1, 0, 0);
                         }
                     }
                     this.accessUpgrades("drawAbove");
@@ -1447,7 +1548,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
+                    this.speed = Math.min(this.getSpeed(), this.speed + (this.getAcceleration() / 25));
                     if (game.shiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1461,8 +1562,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.max(0, this.speed - (this.acceleration / 25));
-                    this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                    this.speed = Math.max(0, this.speed - (this.getAcceleration() / 25));
+                    this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                     if (game.shiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1487,7 +1588,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
+                    this.speed = Math.min(this.getSpeed(), this.speed + (this.getAcceleration() / 25));
                     if (game.shiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1501,8 +1602,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.max(0, this.speed - (this.acceleration / 25));
-                    this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                    this.speed = Math.max(0, this.speed - (this.getAcceleration() / 25));
+                    this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                     if (game.shiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1525,7 +1626,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.strafe = Math.max(-this.getStrafe(), this.strafe - (this.acceleration / 25));
+                    this.strafe = Math.max(-this.getStrafe(), this.strafe - (this.getAcceleration() / 25));
                     if (game.shiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1539,7 +1640,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.strafe = Math.min(this.getStrafe(), this.strafe + (this.acceleration / 25));
+                    this.strafe = Math.min(this.getStrafe(), this.strafe + (this.getAcceleration() / 25));
                     if (game.shiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1563,7 +1664,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
+                    this.speed = Math.min(this.getSpeed(), this.speed + (this.getAcceleration() / 25));
                     if (this.aiShiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1577,8 +1678,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.max(0, this.speed - (this.acceleration / 25));
-                    this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                    this.speed = Math.max(0, this.speed - (this.getAcceleration() / 25));
+                    this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                     if (this.aiShiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1599,7 +1700,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.min(this.getSpeed(), this.speed + (this.acceleration / 25));
+                    this.speed = Math.min(this.getSpeed(), this.speed + (this.getAcceleration() / 25));
                     if (this.aiShiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1613,8 +1714,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, false, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.speed = Math.max(0, this.speed - (this.acceleration / 25));
-                    this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                    this.speed = Math.max(0, this.speed - (this.getAcceleration() / 25));
+                    this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                     if (this.aiShiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1637,7 +1738,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.strafe = Math.max(-this.getStrafe(), this.strafe - (this.acceleration / 25));
+                    this.strafe = Math.max(-this.getStrafe(), this.strafe - (this.getAcceleration() / 25));
                     if (this.aiShiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1651,7 +1752,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     playSound(this.accelSound, this.accelSoundTime1, this.accelSoundTime2);
                     this.speedAlteration = true;
-                    this.strafe = Math.min(this.getStrafe(), this.strafe + (this.acceleration / 25));
+                    this.strafe = Math.min(this.getStrafe(), this.strafe + (this.getAcceleration() / 25));
                     if (this.aiShiftKey)
                     {
                         this.power -= this.boostCost / 100;
@@ -1821,7 +1922,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             this.aiWKey = true;
                             if (this.strafable)
                             {
-                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                                this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                             }
                         }
                         else
@@ -1938,7 +2039,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             this.aiWKey = true;
                             if (this.strafable)
                             {
-                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                                this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                             }
                         }
                         else
@@ -2047,7 +2148,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             this.aiWKey = true;
                             if (this.strafable)
                             {
-                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                                this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                             }
                         }
                         else
@@ -2152,7 +2253,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             this.aiWKey = true;
                             if (this.strafable)
                             {
-                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                                this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                             }
                         }
                     }
@@ -2179,7 +2280,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             this.aiQKey = false;
                             if (this.strafable)
                             {
-                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                                this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                             }
                             if (this.cloakable)
                             {
@@ -2196,7 +2297,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             }
                             if (this.strafable)
                             {
-                                this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                                this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                             }
                             if (this.cloakable)
                             {
@@ -2227,7 +2328,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.aiSKey = true;
                     if (this.strafable)
                     {
-                        this.strafe = Math.max(0, this.strafe - (this.acceleration / 25));
+                        this.strafe = Math.max(0, this.strafe - (this.getAcceleration() / 25));
                     }
                     if (this.cloakable)
                     {
@@ -2291,6 +2392,30 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             if (new Date().getTime() - this.destructionTime > this.destructDuration * 1000 && this.destructionTime != 0)
             {
                 //drop cargo upon deletion
+
+                    //if lucky, an upgrade or two will survive the explosion
+                var salvjLuck = Math.random();
+                if (salvjLuck > 0.85)
+                {
+                    var upGrdzScrpNum = Math.floor(Math.random() * this.upgrades.length);
+                    if (this.upgrades[upGrdzScrpNum].name != "CORE")
+                    {
+                        this.cargoBay.unshift(this.upgrades[upGrdzScrpNum]);
+                    }
+                    var upGrdzScrpNum2 = Math.floor(Math.random() * this.upgrades.length);
+                    if (this.upgrades[upGrdzScrpNum2].name != "CORE" && upGrdzScrpNum != upGrdzScrpNum2)
+                    {
+                        this.cargoBay.unshift(this.upgrades[upgrdzscrpnum2]);
+                    }
+                }
+                else if (salvjLuck > 0.55)
+                {
+                    var upGrdzScrpNum = Math.floor(Math.random() * this.upgrades.length);
+                    if (this.upgrades[upGrdzScrpNum].name != "CORE")
+                    {
+                        this.cargoBay.unshift(this.upgrades[upGrdzScrpNum]);
+                    }
+                }
 
                     //insert scrap into cargo upon destruction
                 var scrapPotential = (this.size / 15) * 5;
@@ -2587,6 +2712,115 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                     this.power -= (this.weaponCost * 2);
                                     playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                     game.projectilesList.push(new Projectile("F1Laser", this.X  - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16, this, this.rotation + this.turretRot1));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "CORE" && this.type == "MinionC32")
+                {
+                    this.sidegunsRate = 3.5; //these mainguns come with this ship and are inseparable from its base structure.
+                    if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 12))
+                            {
+                                this.power -= (this.weaponCost * 12);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("FusionSpike3", this.X + Math.cos(this.rotation - Math.PI * 5.8 / 16) * 22, this.Y  + Math.sin(this.rotation - Math.PI * 5.8 / 16) * 22, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("FusionSpike3", this.X + Math.cos(this.rotation - Math.PI * 10.2 / 16) * 22, this.Y  + Math.sin(this.rotation - Math.PI * 10.2 / 16) * 22, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && game.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.aiSpaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 12))
+                            {
+                                this.power -= (this.weaponCost * 12);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("FusionSpike3", this.X + Math.cos(this.rotation - Math.PI * 5.8 / 16) * 22, this.Y  + Math.sin(this.rotation - Math.PI * 5.8 / 16) * 22, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("FusionSpike3", this.X + Math.cos(this.rotation - Math.PI * 10.2 / 16) * 22, this.Y  + Math.sin(this.rotation - Math.PI * 10.2 / 16) * 22, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "MinionC32-FusionSentryGun" && this.type == "MinionC32" && this.upgrades[i].part == "turret")
+                {
+                    this.turret1Rate = 3.5;
+                    if (use == "drawAbove")
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitD, 870, 664, 19, 18, 19, 18, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 19, 18, this.X, this.Y, 19, 18, this.rotation, false, 1, 0, 0);
+                            var colorized2 = colorizedImage(divineKitD, 866, 613, 25, 53, 25, 53, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized2, 0, 0, 25, 53, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16, 25 * 0.9, 53 * 0.9, this.rotation + 1/2 * Math.PI + this.turretRot1, false, 1, + 0.4, -4.6);
+                        }
+                        else
+                        {
+                            draw(divineKitD, 870, 664, 19, 18, this.X, this.Y, 19, 18, this.rotation, false, 1, 0, 0);
+                            draw(divineKitD, 866, 613, 25, 53, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16, 25 * 0.9, 53 * 0.9, this.rotation + 1/2 * Math.PI + this.turretRot1, false, 1, + 0.4, -4.6);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.Y, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.X) - 1 * Math.PI - this.rotation;
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 8))
+                                {
+                                    this.power -= (this.weaponCost * 8);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("FusionSpike3", this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.cos(this.rotation + this.turretRot1 - Math.PI * 15.98 / 16) * -44, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.sin(this.rotation + this.turretRot1 - Math.PI * 15.98 / 16) * -44, this, this.rotation + this.turretRot1));
+                                }
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.turretPowered == true )
+                        {
+                            //Point to nearest enemy
+                            this.targetClosestEnemy("sentry");
+                            if (this.sentryTarget != "none")
+                            {
+                                this.turretRot1 = Math.atan2(this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.Y, this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - this.sentryTarget.X) - 1 * Math.PI - this.rotation;
+                            }
+                            else
+                            {
+                                this.turretRot1 += 0.02;
+                            }
+
+                            if (new Date().getTime() - this.turret1StoreTime >= this.turret1Rate * 1000 && this.sentryTarget != "none")
+                            {
+                                this.turret1StoreTime = new Date().getTime();
+                                if (this.power >= (this.weaponCost * 8))
+                                {
+                                    this.power -= (this.weaponCost * 8);
+                                    playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                    game.projectilesList.push(new Projectile("FusionSpike3", this.X - Math.cos(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.cos(this.rotation + this.turretRot1 - Math.PI * 15.98 / 16) * -44, this.Y - Math.sin(this.rotation - Math.PI * 7 / 16) * 1.16 - Math.sin(this.rotation + this.turretRot1 - Math.PI * 15.98 / 16) * -44, this, this.rotation + this.turretRot1));
                                 }
                             }
                         }
@@ -3766,7 +4000,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
     this.runSystems = function()
     {
-        if (ifInScreenDraw(this.X, this.Y, this.size) || game.togglePerformance == false)
+        if (ifInScreenDraw(this.X, this.Y, this.size * 1.5) || game.togglePerformance == false)
         {
             this.destruct();
             if (this.activateThisShip)

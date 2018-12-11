@@ -245,6 +245,15 @@
             this.image = ["divineKitD", 447, 695, 77, 87, 1.15];
             this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
         }
+        else if (this.name == "MinionC32-FusionSentryGun")
+        {
+            this.utility = "part";
+            this.part = "turret";
+            this.manufacturer = "Grevner Technologies";
+            this.price = 6200;
+            this.image = ["divineKitD", 605, 714, 68, 49, 0.86];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
+        }
 
         //Core
         else if (this.name == "CORE")
@@ -418,6 +427,15 @@
             this.manufacturer = "Grevner Technologies";
             this.price = 3000000;
             this.image = ["divineKitD", 29, 127, 384, 556, 0.2];
+            this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
+        }
+        else if (this.name == "MinionC32")
+        {
+            this.utility = "ship";
+            this.type = "Fighter (Medium)";
+            this.manufacturer = "Grevner Technologies";
+            this.price = 9000;
+            this.image = ["divineKitD", 83, 684, 80, 116, 0.45];
             this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
         }
 
