@@ -576,7 +576,7 @@ function distance(esto, eso)
 
 function ifInScreenDraw(x, y, size)
 {
-    if (x - xxx(size) < (game.viewX + 2/3 * (game.c.width / game.scale)) && x + xxx(size) > (game.viewX - 2/3 * (game.c.width / game.scale)) && y - yyy(size) < (game.viewY + (size / game.scale) + 2/3 * (game.c.height / game.scale)) && y + yyy(size) > (game.viewY - 2/3 * (game.c.height / game.scale)))
+    if (x - xxx(size * game.scale) < (game.viewX + 2/3 * (game.c.width / game.scale)) && x + xxx(size * game.scale) > (game.viewX - 2/3 * (game.c.width / game.scale)) && y - yyy(size * game.scale) < (game.viewY + 2/3 * (game.c.height / game.scale)) && y + yyy(size * game.scale) > (game.viewY - 2/3 * (game.c.height / game.scale)))
     {
         return true;
     }
