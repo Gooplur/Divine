@@ -221,15 +221,16 @@ function Game()
     this.shipsList = [];
     //this.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
-    //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", false, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
     this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
-    //this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
+    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
     //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
-    //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
-    //this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", true, "Standard", "Stocked"));
+    this.shipsList.push(new Ship(23000, -25000, "Capsid08", "Player", "follower", false, "Standard", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", true, "Advanced", "Stocked"));
     //for (var i = 0; i < 2; i++)
     //{
     //    this.shipsList.push(new Ship(25000 - 2500 + 500 * i, -25000 - 2500 + 500 * i, "Screecher", "Player", "swooper", false, "Standard", "Good"));
@@ -243,6 +244,7 @@ function Game()
     //{
     //    this.shipsList.push(new Ship(-3000 - 2400 + 300 * i, 0 - 2400 + 300 * i, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
     //}
+    this.shipsList.push(new Ship(-16000, 16000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(-9000, 9000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(-1300, -500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(7560, -250, "Mantis09", "Boofeln Widget Corporation", "simple", false, "Advanced", "Doom"));
@@ -258,10 +260,12 @@ function Game()
     this.shipsList.push(new Ship(8200, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(4750, 1700, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(6000, -3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(10000, -9000, "Capsid08", "Boofeln Widget Corporation", "basic", false, "Standard", "Stocked"));
+    this.shipsList.push(new Ship(-8200, 8400, "Capsid08", "Player", "basic", false, "Advanced", "Stocked"));
 
-    //this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Advanced", "Good"));
-    //this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
-    //this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Advanced", "Good"));
+    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
 
     //this.shipsList.push(new Ship(-10000, 10000, "Harbinger88", "Boofeln Widget Corporation", "simple", false, "Standard", "Stocked"));
     //this.shipsList.push(new Ship(-2500, 5500, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));

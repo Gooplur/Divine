@@ -350,10 +350,21 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.damage = 33;
                 this.zIndex = 1;
                 this.radius = 13;
-                this.distortResist = true;
+                this.distortResist = false;
                 this.bombType = "sticky";
                 this.bombAbility = "none";
                 this.bombDelete = false; //to delete the bomb automatically after the damage is registered
+            }
+            else if (this.type == "SolarFlame")
+            {
+                this.solar = true;
+                this.speed = who.speed + 18;
+                this.range = 700;
+                this.damage = 24;
+                this.phasing = false;
+                this.zIndex = 1;
+                this.radius = 65;
+                this.distortResist = true;
             }
         }
     };
@@ -628,26 +639,24 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             {
                 if (this.boom == true)
                 {
-                    //if (this.kaboom != "over")
-                    //{
-                    //    //this.kaboom = true;
-                    //}
-
                     if (this.animLoop == 0)
                     {
-                        this.animate(200, [[divineKitE, 871, 23, 14, 14, this.X, this.Y, 14 * 1.55, 14 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 899, 15, 27, 24, this.X, this.Y, 27 * 1.55, 24 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE,820, 55, 38, 36, this.X, this.Y, 38 * 1.55, 36 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 872, 50, 59, 54, this.X, this.Y, 59 * 1.55, 54 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 872, 50, 59, 54, this.X, this.Y, 59 * 1.65, 54 * 1.65, this.rotation + 1/2 * Math.PI, false, 0.8, 0, 0]]);
+                        this.animate(0.2, [[divineKitE, 871, 23, 14, 14, this.X, this.Y, 14 * 1.55, 14 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 899, 15, 27, 24, this.X, this.Y, 27 * 1.55, 24 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE,820, 55, 38, 36, this.X, this.Y, 38 * 1.55, 36 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 872, 50, 59, 54, this.X, this.Y, 59 * 1.55, 54 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 872, 50, 59, 54, this.X, this.Y, 59 * 1.65, 54 * 1.65, this.rotation + 1/2 * Math.PI, false, 0.8, 0, 0]]);
                     }
                     else
                     {
                         this.kaboom = true;
                         this.bombDelete = true;
-                        //this.bombDelete = "delete";
                     }
                 }
                 else
                 {
                     draw(divineKitE, 832, 26, 11, 11, this.X, this.Y, 11 * 1.55, 11 * 1.55, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
                 }
+            }
+            else if (this.type == "SolarFlame")
+            {
+                this.animate(0.5, [[divineKitE, 216, 8, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 217, 37, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 256, 39, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 296, 21, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 254, 7, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0]]);
             }
         }
     };

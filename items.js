@@ -493,7 +493,7 @@
             this.utility = "ship";
             this.type = "Fighter (large)";
             this.manufacturer = "Solaris";
-            this.price = 33000;
+            this.price = 21000;
             this.image = ["divineKitE", 806, 181, 118, 158, 0.7];
             this.brand = ["divineKitE", 0, 1, 56, 67, 1.3];
         }

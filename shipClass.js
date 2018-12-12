@@ -4272,10 +4272,10 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     }
                     else if (use == "aiActivate")
                     {
-                        if (this.maingunsPowered == true && game.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
                         {
                             this.maingunsStoreTime = new Date().getTime();
-                            game.aiSpaceKey = false;
+                            this.aiSpaceKey = false;
 
                             if (this.power >= (this.weaponCost * 2))
                             {
@@ -4294,6 +4294,52 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 11.3 / 16) * 70, this.Y  + Math.sin(this.rotation - Math.PI * 11.3 / 16) * 70, this, this.rotation - Math.PI / 2));
                                 game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 12.4 / 16) * 75, this.Y  + Math.sin(this.rotation - Math.PI * 12.4 / 16) * 75, this, this.rotation - Math.PI / 2));
                                 game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 13.5 / 16) * 80, this.Y  + Math.sin(this.rotation - Math.PI * 13.5 / 16) * 80, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "Capsid08-SolarCasterTransplant" && this.type == "Capsid08" && this.upgrades[i].part == "mainguns")
+                {
+                    this.maingunsRate = 0.05; //these mainguns come with this ship and are inseparable from its base structure.
+                    if (use == "drawAbove")
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitE, 808, 508, 107, 112, 107, 112, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 107, 112, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 43, this.Y + Math.sin(this.rotation - Math.PI * 8 / 16) * 43, 107 * 1.55, 112 * 1.55, this.rotation, false, 1, 3, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitE, 808, 508, 107, 112, this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 43, this.Y + Math.sin(this.rotation - Math.PI * 8 / 16) * 43, 107 * 1.55, 112 * 1.55, this.rotation, false, 1, 3, 0);
+                        }
+                    }
+                    else if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 0.5))
+                            {
+                                this.power -= (this.weaponCost * 0.5);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("SolarFlame", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 108, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 108, this, this.rotation - Math.PI / 2 + Math.PI * (8 + (1 - (2 * Math.random())) / 16)));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiSpaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 0.5))
+                            {
+                                this.power -= (this.weaponCost * 0.5);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("SolarFlame", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 108, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 108, this, this.rotation - Math.PI / 2 + Math.PI * (8 + (1 - (2 * Math.random())) / 16)));
                             }
                         }
                     }
