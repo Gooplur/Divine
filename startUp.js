@@ -9,6 +9,22 @@ function imageSoundLoading()
     divineStarterPack.src = ("images/divineStarterPack.png");
     window.divineStarterPack = divineStarterPack;
 
+    var vortex = new Image();
+    vortex.src = ("images/vortex.png");
+    window.vortex = vortex;
+
+    var sun1 = new Image();
+    sun1.src = ("images/sun1.png");
+    window.sun1 = sun1;
+
+    var sun2 = new Image();
+    sun2.src = ("images/sun2.png");
+    window.sun2 = sun2;
+
+    var sun3 = new Image();
+    sun3.src = ("images/sun3.png");
+    window.sun3 = sun3;
+
     var divineKitA = new Image();
     divineKitA.src = ("images/divineKitA.png");
     window.divineKitA = divineKitA;
@@ -25,6 +41,10 @@ function imageSoundLoading()
     divineKitD.src = ("images/divineKitD.png");
     window.divineKitD = divineKitD;
 
+    var divineKitE = new Image();
+    divineKitE.src = ("images/divineKitE.png");
+    window.divineKitE = divineKitE;
+
     divineStarterPack.onload = function()
     {
         divineKitA.onload = function()
@@ -35,7 +55,10 @@ function imageSoundLoading()
                 {
                     divineKitD.onload = function()
                     {
-                        startGame();
+                        divineKitE.onload = function()
+                        {
+                            startGame();
+                        };
                     };
                 };
             };
@@ -201,11 +224,12 @@ function Game()
     //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Advanced", "Stocked"));
     //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
     this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
+    //this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
     //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", true, "Standard", "Stocked"));
+    //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
+    //this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", false, "Standard", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", true, "Standard", "Stocked"));
     //for (var i = 0; i < 2; i++)
     //{
     //    this.shipsList.push(new Ship(25000 - 2500 + 500 * i, -25000 - 2500 + 500 * i, "Screecher", "Player", "swooper", false, "Standard", "Good"));
@@ -221,23 +245,23 @@ function Game()
     //}
     this.shipsList.push(new Ship(-9000, 9000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(-1300, -500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(7560, -250, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Advanced", "Doom"));
+    this.shipsList.push(new Ship(7560, -250, "Mantis09", "Boofeln Widget Corporation", "simple", false, "Advanced", "Doom"));
     this.shipsList.push(new Ship(-1000, 500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(500, 100, "Afid01", "Boofeln Widget Corporation", "simple", false, "Advanced", "Good"));
-    this.shipsList.push(new Ship(300, -200, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(300, -200, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(100, 1500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(-250, -500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(900, -900, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(900, -900, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(9000, -1000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(7750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(1400, 1100, "Afid01", "Boofeln Widget Corporation", "basic-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(7750, 1700, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(1400, 1100, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
     this.shipsList.push(new Ship(8200, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(4750, 1700, "Afid01", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
+    this.shipsList.push(new Ship(4750, 1700, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
     this.shipsList.push(new Ship(6000, -3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
 
-    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Advanced", "Good"));
-    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Advanced", "Good"));
+    //this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+    //this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
 
     //this.shipsList.push(new Ship(-10000, 10000, "Harbinger88", "Boofeln Widget Corporation", "simple", false, "Standard", "Stocked"));
     //this.shipsList.push(new Ship(-2500, 5500, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
@@ -580,26 +604,7 @@ function distance(esto, eso)
 
 function ifInScreenDraw(x, y, size)
 {
-    var szScaledX;
-    if (game.scale >= 1)
-    {
-        szScaledX = xxx(size) * game.scale;
-    }
-    else
-    {
-        szScaledX = xxx(size) / game.scale;
-    }
-    var szScaledY;
-    if (game.scale >= 1)
-    {
-        szScaledY = xxx(size) * game.scale;
-    }
-    else
-    {
-        szScaledY = xxx(size) / game.scale;
-    }
-
-    if (x - szScaledX < (game.viewX + 2/3 * (game.c.width / game.scale)) && x + szScaledX > (game.viewX - 2/3 * (game.c.width / game.scale)) && y - szScaledY < (game.viewY + 2/3 * (game.c.height / game.scale)) && y + szScaledY > (game.viewY - 2/3 * (game.c.height / game.scale)))
+    if (x < game.viewX + 2/3 * (game.c.width / game.scale) + size * game.scale && x > game.viewX - 2/3 * (game.c.width / game.scale) - size * game.scale && y < game.viewY + 2/3 * (game.c.height / game.scale) + size * game.scale && y > game.viewY - 2/3 * (game.c.height / game.scale) - size * game.scale)
     {
         return true;
     }

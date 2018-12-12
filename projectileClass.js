@@ -61,6 +61,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.boomSize = 1; //to determine the size of the explosion animation
     this.boomPeek = false; //this is a bomb animating variable that can be freely used
     this.bombRadius = 800;
+    this.bombRange = 800;
     this.bombAll = false; //this determines whether the bomb hurts allies and friends or not
     //exploding projectiles only
     this.explodes = false;
@@ -79,6 +80,8 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     this.distortion = false;
     this.distort = 0;
     this.distortTime = 0;
+    //solar projectiles
+    this.solar = false;
     //On-Death-Do-Something variables
     this.doOnProjectEnd = false; //when the projectile reaches the end of its project range it does something.
     this.doOnContact = false;
@@ -324,7 +327,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             {
                 this.isbomb = true;
                 this.speed = 0;
-                this.range = 1100;
+                this.bombRange = 880;
                 this.damage = 1111;
                 this.zIndex = 1;
                 this.radius = 50;
@@ -334,7 +337,23 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.bombDelete = false; //to delete the bomb automatically after the damage is registered
                 this.booms = 8; //to determine the number of miniature explosions inside of a bigger one
                 this.boomSize = 0.6; //to determine the size of the explosion animation
-                this.bombRadius = 800;
+                this.bombRadius = 700;
+            }
+            else if (this.type == "SolarStickyBomb")
+            {
+                this.isbomb = true;
+                this.solar = true;
+                this.fuse = 3;
+                this.speed = 20;
+                this.range = 1010;
+                this.bombRange = 80;
+                this.damage = 33;
+                this.zIndex = 1;
+                this.radius = 13;
+                this.distortResist = true;
+                this.bombType = "sticky";
+                this.bombAbility = "none";
+                this.bombDelete = false; //to delete the bomb automatically after the damage is registered
             }
         }
     };
@@ -358,7 +377,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 {
                     if (game.shipsList[i].faction != this.quien.faction || this.bombAll)
                     {
-                        if (this.distanceTo(game.shipsList[i]) <= this.range)
+                        if (this.distanceTo(game.shipsList[i]) <= this.bombRange)
                         {
                             if (this.bombAbility == "vorcadium")
                             {
@@ -370,6 +389,14 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                                 }
                             }
                             this.dealDamageTo(game.shipsList[i]);
+                            if (this.sticker != "none" && this.bombDelete != true)
+                            {
+                                if (this.sticker.integrity <= 0 || this.sticker.destructed == true)
+                                {
+                                    this.sticker = "none";
+                                    this.bombDelete = "delete";
+                                }
+                            }
                         }
                     }
                 }
@@ -387,15 +414,26 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                     this.target = this.nearestEnemy();
                     if (this.distanceTo(this.target) <= this.radius + this.target.size * 0.9 && this.target.stickyResistUP == false)
                     {
+                        this.stickyDist = this.distanceTo(this.target);
                         this.sticker = this.target;
                         this.stickyX = this.sticker.X;
                         this.stickyY = this.sticker.Y;
+                        this.stickRot = this.sticker.rotation;
+                        this.meStickyX = this.X;
+                        this.meStickyY = this.Y;
+                        this.meStickyRot = this.rotation;
+
                     }
                 }
                 else
                 {
-                    this.X += (this.stickyX - this.sticker.X);
-                    this.Y += (this.stickyY - this.sticker.Y);
+                    this.speed = 0;
+                    //this.X += (this.stickyX - this.sticker.X);
+                    //this.Y += (this.stickyY - this.sticker.Y);
+
+                    this.rotation = this.meStickyRot + this.sticker.rotation;
+                    this.X = this.sticker.X + Math.cos(Math.atan2(this.stickyY - this.meStickyY, this.stickyX - this.meStickyX)) * this.stickyDist;
+                    this.Y = this.sticker.Y + Math.sin(Math.atan2(this.stickyY - this.meStickyY, this.stickyX - this.meStickyX)) * this.stickyDist; // - Math.PI
 
                     if (new Date().getTime() - this.fuseTime > 100)
                     {
@@ -586,6 +624,31 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                     draw(divineKitC, 95, 215, 23, 29, this.X, this.Y, 23 * 2.2, 29 * 2.2, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
                 }
             }
+            else if (this.type == "SolarStickyBomb")
+            {
+                if (this.boom == true)
+                {
+                    //if (this.kaboom != "over")
+                    //{
+                    //    //this.kaboom = true;
+                    //}
+
+                    if (this.animLoop == 0)
+                    {
+                        this.animate(200, [[divineKitE, 871, 23, 14, 14, this.X, this.Y, 14 * 1.55, 14 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 899, 15, 27, 24, this.X, this.Y, 27 * 1.55, 24 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE,820, 55, 38, 36, this.X, this.Y, 38 * 1.55, 36 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 872, 50, 59, 54, this.X, this.Y, 59 * 1.55, 54 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.9, 0, 0], [divineKitE, 872, 50, 59, 54, this.X, this.Y, 59 * 1.65, 54 * 1.65, this.rotation + 1/2 * Math.PI, false, 0.8, 0, 0]]);
+                    }
+                    else
+                    {
+                        this.kaboom = true;
+                        this.bombDelete = true;
+                        //this.bombDelete = "delete";
+                    }
+                }
+                else
+                {
+                    draw(divineKitE, 832, 26, 11, 11, this.X, this.Y, 11 * 1.55, 11 * 1.55, this.rotation + 1/2 * Math.PI, false, 1, 0, 0);
+                }
+            }
         }
     };
 
@@ -724,11 +787,14 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                     game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 16.5/18 * 2 * Math.PI, 0, 0));
                     game.projectilesList.push(new Projectile("FusionSpike2",this.X, this.Y, this.quien, 18/18 * 2 * Math.PI, 0, 0));
                 }
-                for (var i = 0; i < game.projectilesList.length; i++)
+                if (this.sticker == "none") //so that sticky bombs will not disapear if they are stuck to a target
                 {
-                    if (game.projectilesList[i] === this)
+                    for (var i = 0; i < game.projectilesList.length; i++)
                     {
-                        game.projectilesList.splice(i, 1);
+                        if (game.projectilesList[i] === this)
+                        {
+                            game.projectilesList.splice(i, 1);
+                        }
                     }
                 }
             }
@@ -742,17 +808,38 @@ function Projectile(type, x, y, who, rotation, adX, adY)
 
     this.dealDamageTo = function(target)
     {
-        var amt = this.damage;
+        var amt;
 
-        target.rechargeBlockedTime = new Date().getTime();
-        if (target.shields - amt >= 0)
+        if (this.solar == true && target.solarResistUP == false)
         {
-            target.shields -= amt;
+            amt = 2/3 * this.damage;
+            var amt2 = 1/3 * this.damage;
+
+            target.rechargeBlockedTime = new Date().getTime();
+            if (target.shields - amt >= 0)
+            {
+                target.shields -= amt;
+            }
+            else
+            {
+                amt -= target.shields;
+                target.integrity -= amt;
+            }
+            target.integrity -= amt2;
         }
-        else
+        else //standard
         {
-            amt -= target.shields;
-            target.integrity -= amt;
+            amt = this.damage;
+            target.rechargeBlockedTime = new Date().getTime();
+            if (target.shields - amt >= 0)
+            {
+                target.shields -= amt;
+            }
+            else
+            {
+                amt -= target.shields;
+                target.integrity -= amt;
+            }
         }
     };
 

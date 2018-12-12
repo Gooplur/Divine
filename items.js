@@ -254,6 +254,24 @@
             this.image = ["divineKitD", 605, 714, 68, 49, 0.86];
             this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
         }
+        else if (this.name == "Capsid08-StickySolarBombTransplant")
+        {
+            this.utility = "part";
+            this.part = "mainguns";
+            this.manufacturer = "Solaris";
+            this.price = 21500;
+            this.image = ["divineKitE", 799, 111, 98, 70, 1.1];
+            this.brand = ["divineKitE", 0, 1, 56, 67, 1.3];
+        }
+        else if (this.name == "Capsid08-SolarCasterTransplant")
+        {
+            this.utility = "part";
+            this.part = "mainguns";
+            this.manufacturer = "Solaris";
+            this.price = 18300;
+            this.image = ["divineKitE", 78, 319, 74, 74, 1.1];
+            this.brand = ["divineKitE", 0, 1, 56, 67, 1.3];
+        }
 
         //Core
         else if (this.name == "CORE")
@@ -330,6 +348,30 @@
             this.price = 28;
             this.description = "Sealed barrels of clear desalinated purified water.";
             this.image = ["divineKitB", 51, 5, 8, 14, 2];
+        }
+        else if (this.name == "Packaged Food")
+        {
+            this.utility = "resource";
+            this.maxStack = 20;
+            this.price = 34;
+            this.description = "Ramen, canned fish, crackers... Food with so many preservatives that it will never go bad.";
+            this.image = ["divineKitE", 399, 20, 48, 37, 1.5];
+        }
+        else if (this.name == "Technology")
+        {
+            this.utility = "resource";
+            this.maxStack = 9;
+            this.price = 200;
+            this.description = "All the most important technological parts for manufacture and sale as consumer technologies.";
+            this.image = ["divineKitE", 451, 3, 46, 48, 1.5];
+        }
+        else if (this.name == "Stem Cells")
+        {
+            this.utility = "resource";
+            this.maxStack = 4;
+            this.price = 600;
+            this.description = "All the most important technological parts for manufacture and sale as consumer technologies.";
+            this.image = ["divineKitE", 510, 6, 47, 48, 1.6];
         }
         else if (this.name == "Petroleum")
         {
@@ -445,6 +487,15 @@
             this.price = 9000;
             this.image = ["divineKitD", 83, 684, 80, 116, 0.45];
             this.brand = ["divineKitD", 16, 0, 44, 47, 2.2];
+        }
+        else if (this.name == "Capsid08")
+        {
+            this.utility = "ship";
+            this.type = "Fighter (large)";
+            this.manufacturer = "Solaris";
+            this.price = 33000;
+            this.image = ["divineKitE", 806, 181, 118, 158, 0.7];
+            this.brand = ["divineKitE", 0, 1, 56, 67, 1.3];
         }
 
         //Set the quantity within reasonable bounds

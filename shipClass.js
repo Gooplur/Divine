@@ -116,11 +116,13 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.distortResistUP = false;
     this.stickyResistUP = false;
     this.transferResistUP = false;
+    this.solarResistUP = false;
 
     //base resistances
     this.distortResist = false;
     this.stickyResist = false;
     this.transferResist = false;
+    this.solarResist = false;
 
     //Status effects
     this.handlingDebuffTime = 0;
@@ -760,6 +762,90 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.laserSound1 = new Audio("sounds/lightLas.wav");
             this.laserSound2 = new Audio("sounds/missileLaunch.wav");
         }
+        else if (this.type == "Capsid08")
+        {
+            this.size = 90;
+            this.integrityMAX = 300; //the amount of damage the physical ship can take before total destruction.
+            this.shieldsMAX = 550; //the total capacity of the ships shielding systems.
+            this.rechargeMAX = 10; //the rate at which shields recharge in the ships best condition.
+            this.recharge = this.rechargeMAX;
+            this.powerMAX = 1000; //the total power capacity that the ship has.
+            this.radarRange = 30000;
+            this.cargoMAX = 12; //the total amount of cargo that the ship can carry.
+            this.speedMAX = 14; //ships maximum potential speed
+            this.accelerationMAX = 5;//max speed up/slow down rate
+            this.acceleration = this.accelerationMAX;
+            this.handlingMAX = 5/100 * Math.PI; //max turn speed
+            this.handling = this.handlingMAX;
+            this.strafable = true;
+            this.strafeMAX = 12;
+            this.shieldingCost = 0.1;
+            this.rechargeCost = 0.15;
+            this.accelerationCost = 0.05;
+            this.handlingCost = 0.01;
+            this.weaponCost = 0.2;
+            this.explosionStyle = [41, 35, 38, ["red", "orange", "green"]];
+            this.shieldsColour = "orange";
+            this.boostSpeed = 17;
+            this.boostAccel = 10;
+            this.boostHandle = 4/100 * Math.PI;
+            this.boostStrafe = 14;
+            this.boostCost = 5;
+
+            this.solarResist = true;
+            this.stickyResist = true;
+
+            if (upgrade == "Standard")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("Capsid08-StickySolarBombTransplant", 1)];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("Capsid08-SolarCasterTransplant", 1), itemize("RedStarShields", 1)];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [itemize("CORE", 1)];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = [];
+            }
+            else if (ammo == "Doom")
+            {
+                this.ammunition = [];
+            }
+
+            //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
+            this.explosionSound = new Audio("sounds/heavyXPL.wav");
+            this.accelSound = new Audio("sounds/accl.mp3");
+            this.accelSoundTime1 = 0.2;
+            this.accelSoundTime2 = 1.1;
+            this.laserSound1 = new Audio("sounds/lightLas.wav");
+            this.laserSound2 = new Audio("sounds/missileLaunch.wav");
+        }
 
         //Predetermined Cargo
         if (typeof(cargoHold) != "undefined" && cargoHold != false)
@@ -774,6 +860,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         this.distortResistUP = this.distortResist;
         this.stickyResistUP = this.stickyResist;
         this.transferResistUP = this.transferResist;
+        this.solarResistUP = this.solarResist;
 
         //bonusReset
         this.shieldsUP = 0;
@@ -952,7 +1039,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     {
         if (z == this.zIndex)
         {
-            if (ifInScreenDraw(this.X, this.Y, this.size))
+            if (ifInScreenDraw(this.X, this.Y, this.size * 2))
             {
                 //DRAW SHIPS
                 if (this.type == "Afid01")
@@ -1168,6 +1255,111 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     }
                     //circle(true, this.X + Math.cos(this.rotation - Math.PI * 12.5 / 16) * 940, this.Y + Math.sin(this.rotation - Math.PI * 12.5 / 16) * 940, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
                     //circle(true, this.X + Math.cos(this.rotation - Math.PI * 53.5 / 80) * -120, this.Y  + Math.sin(this.rotation - Math.PI * 53.5 / 80) * -120, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    this.accessUpgrades("drawAbove");
+                }
+                else if (this.type == "Capsid08")
+                {
+                    this.accessUpgrades("drawBelow");
+                    var uppGrd = false;
+                    var ready2Shute = false;
+                    for (var i = 0; i < this.upgrades.length; i++)
+                    {
+                        if (this.upgrades[i].name == "Capsid08-StickySolarBombTransplant")
+                        {
+                            if (new Date().getTime() - this.maingunsStoreTime >= 2.5 * 1000)
+                            {
+                                ready2Shute = true;
+                            }
+                            uppGrd = true;
+                            break;
+                        }
+                    }
+                    if (uppGrd)
+                    {
+                        if (ready2Shute)
+                        {
+                            if (this.speedAlteration == false)
+                            {
+                                if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                                {
+                                    var colorized = colorizedImage(divineKitE, 793, 345, 143, 152, 143, 152, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                    draw(colorized, 0, 0, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                                else
+                                {
+                                    draw(divineKitE, 793, 345, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                            }
+                            else
+                            {
+                                if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                                {
+                                    var colorized = colorizedImage(divineKitE, 953, 345, 143, 152, 143, 152, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                    draw(colorized, 0, 0, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                                else
+                                {
+                                    draw(divineKitE, 953, 345, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (this.speedAlteration == false)
+                            {
+                                if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                                {
+                                    var colorized = colorizedImage(divineKitE, 953, 184, 143, 152, 143, 152, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                    draw(colorized, 0, 0, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                                else
+                                {
+                                    draw(divineKitE, 953, 184, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                            }
+                            else
+                            {
+                                if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                                {
+                                    var colorized = colorizedImage(divineKitE, 197, 259, 143, 152, 143, 152, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                    draw(colorized, 0, 0, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                                else
+                                {
+                                    draw(divineKitE, 197, 259, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (this.speedAlteration == false)
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineKitE, 793, 184, 143, 152, 143, 152, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                            }
+                            else
+                            {
+                                draw(divineKitE, 793, 184, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                            {
+                                var colorized = colorizedImage(divineKitE, 329, 260, 143, 152, 143, 152, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                                draw(colorized, 0, 0, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                            }
+                            else
+                            {
+                                draw(divineKitE, 329, 260, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
+                            }
+                        }
+                    }
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
                     this.accessUpgrades("drawAbove");
                 }
             }
@@ -2727,7 +2919,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 }
                 if (this.upgrades[i].name == "CORE" && this.type == "MinionC32")
                 {
-                    this.sidegunsRate = 3.5; //these mainguns come with this ship and are inseparable from its base structure.
+                    this.maingunsRate = 3.5; //these mainguns come with this ship and are inseparable from its base structure.
                     if (use == "playerActivate")
                     {
                         if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
@@ -4048,6 +4240,64 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                         }
                     }
                 }
+                if (this.upgrades[i].name == "Capsid08-StickySolarBombTransplant" && this.type == "Capsid08" && this.upgrades[i].part == "mainguns")
+                {
+                    this.maingunsRate = 2.5; //these mainguns come with this ship and are inseparable from its base structure.
+                    if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 2))
+                            {
+                                this.power -= (this.weaponCost * 2);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 2.5 / 16) * 80, this.Y  + Math.sin(this.rotation - Math.PI * 2.5 / 16) * 80, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 3.6 / 16) * 75, this.Y  + Math.sin(this.rotation - Math.PI * 3.6 / 16) * 75, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 4.7 / 16) * 70, this.Y  + Math.sin(this.rotation - Math.PI * 4.7 / 16) * 70, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 5.8 / 16) * 65, this.Y  + Math.sin(this.rotation - Math.PI * 5.8 / 16) * 65, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 6.9 / 16) * 60, this.Y  + Math.sin(this.rotation - Math.PI * 6.9 / 16) * 60, this, this.rotation - Math.PI / 2));
+
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 55, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 55, this, this.rotation - Math.PI / 2));
+
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 9.1 / 16) * 60, this.Y  + Math.sin(this.rotation - Math.PI * 9.1 / 16) * 60, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 10.2 / 16) * 65, this.Y  + Math.sin(this.rotation - Math.PI * 10.2 / 16) * 65, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 11.3 / 16) * 70, this.Y  + Math.sin(this.rotation - Math.PI * 11.3 / 16) * 70, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 12.4 / 16) * 75, this.Y  + Math.sin(this.rotation - Math.PI * 12.4 / 16) * 75, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 13.5 / 16) * 80, this.Y  + Math.sin(this.rotation - Math.PI * 13.5 / 16) * 80, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && game.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.aiSpaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 2))
+                            {
+                                this.power -= (this.weaponCost * 2);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 2.5 / 16) * 80, this.Y  + Math.sin(this.rotation - Math.PI * 2.5 / 16) * 80, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 3.6 / 16) * 75, this.Y  + Math.sin(this.rotation - Math.PI * 3.6 / 16) * 75, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 4.7 / 16) * 70, this.Y  + Math.sin(this.rotation - Math.PI * 4.7 / 16) * 70, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 5.8 / 16) * 65, this.Y  + Math.sin(this.rotation - Math.PI * 5.8 / 16) * 65, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 6.9 / 16) * 60, this.Y  + Math.sin(this.rotation - Math.PI * 6.9 / 16) * 60, this, this.rotation - Math.PI / 2));
+
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 55, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 55, this, this.rotation - Math.PI / 2));
+
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 9.1 / 16) * 60, this.Y  + Math.sin(this.rotation - Math.PI * 9.1 / 16) * 60, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 10.2 / 16) * 65, this.Y  + Math.sin(this.rotation - Math.PI * 10.2 / 16) * 65, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 11.3 / 16) * 70, this.Y  + Math.sin(this.rotation - Math.PI * 11.3 / 16) * 70, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 12.4 / 16) * 75, this.Y  + Math.sin(this.rotation - Math.PI * 12.4 / 16) * 75, this, this.rotation - Math.PI / 2));
+                                game.projectilesList.push(new Projectile("SolarStickyBomb", this.X + Math.cos(this.rotation - Math.PI * 13.5 / 16) * 80, this.Y  + Math.sin(this.rotation - Math.PI * 13.5 / 16) * 80, this, this.rotation - Math.PI / 2));
+                            }
+                        }
+                    }
+                }
             }
         }
     };
@@ -4078,7 +4328,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
     this.runSystems = function()
     {
-        if (ifInScreenDraw(this.X, this.Y, this.size * 1.5) || game.togglePerformance == false)
+        if (ifInScreenDraw(this.X, this.Y, this.size * 2) || game.togglePerformance == false)
         {
             this.destruct();
             if (this.activateThisShip)
