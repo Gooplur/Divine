@@ -104,7 +104,6 @@ function Scenery(X, Y, type, list, extra, size)
                 else if (this.extra == "Safir")
                 {
                     //draw the planet
-                    console.log(sun3.complete);
                     draw(sun3, 0, 0, sun3.width, sun3.height, this.X, this.Y, sun3.width * 14, sun3.height * 14, 0, false, 1, false, false);
 
                     if (this.flag)

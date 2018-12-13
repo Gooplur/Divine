@@ -8,6 +8,31 @@ function navigator()
 {
     if (game.mode == "navigator")
     {
+
+        //Selecting Ships
+        for (var i = 0; i < game.shipsList.length; i++)
+        {
+            //((((game.mouseX - 1/2 * game.c.width) / game.scale) + game.viewX))
+            if (distance(game.worldMouse, game.shipsList[i]) <= game.shipsList[i].size)
+            {
+                if (game.shipsList[i].faction == "Player")
+                {
+                    console.log("pass");
+
+                    if (game.dClick == true)
+                    {
+                        game.dClick = false;
+
+                        for (var j = 0; j < game.shipsList; i++)
+                        {
+                            game.shipsList[j].player = false;
+                        }
+                        game.shipsList[i].player = true;
+                    }
+                }
+            }
+        }
+
         //Controls for scrolling.
         if (game.upKey == true)
         {

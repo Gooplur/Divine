@@ -192,6 +192,7 @@ function Game()
     this.mouseY = 0;
     this.MX = 0;
     this.MY = 0;
+    this.worldMouse = {X: 0, Y: 0};
     this.gameJustStarted = true;
         //Menu Variables
     this.draggedItem = false;
@@ -345,6 +346,7 @@ function Game()
             game.c.addEventListener("mousemove", mouseSensing);
             document.addEventListener("click", mouseClick);
             document.addEventListener("mouseup", mouseRelease);
+            document.addEventListener("dblclick", doubleClick);
         }
         //navigator
         navigator();
@@ -396,6 +398,7 @@ function Game()
             game.x.fillText("X: " + Math.round(self.playerX) + " | Y: " + Math.round(self.playerY), 1/2 * game.c.width, 1/10 * game.c.height); //-440
         }
 
+        this.dClick = false;
         if (self.state == "Divine" || self.state == "DivinePaused" || self.state == "DivinePausedByPlayer")
         {
             requestAnimationFrame(self.gameLoop, self.c);

@@ -275,14 +275,20 @@ function mouseSensing(event)
     //console.log ("( " + game.mouseX + ", " + game.mouseY + " )");
     game.mouseX = event.offsetX; //this sets the mouse X coordinate.
     game.mouseY = event.offsetY; //this sets the mouse Y coordinate.
-    game.MX = game.viewX + game.mouseX - 1/2 * game.c.width;
-    game.MY = game.viewY + game.mouseY - 1/2 * game.c.height;
+    game.MX = (((game.mouseX - 1/2 * game.c.width) / game.scale) + game.viewX);
+    game.MY = (((game.mouseY - 1/2 * game.c.height) / game.scale) + game.viewY);
+    game.worldMouse = {X: game.MX, Y: game.MY};
 }
 
 function mouseClick()
 {
     game.click = true;
     //game.unclick = false; //this is still here as a warning... DO NOT SET UNCLICK TO FALSE ON CLICK!
+}
+
+function doubleClick()
+{
+    game.dClick = true;
 }
 
 function mouseRelease()
