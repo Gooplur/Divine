@@ -138,6 +138,8 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.cloaking = false;
     this.directionless = false; //this negates the need for handling because the ship does not have a front and can move through space in any direction without turning.
     this.shop = []; //this is the equipment that a ship has for sale... it is at discount price if you own the trade station.
+    this.solar = false; //this determines if a ship recharges power using solar radiation
+    this.solarOrganic = false; //this determines if solar radiation can be used to restore integrity
     //ACTION VARIABLES (like moving attacking etc.)
     this.speedAlteration = false;
     this.offline = false; //if a ship is powered offline it can not be discovered by long range trackers but it also cannot change its acceleration use its shielding systems, nor attack with its weapon systems.
@@ -187,7 +189,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.recharge = this.rechargeMAX;
             this.powerMAX = 3000; //the total power capacity that the ship has.
             this.radarRange = 12000;
-            this.cargoMAX = 6; //the total amount of cargo that the ship can carry.
+            this.cargoMAX = 4; //the total amount of cargo that the ship can carry.
             this.speedMAX = 30; //ships maximum potential speed
             this.accelerationMAX = 4;//max speed up/slow down rate
             this.acceleration = this.accelerationMAX;
@@ -351,7 +353,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.recharge = this.rechargeMAX;
             this.powerMAX = 500; //the total power capacity that the ship has.
             this.radarRange = 8000;
-            this.cargoMAX = 3; //the total amount of cargo that the ship can carry.
+            this.cargoMAX = 2; //the total amount of cargo that the ship can carry.
             this.speedMAX = 25; //ships maximum potential speed
             this.accelerationMAX = 25;//max speed up/slow down rate
             this.acceleration = this.accelerationMAX;
@@ -792,6 +794,9 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             this.boostStrafe = 14;
             this.boostCost = 5;
 
+            this.solar = true;
+            this.solarOrganic = true;
+
             this.solarResist = true;
             this.stickyResist = true;
 
@@ -834,6 +839,93 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
             else if (ammo == "Doom")
             {
                 this.ammunition = [];
+            }
+
+            //sounds
+            this.shieldingSound = new Audio("sounds/shieldsUp.wav");
+            this.poweringSound = new Audio("sounds/powerOn.wav");
+            this.explosionSound = new Audio("sounds/heavyXPL.wav");
+            this.accelSound = new Audio("sounds/accl.mp3");
+            this.accelSoundTime1 = 0.2;
+            this.accelSoundTime2 = 1.1;
+            this.laserSound1 = new Audio("sounds/lightLas.wav");
+            this.laserSound2 = new Audio("sounds/missileLaunch.wav");
+        }
+        else if (this.type == "Capsid12B")
+        {
+            this.size = 32;
+            this.integrityMAX = 75; //the amount of damage the physical ship can take before total destruction.
+            this.shieldsMAX = 190; //the total capacity of the ships shielding systems.
+            this.rechargeMAX = 10; //the rate at which shields recharge in the ships best condition.
+            this.recharge = this.rechargeMAX;
+            this.powerMAX = 800; //the total power capacity that the ship has.
+            this.radarRange = 13535;
+            this.cargoMAX = 5; //the total amount of cargo that the ship can carry.
+            this.speedMAX = 24; //ships maximum potential speed
+            this.accelerationMAX = 8;//max speed up/slow down rate
+            this.acceleration = this.accelerationMAX;
+            this.handlingMAX = 6/100 * Math.PI; //max turn speed
+            this.handling = this.handlingMAX;
+            this.strafable = true;
+            this.strafeMAX = 24;
+            this.shieldingCost = 0.1;
+            this.rechargeCost = 0.15;
+            this.accelerationCost = 0.05;
+            this.handlingCost = 0.01;
+            this.weaponCost = 0.2;
+            this.explosionStyle = [27, 25, 27, ["red", "orange", "green"]];
+            this.shieldsColour = "orange";
+            this.boostSpeed = 27;
+            this.boostAccel = 9;
+            this.boostHandle = 5/100 * Math.PI;
+            this.boostStrafe = 27;
+            this.boostCost = 5;
+
+            this.solar = true;
+            this.solarOrganic = true;
+
+            this.solarResist = true;
+            this.stickyResist = true;
+
+            if (upgrade == "Standard")
+            {
+                this.upgrades = [itemize("CORE", 1)];
+            }
+            else if (upgrade == "Advanced")
+            {
+                this.upgrades = [itemize("CORE", 1), itemize("RedStarShields", 1)];
+            }
+            else if (upgrade == "Basic")
+            {
+                this.upgrades = [itemize("CORE", 1)];
+            }
+            else
+            {
+                if (typeof(upgrade) != "undefined" && upgrade != false)
+                {
+                    this.upgrades = upgrade;
+                }
+            }
+
+            if (ammo == "Scarce")
+            {
+                this.ammunition = []
+            }
+            else if (ammo == "Some")
+            {
+                this.ammunition = []
+            }
+            else if (ammo == "Good")
+            {
+                this.ammunition = []
+            }
+            else if (ammo == "Stocked")
+            {
+                this.ammunition = []
+            }
+            else if (ammo == "Doom")
+            {
+                this.ammunition = []
             }
 
             //sounds
@@ -1356,6 +1448,37 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                             {
                                 draw(divineKitE, 329, 260, 143, 152, this.X, this.Y, 143 * 1.55, 152 * 1.55, this.rotation, false, 1, 0, 0);
                             }
+                        }
+                    }
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    //circle(true, this.X + Math.cos(this.rotation - Math.PI * 9.7 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 9.7 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
+                    this.accessUpgrades("drawAbove");
+                }
+                else if (this.type == "Capsid12B")
+                {
+                    this.accessUpgrades("drawBelow");
+                    if (this.speedAlteration == false)
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitE, 977, 10, 74, 65, 74, 65, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 74, 65, this.X, this.Y, 74 * 1.13, 65 * 1.13, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitE, 977, 10, 74, 65, this.X, this.Y, 74 * 1.13, 65 * 1.13, this.rotation, false, 1, 0, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (this.shieldingOnline && this.getShields() > 0 && this.shields > 0)
+                        {
+                            var colorized = colorizedImage(divineKitE, 977, 82, 74, 65, 74, 65, 0.3 * Math.max(0, this.shields)/this.getShields(), this.getShieldsColour());
+                            draw(colorized, 0, 0, 74, 65, this.X, this.Y, 74 * 1.13, 65 * 1.13, this.rotation, false, 1, 0, 0);
+                        }
+                        else
+                        {
+                            draw(divineKitE, 977, 82, 74, 65, this.X, this.Y, 74 * 1.13, 65 * 1.13, this.rotation, false, 1, 0, 0);
                         }
                     }
                     //circle(true, this.X + Math.cos(this.rotation - Math.PI * 6.3 / 16) * 39, this.Y  + Math.sin(this.rotation - Math.PI * 6.3 / 16) * 39, 2, 0, 2 * Math.PI, "blue", 1, false, false, 0, 1);
@@ -2636,7 +2759,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.cargoBay.unshift(itemize("Scrap", 15));
                 }
                     //this part actually creates the cargo hold scenery object.
-                game.sceneryList.push(new Scenery(this.X, this.Y, "cargohold", this.cargoBay, this.cargoMAX)); //this.cargoBay
+                game.sceneryList.push(new Scenery(this.X, this.Y, "cargohold", this.cargoBay, this.cargoMAX, 80)); //this.cargoBay
                 //delete this ship
                 for (var i = 0; i < game.shipsList.length; i++)
                 {
@@ -4340,6 +4463,40 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                                 this.power -= (this.weaponCost * 0.5);
                                 playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
                                 game.projectilesList.push(new Projectile("SolarFlame", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 108, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 108, this, this.rotation - Math.PI / 2 + Math.PI * (8 + (1 - (2 * Math.random())) / 16)));
+                            }
+                        }
+                    }
+                }
+                if (this.upgrades[i].name == "CORE" && this.type == "Capsid12B")
+                {
+                    this.maingunsRate = 0.43; //these mainguns come with this ship and are inseparable from its base structure.
+                    if (use == "playerActivate")
+                    {
+                        if (this.maingunsPowered == true && game.spaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            game.spaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 1))
+                            {
+                                this.power -= (this.weaponCost * 1);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("SolarBall", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 19, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 19, this, this.rotation - Math.PI / 2 + Math.PI * (8 + (0.3 - (0.6 * Math.random())) / 16)));
+                            }
+                        }
+                    }
+                    else if (use == "aiActivate")
+                    {
+                        if (this.maingunsPowered == true && this.aiSpaceKey && new Date().getTime() - this.maingunsStoreTime >= this.maingunsRate * 1000)
+                        {
+                            this.maingunsStoreTime = new Date().getTime();
+                            this.aiSpaceKey = false;
+
+                            if (this.power >= (this.weaponCost * 1))
+                            {
+                                this.power -= (this.weaponCost * 1);
+                                playSound(this.laserSound1, this.laserSound1Time1, this.laserSound1Time2);
+                                game.projectilesList.push(new Projectile("SolarBall", this.X + Math.cos(this.rotation - Math.PI * 8 / 16) * 19, this.Y  + Math.sin(this.rotation - Math.PI * 8 / 16) * 19, this, this.rotation - Math.PI / 2 + Math.PI * (8 + (0.3 - (0.6 * Math.random())) / 16)));
                             }
                         }
                     }

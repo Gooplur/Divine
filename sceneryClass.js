@@ -2,7 +2,7 @@
  * Created by skyeguy on 11/23/17.
  */
 
-function Scenery(X, Y, type, list, extra)
+function Scenery(X, Y, type, list, extra, size)
 {
     this.X = X;
     this.Y = Y;
@@ -13,12 +13,24 @@ function Scenery(X, Y, type, list, extra)
     this.random = Math.random();
     this.extra = extra;
     this.flag = false;
+    if (typeof(size) != "undefined")
+    {
+        if (size == false)
+        {
+            this.size = 14.15;
+        }
+        else
+        {
+            this.size = size;
+        }
+    }
     //planet variables
     this.pricing = {shop: [1, 1], shipyard: [1, 1], docking: 55};
     this.shopContents = [];
     this.shipyardContents = [];
     this.dockingContents = [];
     this.resetContentsTime = 0; //used in reseting shop contents after an elsewhere defined period of time.
+    this.star = false;
 
     //cargohold variables
     this.contents = list;
@@ -39,7 +51,7 @@ function Scenery(X, Y, type, list, extra)
                 {
                     this.spin -= 0.015;
                 }
-                if (ifInScreenDraw(this.X, this.Y, 14.15))
+                if (ifInScreenDraw(this.X, this.Y, this.size))
                 {
                     rectangle(true, this.X, this.Y, 20, 20, "grey", 2, "darkGrey", false, this.rotation + this.spin, 1);
                     rectangle(true, this.X, this.Y, 9, 9, "darkGrey", 2, "black", false, this.rotation + 2*this.spin, 1/4*Math.PI, 1);
@@ -89,6 +101,20 @@ function Scenery(X, Y, type, list, extra)
                         game.x.fillText(this.extra, xxx(0), yyy(-200));
                     }
                 }
+                else if (this.extra == "Safir")
+                {
+                    //draw the planet
+                    console.log(sun3.complete);
+                    draw(sun3, 0, 0, sun3.width, sun3.height, this.X, this.Y, sun3.width * 14, sun3.height * 14, 0, false, 1, false, false);
+
+                    if (this.flag)
+                    {
+                        game.x.textAlign = "center";
+                        game.x.font = fonter(16, "Arial");
+                        game.x.fillStyle = game.playerHUDColor;
+                        game.x.fillText(this.extra, xxx(0), yyy(-200));
+                    }
+                }
             }
         }
     };
@@ -103,13 +129,13 @@ function Scenery(X, Y, type, list, extra)
                 game.sceneryList.splice(game.sceneryList.indexOf(this), 1);
             }
 
-            if (ifInScreenDraw(this.X, this.Y, 14.15))
+            if (ifInScreenDraw(this.X, this.Y, this.size))
             {
                 for (var i = 0; i < game.shipsList.length; i++)
                 {
                     if (game.shipsList[i].player)
                     {
-                        if (distance(this, game.shipsList[i]) <= 80)
+                        if (distance(this, game.shipsList[i]) <= this.size)
                         {
                             if (game.eKey)
                             {
@@ -130,7 +156,7 @@ function Scenery(X, Y, type, list, extra)
         }
         else if (this.type == "planet")
         {
-            if (ifInScreenDraw(this.X, this.Y, 14.15))
+            if (ifInScreenDraw(this.X, this.Y, this.size))
             {
                 for (var i = 0; i < game.shipsList.length; i++)
                 {
@@ -138,7 +164,7 @@ function Scenery(X, Y, type, list, extra)
                     {
                         if (this.extra == "Aztlan")
                         {
-                            if (distance(this, game.shipsList[i]) <= 190)
+                            if (distance(this, game.shipsList[i]) <= this.size)
                             {
                                 this.flag = true;
                                 //menu
@@ -167,7 +193,7 @@ function Scenery(X, Y, type, list, extra)
                         }
                         else if (this.extra == "Kurm")
                         {
-                            if (distance(this, game.shipsList[i]) <= 100)
+                            if (distance(this, game.shipsList[i]) <= this.size)
                             {
                                 this.flag = true;
                                 //menu
@@ -195,7 +221,7 @@ function Scenery(X, Y, type, list, extra)
                         }
                         else if (this.extra == "Dorshun")
                         {
-                            if (distance(this, game.shipsList[i]) <= 380)
+                            if (distance(this, game.shipsList[i]) <= this.size)
                             {
                                 this.flag = true;
                             }
@@ -203,6 +229,28 @@ function Scenery(X, Y, type, list, extra)
                             {
                                 this.flag = false;
                             }
+                        }
+                        else if (this.extra == "Safir")
+                        {
+                            this.star = true;
+                            if (distance(this, game.shipsList[i]) <= size)
+                            {
+                                if (game.shipsList[i].solar == true && game.shipsList[i].power < game.shipsList[i].powerMAX)
+                                {
+                                    game.shipsList[i].power += 0.55;
+                                }
+                                if (game.shipsList[i].solarOrganic == true && game.shipsList[i].integrity < game.shipsList[i].integrityMAX)
+                                {
+                                    game.shipsList[i].integrity += 0.05;
+                                }
+
+                                this.flag = true;
+                            }
+                            else
+                            {
+                                this.flag = false;
+                            }
+
                         }
                     }
                 }

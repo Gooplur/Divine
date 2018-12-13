@@ -482,7 +482,7 @@
         else if (this.name == "MinionC32")
         {
             this.utility = "ship";
-            this.type = "Fighter (Medium)";
+            this.type = "Fighter (medium)";
             this.manufacturer = "Grevner Technologies";
             this.price = 9000;
             this.image = ["divineKitD", 83, 684, 80, 116, 0.45];
@@ -495,6 +495,15 @@
             this.manufacturer = "Solaris";
             this.price = 21000;
             this.image = ["divineKitE", 806, 181, 118, 158, 0.7];
+            this.brand = ["divineKitE", 0, 1, 56, 67, 1.3];
+        }
+        else if (this.name == "Capsid12B")
+        {
+            this.utility = "ship";
+            this.type = "Fighter (small)";
+            this.manufacturer = "Solaris";
+            this.price = 3935;
+            this.image = ["divineKitE", 977, 10, 74, 65, 0.37];
             this.brand = ["divineKitE", 0, 1, 56, 67, 1.3];
         }
 

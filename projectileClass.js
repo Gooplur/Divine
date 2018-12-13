@@ -366,6 +366,28 @@ function Projectile(type, x, y, who, rotation, adX, adY)
                 this.radius = 65;
                 this.distortResist = true;
             }
+            else if (this.type == "SolarBall")
+            {
+                this.solar = true;
+                this.speed = who.speed + 20;
+                this.range = 1130;
+                this.damage = 15;
+                this.phasing = false;
+                this.zIndex = 1;
+                this.radius = 23;
+                this.distortResist = true;
+            }
+            else if (this.type == "SolarBolt")
+            {
+                this.solar = true;
+                this.speed = who.speed + 23;
+                this.range = 1350;
+                this.damage = 18;
+                this.phasing = false;
+                this.zIndex = 1;
+                this.radius = 37;
+                this.distortResist = true;
+            }
         }
     };
 
@@ -657,6 +679,14 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             else if (this.type == "SolarFlame")
             {
                 this.animate(0.5, [[divineKitE, 216, 8, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 217, 37, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 256, 39, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 296, 21, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0], [divineKitE, 254, 7, 32, 31, this.X, this.Y, 32 * 1.75, 31 * 1.75, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0]]);
+            }
+            else if (this.type == "SolarBall")
+            {
+                draw(divineKitE, 180, 13, 17, 18, this.X, this.Y, 17 * 1.55, 18 * 1.55, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0);
+            }
+            else if (this.type == "SolarBolt")
+            {
+                draw(divineKitE, 145, 4, 26, 40, this.X, this.Y, 26 * 1.45, 40 * 1.45, this.rotation + 1/2 * Math.PI, false, 0.88, 0, 0);
             }
         }
     };

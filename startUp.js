@@ -213,9 +213,10 @@ function Game()
     }
         //Scenery List (asteroids, cargo holds, etc.)
     this.sceneryList = [];
-    this.sceneryList.push(new Scenery(25000, -25000, "planet", [], "Aztlan"));
-    this.sceneryList.push(new Scenery(-13266, -41523, "planet", [], "Kurm"));
-    this.sceneryList.push(new Scenery(-19898, -37713, "planet", [], "Dorshun"));
+    this.sceneryList.push(new Scenery(0, 0, "planet", [], "Safir", 2300)); //STAR
+    this.sceneryList.push(new Scenery(25000, -25000, "planet", [], "Aztlan", 190));
+    this.sceneryList.push(new Scenery(-13266, -41523, "planet", [], "Kurm", 100));
+    this.sceneryList.push(new Scenery(-19898, -37713, "planet", [], "Dorshun", 380));
 
         //Ships List
     this.shipsList = [];
@@ -230,7 +231,8 @@ function Game()
     this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
     this.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", false, "Standard", "Stocked"));
     this.shipsList.push(new Ship(23000, -25000, "Capsid08", "Player", "follower", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", true, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", false, "Advanced", "Stocked"));
+    this.shipsList.push(new Ship(25000, -25000, "Capsid12B", "Player", "follower", true, "Standard", "Stocked"));
     //for (var i = 0; i < 2; i++)
     //{
     //    this.shipsList.push(new Ship(25000 - 2500 + 500 * i, -25000 - 2500 + 500 * i, "Screecher", "Player", "swooper", false, "Standard", "Good"));

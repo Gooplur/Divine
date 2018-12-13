@@ -1444,7 +1444,10 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     }
                     if (playerShipNum > -1)
                     {
-                        game.shipsList[playerShipNum].power = Math.max(0, Math.min(game.shipsList[playerShipNum].powerMAX, game.shipsList[playerShipNum].power + game.draggedItem.charge));
+                        if (game.shipsList[playerShipNum].solar == false) //solar charged ships cannot have power recharged the normal way.
+                        {
+                            game.shipsList[playerShipNum].power = Math.max(0, Math.min(game.shipsList[playerShipNum].powerMAX, game.shipsList[playerShipNum].power + game.draggedItem.charge));
+                        }
                         game.shipsList[playerShipNum].integrity = Math.max(0, Math.min(game.shipsList[playerShipNum].integrityMAX, game.shipsList[playerShipNum].integrity + game.draggedItem.repair));
                         game.shipsList[playerShipNum].shields = Math.max(0, Math.min(game.shipsList[playerShipNum].getShields(), game.shipsList[playerShipNum].shields + game.draggedItem.boost));
 
