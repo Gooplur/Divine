@@ -13,6 +13,8 @@ function Scenery(X, Y, type, list, extra, size)
     this.random = Math.random();
     this.extra = extra;
     this.flag = false;
+    this.isSetup = false;
+    this.faction = false;
     if (typeof(size) != "undefined")
     {
         if (size == false)
@@ -26,14 +28,46 @@ function Scenery(X, Y, type, list, extra, size)
     }
     //planet variables
     this.pricing = {shop: [1, 1], shipyard: [1, 1], docking: 55};
+    this.desiredStock = [];
+    this.production = [];
     this.shopContents = [];
     this.shipyardContents = [];
     this.dockingContents = [];
     this.resetContentsTime = 0; //used in reseting shop contents after an elsewhere defined period of time.
+    this.econo = false; //does this participate in the in-game economy
     this.star = false;
 
     //cargohold variables
     this.contents = list;
+
+    this.setup = function(type)
+    {
+        if (this.isSetup == false)
+        {
+            this.isSetup = true;
+
+            if (type == "planet")
+            {
+                if (this.extra == "Aztlan")
+                {
+                    this.econo = true;
+                    this.faction = "UIR";
+                    this.shopContents = [itemize("Freshwater", 999), itemize("Freshwater", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 2), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 4), itemize("Power Core", 7), itemize("Repair Kit", 999), itemize("Repair Kit", 6), itemize("Shield Jumper", 3), itemize("RedStarShields", 3), itemize("JadeDragonShields", 1), itemize("M1Missile", 999), itemize("M1Missile", 15), itemize("PlasmaticSeeker", 6), itemize("TrineumSeeker", 999), itemize("Technology", 6)];
+                    this.desiredStock = [["Freshwater", 40], ["Petroleum", 38], ["Power Core", 21], ["Repair Kit", 18], ["Shield Jumper", 5], ["RedStarShields", 2], ["JadeDragonShields", 1], ["M1Missile", 25], ["PlasmaticSeeker", 9], ["TrineumSeeker", 14], ["Technology", 14], ["Majestad-TrineumDisseminator", 2], ["Majestad-CelesteShields", 1], ["Majestad-TrineumBlasterSentryGuns", 1], ["Majestad-TrineumSplicer", 1], ["Majestad-TrineumSplicer", 1], ["Oxygen Tank", 2]];
+                    this.production = [["Freshwater", 22], ["Petroleum", 15], ["Oxygen Tank", 8], ["Power Core", 3], ["Repair Kit", 2], ["Shield Jumper", 1], ["TrineumSeeker", 8], ["Technology", 5], ["Packaged Food", 3], ["Majestad-CelesteShields", 1], ["Majestad-TrineumBlasterSentryGuns", 1], ["Majestad-TrineumRay", 1], ["Majestad-TrineumSplicer", 1], ["Majestad-TrineumDisseminator", 2]];
+                }
+                else if (this.extra == "Kurm")
+                {
+                    this.econo = true;
+                    this.faction = "UIR";
+                    this.shopContents = [itemize("Freshwater", 6), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 3), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 1), itemize("Power Core", 2), itemize("Repair Kit", 3), itemize("M1Missile", 999), itemize("M1Missile", 14), itemize("PlasmaticSeeker", 6), itemize("Afid01-F1Lasers", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-Boosters", 1), itemize("Afid01-Boosters", 1), itemize("Afid01-F1SentryGun", 1), itemize("Afid01-F1SentryGun", 1), itemize("Afid01-F1SentryGun", 1), itemize("Disk01-F1SingleStream", 1), itemize("Disk01-F1SingleStream", 1), itemize("Disk01-F1SingleStream", 1), itemize("Mantis09-PlasmaCannon", 1), itemize("Mantis09-PlasmaBlasters", 1), itemize("Mantis09-PlasmaBlasters", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("Packaged Food", 8)];
+                    this.desiredStock = [["Scrap", 3], ["Oxygen Tank", 20], ["Freshwater", 10], ["Petroleum", 12], ["Power Core", 4], ["Repair Kit", 6], ["Shield Jumper", 1], ["RedStarShields", 1], ["JadeDragonShields", 2], ["StabilizingParticleFogShield", 1], ["M1Missile", 40], ["PlasmaticSeeker", 11], ["Technology", 6], ["Afid01-F1Lasers", 6], ["Afid01-M1Launcher", 5], ["Afid01-Boosters", 3], ["Afid01-F1SentryGun", 4], ["Disk01-F1SingleStream", 5], ["Mantis09-PlasmaCannon", 1], ["Mantis09-PlasmaBlasters", 3], ["Mantis09-PlasmaAccelerator", 2], ["Packaged Food", 13]];
+                    this.production = [["Power Core", 1], ["Repair Kit", 1], ["Technology", 1], ["M1Missile", 12], ["PlasmaticSeeker", 5], ["Afid01-F1Lasers", 2], ["Afid01-M1Launcher", 2], ["Afid01-Boosters", 1], ["Afid01-F1SentryGun", 2], ["Disk01-F1SingleStream", 3], ["Mantis09-PlasmaCannon", 1], ["Mantis09-PlasmaBlasters", 1], ["Mantis09-PlasmaAccelerator", 1]];
+                }
+            }
+        }
+
+    };
 
     this.drawScene = function(z)
     {
@@ -155,6 +189,8 @@ function Scenery(X, Y, type, list, extra, size)
         }
         else if (this.type == "planet")
         {
+            this.setup(this.type);
+
             if (ifInScreenDraw(this.X, this.Y, this.size))
             {
                 for (var i = 0; i < game.shipsList.length; i++)
@@ -174,13 +210,13 @@ function Scenery(X, Y, type, list, extra, size)
                                     game.planetMenuList = ["shop", "shipyard", "docking"];
                                     game.userShipLocator = i;
                                     game.currentPlanetLocator = game.sceneryList.indexOf(this);
-                                    this.pricing = {shop: [0.6, 1.2], shipyard: [0.4, 1.1], docking: 55};
+                                    this.pricing = {shop: [0.92, 1.06], shipyard: [0.4, 1.1], docking: 55};
+                                    game.merch = this;
 
                                     //Resets the contents of the shop and shipyard every hour
                                     if (new Date().getTime() - this.resetContentsTime > 60 * (1000 * 60)) //the first number is a measurement of minutes
                                     {
                                         this.resetContentsTime = new Date().getTime();
-                                        this.shopContents = [itemize("Freshwater", 999), itemize("Freshwater", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 2), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 4), itemize("Power Core", 7), itemize("Repair Kit", 999), itemize("Repair Kit", 6), itemize("Shield Jumper", 3), itemize("M1Missile", 999), itemize("M1Missile", 15), itemize("PlasmaticSeeker", 6), itemize("TrineumSeeker", 999)];
                                         this.shipyardContents = [itemize("Majestad", 1, false), itemize("Majestad", 1, false), itemize("Majestad", 1, false)];
                                     }
                                 }
@@ -200,10 +236,11 @@ function Scenery(X, Y, type, list, extra, size)
                                 {
                                     game.eKey = false;
                                     game.planetMenu = true;
-                                    game.planetMenuList = ["shipyard"];
+                                    game.planetMenuList = ["shipyard", "shop"];
                                     game.userShipLocator = i;
                                     game.currentPlanetLocator = game.sceneryList.indexOf(this);
-                                    this.pricing = {shop: [1, 1], shipyard: [0.5, 1], docking: 55};
+                                    this.pricing = {shop: [0.92, 1.06], shipyard: [0.5, 1], docking: 55};
+                                    game.merch = this;
 
                                     //Resets the contents of the shop and shipyard every hour
                                     if (new Date().getTime() - this.resetContentsTime > 60 * (1000 * 60)) //the first number is a measurement of minutes

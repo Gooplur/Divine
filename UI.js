@@ -153,6 +153,7 @@ function planetMenu(options) //options is a list of all the possible selections 
     {
         game.eKey = false;
         game.state = "Divine";
+        game.merch = "none";
         game.planetMenu = false;
     }
 }
@@ -233,7 +234,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         game.x.textAlign = "left";
         game.x.font = fonter(14, "Arial");
         game.x.fillStyle = "white";
-        game.x.fillText("Buy ~ " + (Math.floor(100 * game.interBuyRate)) + "%  Sell ~ " + (Math.floor(100 * game.interSellRate)) + "%", xxx(325 + 82.5), yyy(90));
+        game.x.fillText("Buy ~ " + (Math.floor(100 * game.demand * game.interSellRate)) + "%  Sell ~ " + (Math.floor(100 * game.demand * game.interBuyRate)) + "%", xxx(325 + 82.5), yyy(90));
     }
     else if (context == "Inventory")
     {
@@ -283,7 +284,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         game.x.textAlign = "left";
         game.x.font = fonter(14, "Arial");
         game.x.fillStyle = "white";
-        game.x.fillText("Buy ~ " + (Math.floor(100 * game.interBuyRate)) + "%  Sell ~ " + (Math.floor(100 * game.interSellRate)) + "%", xxx(325 + 82.5), yyy(90));
+        game.x.fillText("Buy ~ " + (Math.floor(100 * game.interSellRate)) + "%  Sell ~ " + (Math.floor(100 * game.interBuyRate)) + "%", xxx(325 + 82.5), yyy(90));
     }
     else if (context == "Repair")
     {
@@ -431,8 +432,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                         game.x.textAlign = "center";
                         game.x.font = fonter(10, "Arial");
                         game.x.fillStyle = "white";
-                        game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(450));
-                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(490));
+                        game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(450));
+                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(490));
                     }
                     else
                     {
@@ -493,8 +494,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                         game.x.textAlign = "center";
                         game.x.font = fonter(10, "Arial");
                         game.x.fillStyle = "white";
-                        game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(450));
-                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(490));
+                        game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(450));
+                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(490));
                     }
                     else
                     {
@@ -588,8 +589,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                         game.x.textAlign = "center";
                         game.x.font = fonter(10, "Arial");
                         game.x.fillStyle = "white";
-                        game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(450 + yPos));
-                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(490 + yPos));
+                        game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(450 + yPos));
+                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(490 + yPos));
                     }
                     else
                     {
@@ -646,8 +647,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.textAlign = "center";
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
-                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(569));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(609));
+                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(569));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(609));
                         }
                         else
                         {
@@ -696,8 +697,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.textAlign = "center";
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
-                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(529));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(569));
+                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(529));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(569));
                         }
                         else
                         {
@@ -746,8 +747,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.textAlign = "center";
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
-                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(529));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(569));
+                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(529));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(569));
                         }
                         else
                         {
@@ -796,8 +797,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.textAlign = "center";
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
-                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.interSellRate), xxx(706 + 125), yyy(529));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.interBuyRate), xxx(706 + 125), yyy(569));
+                            game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(529));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(569));
                         }
                         else
                         {
@@ -933,6 +934,106 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             game.x.stroke();
         }
 
+        if (game.mouseX > xxx(51) && game.mouseX < xxx(51 + 319) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll1) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll1))
+        {
+            if (game.merch.econo == true)
+            {
+                var ammount = 0;
+                var variationn = 0;
+                var focusItm = "none";
+                var itmFocus = "none";
+                var desireFocus = 1;
+                for (var g = 0; g < list1.length; g++)
+                {
+                    if (list1[g].dragged)
+                    {
+                        focusItm = list1[g];
+                    }
+                    else if (list1[g].selected)
+                    {
+                        itmFocus = list1[g];
+                    }
+                }
+                for (var g = 0; g < game.merch.shopContents.length; g++)
+                {
+                    if (game.merch.shopContents[g].dragged)
+                    {
+                        focusItm = game.merch.shopContents[g];
+                    }
+                    else if (game.merch.shopContents[g].selected)
+                    {
+                        itmFocus = game.merch.shopContents[g];
+                    }
+                }
+
+                if (focusItm == "none")
+                {
+                    if (itmFocus == "none")
+                    {
+                        for (var g = 0; g < game.merch.shopContents.length; g++)
+                        {
+                            if (list1[i].name == game.merch.shopContents[g].name)
+                            {
+                                ammount += game.merch.shopContents[g].quantity;
+                            }
+                        }
+
+                        for (var g = 0; g < game.merch.desiredStock.length; g++)
+                        {
+                            if (list1[i].name == game.merch.desiredStock[g][0])
+                            {
+                                variationn = game.merch.desiredStock[g][1] - ammount;
+                                desireFocus = game.merch.desiredStock[g][1] / ammount;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (var g = 0; g < game.merch.shopContents.length; g++)
+                        {
+                            if (itmFocus.name == game.merch.shopContents[g].name)
+                            {
+                                ammount += game.merch.shopContents[g].quantity;
+                            }
+                        }
+
+                        for (var g = 0; g < game.merch.desiredStock.length; g++)
+                        {
+                            if (itmFocus.name == game.merch.desiredStock[g][0])
+                            {
+                                variationn = game.merch.desiredStock[g][1] - ammount;
+                                desireFocus = game.merch.desiredStock[g][1] / ammount;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (var g = 0; g < game.merch.shopContents.length; g++)
+                    {
+                        if (focusItm.name == game.merch.shopContents[g].name)
+                        {
+                            ammount += game.merch.shopContents[g].quantity;
+                        }
+                    }
+
+                    for (var g = 0; g < game.merch.desiredStock.length; g++)
+                    {
+                        if (focusItm.name == game.merch.desiredStock[g][0])
+                        {
+                            variationn = game.merch.desiredStock[g][1] - ammount;
+                            desireFocus = game.merch.desiredStock[g][1] / ammount;
+                            break;
+                        }
+                    }
+                }
+
+                game.demand = Math.min(1 + ((8/9 * desireFocus / 16) + (1/9 * variationn / 29)), 1.92);
+            }
+        }
+
         //Item Selecting
         if (game.shiftKey != true && game.unclick && game.mouseX > xxx(51) && game.mouseX < xxx(51 + 319) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll1) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll1))
         {
@@ -1038,6 +1139,106 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
             game.x.stroke();
         }
 
+        if (game.mouseX > xxx(51 + 324) && game.mouseX < xxx(51 + 319 + 324) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll2) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll2))
+        {
+            if (game.merch.econo == true)
+            {
+                var ammount = 0;
+                var variationn = 0;
+                var focusItm = "none";
+                var itmFocus = "none";
+                var desireFocus = 1;
+                for (var g = 0; g < list1.length; g++)
+                {
+                    if (list1[g].dragged)
+                    {
+                        focusItm = list1[g];
+                    }
+                    else if (list1[g].selected)
+                    {
+                        itmFocus = list1[g];
+                    }
+                }
+                for (var g = 0; g < game.merch.shopContents.length; g++)
+                {
+                    if (game.merch.shopContents[g].dragged)
+                    {
+                        focusItm = game.merch.shopContents[g];
+                    }
+                    else if (game.merch.shopContents[g].selected)
+                    {
+                        itmFocus = game.merch.shopContents[g];
+                    }
+                }
+
+                if (focusItm == "none")
+                {
+                    if (itmFocus == "none")
+                    {
+                        for (var g = 0; g < game.merch.shopContents.length; g++)
+                        {
+                            if (list2[i].name == game.merch.shopContents[g].name)
+                            {
+                                ammount += game.merch.shopContents[g].quantity;
+                            }
+                        }
+
+                        for (var g = 0; g < game.merch.desiredStock.length; g++)
+                        {
+                            if (list2[i].name == game.merch.desiredStock[g][0])
+                            {
+                                variationn = game.merch.desiredStock[g][1] - ammount;
+                                desireFocus = game.merch.desiredStock[g][1] / ammount;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (var g = 0; g < game.merch.shopContents.length; g++)
+                        {
+                            if (itmFocus.name == game.merch.shopContents[g].name)
+                            {
+                                ammount += game.merch.shopContents[g].quantity;
+                            }
+                        }
+
+                        for (var g = 0; g < game.merch.desiredStock.length; g++)
+                        {
+                            if (itmFocus.name == game.merch.desiredStock[g][0])
+                            {
+                                variationn = game.merch.desiredStock[g][1] - ammount;
+                                desireFocus = game.merch.desiredStock[g][1] / ammount;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (var g = 0; g < game.merch.shopContents.length; g++)
+                    {
+                        if (focusItm.name == game.merch.shopContents[g].name)
+                        {
+                            ammount += game.merch.shopContents[g].quantity;
+                        }
+                    }
+
+                    for (var g = 0; g < game.merch.desiredStock.length; g++)
+                    {
+                        if (focusItm.name == game.merch.desiredStock[g][0])
+                        {
+                            variationn = game.merch.desiredStock[g][1] - ammount;
+                            desireFocus = game.merch.desiredStock[g][1] / ammount;
+                            break;
+                        }
+                    }
+                }
+
+                game.demand = Math.min(1 + ((8/9 * desireFocus / 16) + (1/9 * variationn / 29)), 1.92);
+            }
+        }
+
         //Item Selecting
         if (game.shiftKey != true && game.unclick && game.mouseX > xxx(51 + 324) && game.mouseX < xxx(51 + 319 + 324) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll2) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll2))
         {
@@ -1118,7 +1319,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         {
             game.x.fillStyle = "orange";
         }
-        game.x.fillText(game.draggedItem.name, game.mouseX - 1/2 * xxx(324) + xxx(5), game.mouseY - yyy(6));
+        game.x.fillText(game.draggedItem.name, game.mouseX - 1/2 * xxx(324) + xxx(5), game.mouseY - yyy(6)); //13.5
 
         //Item Quantity
         game.x.textAlign = "right";
@@ -1131,7 +1332,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         {
             game.x.fillStyle = "orange";
         }
-        game.x.fillText("x " + game.draggedItem.quantity, game.mouseX - 1/2 * xxx(324) + xxx(319), game.mouseY - yyy(6));
+        game.x.fillText("x " + game.draggedItem.quantity, game.mouseX - 1/2 * xxx(324) + xxx(319), game.mouseY - yyy(6)); //13.5
 
         //ONCE THE SHIFT KEY IS RELEASED THE ITEM IS DROPPED
         if (game.shiftKey == false)
@@ -1184,9 +1385,9 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                 if (context == "Shop" && allowed || context == "Shipyard" && allowed)
                 {
                     allowed = false;
-                    if (game.draggedItem.selected && (game.draggedItem.price * game.draggedItem.quantity) <= game.checks)
+                    if (game.draggedItem.selected && (game.draggedItem.price * game.demand * game.draggedItem.quantity) <= game.checks)
                     {
-                        game.checks -= game.interSellRate * game.draggedItem.price * game.draggedItem.quantity;
+                        game.checks -= game.interSellRate * game.demand * game.draggedItem.price * game.draggedItem.quantity;
                         listHost.splice(listHost.indexOf(game.draggedItem), 1);
                         if (listNum >= list1.length)
                         {
@@ -1203,7 +1404,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     }
                     else
                     {
-                        game.checks -= game.interSellRate * game.draggedItem.price;
+                        game.checks -= game.interSellRate * game.demand * game.draggedItem.price;
                         if (game.draggedItem.quantity > 1)
                         {
                             game.draggedItem.quantity -= 1;
@@ -1379,7 +1580,8 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     allowed = false;
                     if (game.draggedItem.selected)
                     {
-                        game.checks += game.interBuyRate * game.draggedItem.price * game.draggedItem.quantity;
+                        game.checks += game.interBuyRate * game.demand * game.draggedItem.price * game.draggedItem.quantity;
+
                         listHost.splice(listHost.indexOf(game.draggedItem), 1);
                         if (listNum >= list2.length)
                         {
@@ -1396,7 +1598,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     }
                     else
                     {
-                        game.checks += game.interBuyRate * game.draggedItem.price;
+                        game.checks += game.interBuyRate * game.demand * game.draggedItem.price;
                         if (game.draggedItem.quantity > 1)
                         {
                             game.draggedItem.quantity -= 1;
@@ -1519,6 +1721,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         game.planetMenu = false;
         game.interInvScroll1 = 0;
         game.interInvScroll2 = 0;
+        game.merch = "none";
         if (context == "Shipyard" || context == "Docking")
         {
             shipConverter(false);

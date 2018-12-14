@@ -61,30 +61,55 @@ function navigator()
             game.scale = Math.max(0.09, game.scale - 0.02);
         }
 
-        if (game.tildKey)
+        if (game.tildKey) //quicksave button
         {
             game.tildKey = false;
 
-            var allyLocator = [];
-            for (var i = 0; i < game.shipsList.length; i++)
+            for (var j = 0; j < game.shipsList; i++)
             {
-                game.shipsList[i].player = false;
-                if (game.shipsList[i].faction == "Player")
-                {
-                    allyLocator.push(i);
-                }
+                game.shipsList[j].player = false;
             }
+        }
+    }
+}
 
-            if (game.navToggle >= allyLocator.length)
+function shipToggle()
+{
+    if (game.plusKey || game.minusKey) //toggle forward through ships
+    {
+        var allyLocator = [];
+        for (var i = 0; i < game.shipsList.length; i++)
+        {
+            game.shipsList[i].player = false;
+            if (game.shipsList[i].faction == "Player")
             {
-                game.navToggle = 0;
+                allyLocator.push(i);
             }
+        }
 
 
-            if (allyLocator.length > 0)
+        if (game.navToggle >= allyLocator.length)
+        {
+            game.navToggle = 0;
+        }
+        if (game.navToggle < 0)
+        {
+            game.navToggle = allyLocator.length - 1;
+        }
+
+
+        if (allyLocator.length > 0)
+        {
+            game.shipsList[allyLocator[game.navToggle]].player = true;
+            if (game.plusKey)
             {
-                game.shipsList[allyLocator[game.navToggle]].player = true;
+                game.plusKey = false;
                 game.navToggle += 1;
+            }
+            if (game.minusKey)
+            {
+                game.minusKey = false;
+                game.navToggle -= 1;
             }
         }
     }

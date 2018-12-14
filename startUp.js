@@ -70,6 +70,8 @@ function Game()
 {
     var self = this;
     this.state = "Divine"; //This determines which game is playing and what is paused.
+    this.system = "Safir"; //This variable determines which solar-system the player is in.
+    this.change = "start"; //this variable allows the solar-system to refresh if change is not equal to the expected code per solar-system.
 
     //These are the X and Y coords that represent the center of the screens view into the game world.
     this.viewX = 0;
@@ -129,6 +131,8 @@ function Game()
     this.interEmptyList = []; //Nothing goes in this list. Its soul purpose is to be empty for the inventory context.
     this.interBuyRate = 0.5; //what percentage shops will pay for your goods.
     this.interSellRate = 1; //what percentage shops will sell there goods at.
+    this.merch = "none";
+    this.demand = 1;
     this.interDockingFee = 55;
     this.interCoords = [0, 0];
     this.aiMenu = false;
@@ -148,6 +152,9 @@ function Game()
     this.aiSelect = "none";
     this.aiShip = -1;
     this.setAiSelect = false;
+
+    //Economy;
+    this.worldEconomy = new Economy();
 
     //shipItem to Ship Converter List (changes ship items into real ships)
     this.shipConverterList = [];
@@ -188,6 +195,7 @@ function Game()
         //Other Sensing Flags
     this.click = false;
     this.unclick = false;
+    this.dClick = false;
     this.mouseX = 0;
     this.mouseY = 0;
     this.MX = 0;
@@ -221,64 +229,6 @@ function Game()
 
         //Ships List
     this.shipsList = [];
-    //this.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
-    //this.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", false, "Advanced", "Stocked"));
-    //this.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
-    this.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
-    //this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(23000, -25000, "Capsid08", "Player", "follower", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(25000, -25000, "Capsid12B", "Player", "follower", true, "Standard", "Stocked"));
-    //for (var i = 0; i < 2; i++)
-    //{
-    //    this.shipsList.push(new Ship(25000 - 2500 + 500 * i, -25000 - 2500 + 500 * i, "Screecher", "Player", "swooper", false, "Standard", "Good"));
-    //}
-
-    //for (var i = 0; i < 10; i++)
-    //{
-    //    this.shipsList.push(new Ship(0 - 2500 + 500 * i, 0 - 2500 + 500 * i, "Screecher", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
-    //}
-    //for (var i = 0; i < 20; i++)
-    //{
-    //    this.shipsList.push(new Ship(-3000 - 2400 + 300 * i, 0 - 2400 + 300 * i, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
-    //}
-    this.shipsList.push(new Ship(-16000, 16000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(-9000, 9000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(-1300, -500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(7560, -250, "Mantis09", "Boofeln Widget Corporation", "simple", false, "Advanced", "Doom"));
-    this.shipsList.push(new Ship(-1000, 500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
-    this.shipsList.push(new Ship(500, 100, "Afid01", "Boofeln Widget Corporation", "simple", false, "Advanced", "Good"));
-    this.shipsList.push(new Ship(300, -200, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(100, 1500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(-250, -500, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(900, -900, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(9000, -1000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(7750, 1700, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(1400, 1100, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(8200, 2000, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(4750, 1700, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(6000, -3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(10000, -9000, "Capsid08", "Boofeln Widget Corporation", "basic", false, "Standard", "Stocked"));
-    this.shipsList.push(new Ship(-8200, 8400, "Capsid08", "Player", "basic", false, "Advanced", "Stocked"));
-
-    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Advanced", "Good"));
-    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
-    this.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
-
-    //this.shipsList.push(new Ship(-10000, 10000, "Harbinger88", "Boofeln Widget Corporation", "simple", false, "Standard", "Stocked"));
-    //this.shipsList.push(new Ship(-2500, 5500, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
-    //this.shipsList.push(new Ship(2000, 2000, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Standard", "Good"));
-    //this.shipsList.push(new Ship(-2000, -2000, "Screecher", "Boofeln Widget Corporation", "swooper", false, "Advanced", "Good"));
-    //this.shipsList.push(new Ship(-2000, 2000, "Mantis09", "Boofeln Widget Corporation", "basic-missile", false, "Advanced", "Good"));
-    //this.shipsList.push(new Ship(300, -200, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
-    //this.shipsList.push(new Ship(100, 1500, "Mantis09", "Boofeln Widget Corporation", "basic-missile", false, "Standard", "Good"));
-    //this.shipsList.push(new Ship(-250, -500, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
-    //this.shipsList.push(new Ship(900, -900, "Mantis09", "Boofeln Widget Corporation", "simple-missile", false, "Standard", "Good"));
 
         //Projectiles List
     this.projectilesList = [];
@@ -348,6 +298,9 @@ function Game()
             document.addEventListener("mouseup", mouseRelease);
             document.addEventListener("dblclick", doubleClick);
         }
+
+        mapBuilder(); //create the map by filling various lists, etc.
+
         //navigator
         navigator();
 
@@ -389,6 +342,8 @@ function Game()
         game.x.restore();
         //GAME WORLD COORD STUFF ^^^^
 
+        shipToggle(); //switches between ships in your fleet using + and - keys
+
         //Display Player HUD
         if (game.coordinates && self.state == "Divine")
         {
@@ -398,7 +353,7 @@ function Game()
             game.x.fillText("X: " + Math.round(self.playerX) + " | Y: " + Math.round(self.playerY), 1/2 * game.c.width, 1/10 * game.c.height); //-440
         }
 
-        this.dClick = false;
+        game.dClick = false;
         if (self.state == "Divine" || self.state == "DivinePaused" || self.state == "DivinePausedByPlayer")
         {
             requestAnimationFrame(self.gameLoop, self.c);
