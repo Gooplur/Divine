@@ -720,7 +720,7 @@ function Projectile(type, x, y, who, rotation, adX, adY)
             if (this.targetSizeMin <= game.shipsList[i].size)
             {
                 //console.log(game.shipsList[i]);
-                if (game.shipsList[i].faction != who.faction && this.distanceTo(game.shipsList[i]) <= who.radarRange)
+                if (game.shipsList[i].faction != this.quien.faction && this.distanceTo(game.shipsList[i]) <= this.quien.radarRange)
                 {
                     if (nearDist == false)
                     {

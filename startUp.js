@@ -342,6 +342,8 @@ function Game()
         game.x.restore();
         //GAME WORLD COORD STUFF ^^^^
 
+        game.worldEconomy.econ(); //the various planets of the galaxy trade goods between one another every 12 minutes. (partEntropy, productionPhase, buyPhase, sellPhase, goodsCapEntropy)
+
         shipToggle(); //switches between ships in your fleet using + and - keys
 
         //Display Player HUD

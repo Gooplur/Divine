@@ -8,17 +8,30 @@ function Economy()
     this.bestDeals = [];
     this.prospectiveSales = [];
     this.econTime = new Date().getTime();
+    this.bienes = [];
+    this.particpantes = 0;
+    this.numEach = 0;
 
     this.econ = function()
     {
-        if (new Date().getTime() - this.econTime > 12 * 1000 * 60) //every 12 minutes...
+        if (new Date().getTime() - this.econTime > 12 * 1000 * 60) //every 12 minutes... //12 * 1000 * 60
         {
+            this.econTime = new Date().getTime();
+            this.participantes = 0;
+
             for (var i = 0; i < game.sceneryList.length; i++)
             {
                 if (game.sceneryList[i].type == "planet" && game.sceneryList[i].econo == true)
                 {
+                    this.participantes += 1;
                     //local entropy of parts
-
+                    for (var j = game.sceneryList[i].shopContents.length - 1; j >= 0; j--)
+                    {
+                        if (game.sceneryList[i].shopContents[j].utility == "part")
+                        {
+                            game.sceneryList[i].shopContents.splice(j, 1);
+                        }
+                    }
                 }
             }
             for (var i = 0; i < game.sceneryList.length; i++)
@@ -38,51 +51,43 @@ function Economy()
                     this.doPurchasing(i);
                 }
             }
+            this.numEach = Math.round(this.traderGoods.length / this.participantes);
             for (var i = 0; i < game.sceneryList.length; i++)
             {
                 if (game.sceneryList[i].type == "planet" && game.sceneryList[i].econo == true)
                 {
                     //selling (redistributing)
                     this.doSelling(i);
-                    this.traderGoods = [];
                 }
             }
+            for (var i = 0; i < game.sceneryList.length; i++)
+            {
+                if (game.sceneryList[i].type == "planet" && game.sceneryList[i].econo == true)
+                {
+                    //local entropy of stock
+                    if (game.sceneryList[i].shopContents.length > 60)
+                    {
+                        for (var j = game.sceneryList[i].shopContents.length - 1; j > 60; j--)
+                        {
+                            game.sceneryList[i].shopContents.splice(j, 1);
+                        }
+                    }
+
+                }
+            }
+            this.traderGoods = [];
         }
     };
     //this.econ();
 
     this.testRun = function()
     {
-        for (var i = 0; i < game.sceneryList.length; i++)
-        {
-            if (game.sceneryList[i].type == "planet" && game.sceneryList[i].econo == true)
-            {
-                //production
-                this.bestDeals = [];
-                this.doProduction(i);
-            }
-        }
-        for (var i = 0; i < game.sceneryList.length; i++)
-        {
-            if (game.sceneryList[i].type == "planet" && game.sceneryList[i].econo == true)
-            {
-                //purchasing
-                this.doPurchasing(i);
-            }
-        }
-        for (var i = 0; i < game.sceneryList.length; i++)
-        {
-            if (game.sceneryList[i].type == "planet" && game.sceneryList[i].econo == true)
-            {
-                //selling (redistributing)
-                this.doSelling(i);
-                this.traderGoods = [];
-            }
-        }
+
     };
 
     this.doPurchasing = function(i)
     {
+        //this.bestDeals = [];
         //browsing
         for (var j = 0; j < game.sceneryList[i].desiredStock.length; j++)
         {
@@ -94,6 +99,9 @@ function Economy()
             {
                 if (game.sceneryList[i].desiredStock[j][0] == game.sceneryList[i].shopContents[k].name)
                 {
+                    var tmp = game.sceneryList[i].shopContents[k].quantity;
+                    if (isNaN(tmp))
+                        //console.log("HERE");
                     cantidad += game.sceneryList[i].shopContents[k].quantity;
                     loc2.push(k);
                 }
@@ -107,11 +115,11 @@ function Economy()
                 if (this.bestDeals[l].name == game.sceneryList[i].desiredStock[j][0])
                 {
                     hasIt = true;
-                    if (this.bestDeals[l].need < (cantidad - game.sceneryList[i].desiredStock[j][1]))
+                    if (this.bestDeals[l].need < (cantidad / game.sceneryList[i].desiredStock[j][1]))
                     {
                         this.bestDeals[l].location = loc;
                         this.bestDeals[l].location2 = loc2;
-                        this.bestDeals[l].need = (cantidad - game.sceneryList[i].desiredStock[j][1]);
+                        this.bestDeals[l].need = (cantidad / game.sceneryList[i].desiredStock[j][1]);
                         if (randBuy > 0)
                         {
                             this.bestDeals[l].amt = this.bestDeals[l].need;
@@ -125,7 +133,7 @@ function Economy()
             }
             if (hasIt == false)
             {
-                this.bestDeals.push({name: game.sceneryList[i].desiredStock[j][0], need: (cantidad - game.sceneryList[i].desiredStock[j][1]), location: loc, location2: loc2, amt: Math.max(1, randBuy)});
+                this.bestDeals.push({name: game.sceneryList[i].desiredStock[j][0], need: (cantidad / game.sceneryList[i].desiredStock[j][1]), location: loc, location2: loc2, amt: Math.max(1, randBuy)});
             }
         }
         var notConsidered = [];
@@ -276,83 +284,130 @@ function Economy()
                 game.sceneryList[i].shopContents.splice(jj, 1);
             }
         }
+
+        var dudz = [];
+        var cleanedGoods = [];
+
+        //merge duplicates
+        for (var j = 0; j < this.traderGoods.length; j++)
+        {
+            var isRepeat = false;
+            for (var ll = 0; ll < dudz.length; ll++)
+            {
+                if (this.traderGoods[j][0] == dudz[ll][0])
+                {
+                    isRepeat = true;
+                }
+            }
+            if (isRepeat == false)
+            {
+                var ammtt = this.traderGoods[j][1];
+                for (var jj = 0; jj < this.traderGoods.length; jj++)
+                {
+                    if (dudz.length < 1)
+                    {
+                        if (this.traderGoods[j][0] == this.traderGoods[jj][0] && j != jj)
+                        {
+                            ammtt += this.traderGoods[jj][1];
+                            dudz.push(this.traderGoods[jj]);
+                        }
+                    }
+                    else
+                    {
+                        var  isADud = false;
+                        for (var l = 0; l < dudz.length; l++)
+                        {
+                            if (this.traderGoods[jj][0] == dudz[l][0] && jj == dudz[l][1])
+                            {
+                                isADud = true;
+                            }
+                        }
+
+                        if (this.traderGoods[j][0] == this.traderGoods[jj][0] && j != jj && isADud == false)
+                        {
+                            ammtt += this.traderGoods[jj][1];
+                            dudz.push([this.traderGoods[jj][0], jj]);
+                        }
+                    }
+                }
+                cleanedGoods.unshift([this.traderGoods[j][0], ammtt]);
+            }
+        }
+        this.traderGoods = cleanedGoods;
     };
 
-    this.doSelling = function(i)
+    this.doSelling = function(i) //random redistribution of the goods that have been strategically purchased...
     {
-        var goodsSold = 0;
-        var soldOff = [];
-
-
-        this.prospectiveSales = [];
-        //plan sales that would earn the most money
-        for (var jk = 0; jk < this.traderGoods.length; jk++)
+        //turn goods into items
+        this.bienes = [];
+        for (var j = 0; j < this.traderGoods.length; j++)
         {
-            for (var l = 0; l < game.sceneryList[i].desiredStock.length; l++)
+            var testItm = itemize(this.traderGoods[j][0], 1);
+
+            if (this.traderGoods[j][1] != 0)
             {
-                if (game.sceneryList[i].desiredStock[l][0] == this.traderGoods[jk][0])
+                if (this.traderGoods[j][1] <= testItm.maxStack)
                 {
-                    var cantidad = 0;
-                    for (var k = 0; k < game.sceneryList[i].shopContents.length; k++)
+                    this.bienes.push(itemize(this.traderGoods[j][0], this.traderGoods[j][1]));
+                }
+                else
+                {
+                    var stackNum = Math.floor(this.traderGoods[j][1] / testItm.maxStack);
+                    var residualNum = Math.floor(this.traderGoods[j][1] % testItm.maxStack);
+
+                    for (var l = 0; l < stackNum; l++)
                     {
-                        cantidad += game.sceneryList[i].shopContents[k].quantity;
+                        this.bienes.push(itemize(this.traderGoods[j][0], testItm.maxStack));
                     }
-                    var need = game.sceneryList[i].desiredStock[l][1] - cantidad;
-
-                    this.prospectiveSales.push({name: this.traderGoods[jk][0], need: need, location: i, amt: Math.max(need, 1)});
-                    break;
-                }
-            }
-        }
-
-        //sort potential sales by highest potential gain
-
-        var orderingList = [];
-
-        for (var jl = 0; jl < this.prospectiveSales.length; jl++)
-        {
-            var needz = -1000;
-            var needzNum = -1;
-
-            for (var l = 0; l < this.prospectiveSales.length; l++)
-            {
-                var wasHit = false;
-                for (var ll = 0; ll < this.prospectiveSales.length; ll++)
-                {
-                    if (this.prospectiveSales.indexOf(orderingList[ll]) == l)
+                    if (residualNum > 0)
                     {
-                        wasHit = true;
-                        break;
-                    }
-                }
-                if (this.prospectiveSales[l].need > needz && wasHit == false)
-                {
-                    needz = this.prospectiveSales[l].need;
-                    needzNum = l;
-                }
-            }
-            orderingList.push(this.prospectiveSales[needzNum]);
-        }
-        this.prospectiveSales = orderingList;
-
-        //make the sales (the top 1/3 of the sales)
-        var topSales = Math.round(this.prospectiveSales.length / 3);
-
-        for (var jl = 0; jl < topSales; jl++)
-        {
-            for (var j = 0; j < game.sceneryList[this.prospectiveSales[jl].location].shopContents.length; j++)
-            {
-                for (var jk = 0; jk < this.traderGoods.length; jk++)
-                {
-                    if (this.traderGoods[jk][0] == this.prospectiveSales[jl].name && game.sceneryList[this.prospectiveSales[jl].location].shopContents[j].name == this.prospectiveSales[jl].name)
-                    {
-
+                        this.bienes.push(itemize(this.traderGoods[j][0], residualNum));
                     }
                 }
             }
         }
 
+        //randomize the list
+        var hechoRandomizado = [];
+        var hacerloRandom = [{name: "spoon7"}, {name: "spoon7"}, {name: "spoon7"}, {name: "spoon7"}, {name: "spoon7"}, {name: "spoon7"}, {name: "spoon7"}];
 
+        for (var j = 0; j < this.bienes.length; j++)
+        {
+            hacerloRandom.splice(Math.floor(Math.random() * hacerloRandom.length), 0, this.bienes[j]);
+        }
+        for (var j = 0; j < hacerloRandom.length; j++)
+        {
+            if (hacerloRandom[j].name != "spoon7")
+            {
+                if (Math.random() > 0.5)
+                {
+                    hechoRandomizado.unshift(hacerloRandom[j]);
+                }
+                else
+                {
+                    hechoRandomizado.push(hacerloRandom[j]);
+                }
+            }
+        }
+        this.bienes = hechoRandomizado;
+
+        //repartir a todos los participantes
+        for (var jj = this.numEach - 1; jj >= 0; jj--)
+        {
+            if (jj >= 0 && jj < this.bienes.length)
+            {
+                if (Math.random() > 0.5)
+                {
+                    game.sceneryList[i].shopContents.unshift(this.bienes[jj]);
+                }
+                else
+                {
+                    game.sceneryList[i].shopContents.push(this.bienes[jj]);
+                }
+                this.bienes.splice(jj, 1);
+
+            }
+        }
     };
 
     this.doProduction = function(i)

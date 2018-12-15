@@ -1030,7 +1030,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     }
                 }
 
-                game.demand = Math.min(1 + ((8/9 * desireFocus / 16) + (1/9 * variationn / 29)), 1.92);
+                game.demand = Math.max(0.34, Math.min(1 + ((8/9 * desireFocus / 16) + (1/9 * variationn / 29)), 1.92));
             }
         }
 
@@ -1235,7 +1235,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     }
                 }
 
-                game.demand = Math.min(1 + ((8/9 * desireFocus / 16) + (1/9 * variationn / 29)), 1.92);
+                game.demand = Math.max(0.34, Math.min(1 + ((8/9 * desireFocus / 16) + (1/9 * variationn / 29)), 1.92));
             }
         }
 

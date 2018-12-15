@@ -138,8 +138,6 @@ function mapBuilder()
             game.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
         }
         //Continuous
-        game.worldEconomy.testRun();
-
 
     }
 }
