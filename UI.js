@@ -217,6 +217,30 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
     }
     else if (context == "Shop")
     {
+        for (var g = 0; g < game.merch.shopContents.length; g++)
+        {
+            game.merch.shopContents[g].host = game.merch.extra;
+        }
+
+        var hostingList = list1;
+        for (g = 0; g < list2.length; g++)
+        {
+            if (list2[g] === game.draggedItem)
+            {
+                hostingList = list2;
+            }
+        }
+
+        if (game.draggedItem.host == game.merch.extra && hostingList == list1)
+        {
+            console.log("pass");
+            game.hostPenalty = 0.5;
+        }
+        else
+        {
+            game.hostPenalty = 1;
+        }
+
         //Cargo Hold title
         game.x.textAlign = "left";
         game.x.font = fonter(30, "Arial");
@@ -234,7 +258,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         game.x.textAlign = "left";
         game.x.font = fonter(14, "Arial");
         game.x.fillStyle = "white";
-        game.x.fillText("Buy ~ " + (Math.floor(100 * game.demand * game.interSellRate)) + "%  Sell ~ " + (Math.floor(100 * game.demand * game.interBuyRate)) + "%", xxx(325 + 82.5), yyy(90));
+        game.x.fillText("Buy ~ " + (Math.floor(100 * game.demand * game.interSellRate)) + "%  Sell ~ " + (Math.floor(100 * game.demand * game.hostPenalty * game.interBuyRate)) + "%", xxx(325 + 82.5), yyy(90));
     }
     else if (context == "Inventory")
     {
@@ -433,7 +457,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                         game.x.font = fonter(10, "Arial");
                         game.x.fillStyle = "white";
                         game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(450));
-                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(490));
+                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.hostPenalty * game.interBuyRate), xxx(706 + 125), yyy(490));
                     }
                     else
                     {
@@ -495,7 +519,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                         game.x.font = fonter(10, "Arial");
                         game.x.fillStyle = "white";
                         game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(450));
-                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(490));
+                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.hostPenalty * game.interBuyRate), xxx(706 + 125), yyy(490));
                     }
                     else
                     {
@@ -590,7 +614,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                         game.x.font = fonter(10, "Arial");
                         game.x.fillStyle = "white";
                         game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(450 + yPos));
-                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(490 + yPos));
+                        game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.hostPenalty * game.interBuyRate), xxx(706 + 125), yyy(490 + yPos));
                     }
                     else
                     {
@@ -648,7 +672,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
                             game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(569));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(609));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.hostPenalty * game.interBuyRate), xxx(706 + 125), yyy(609));
                         }
                         else
                         {
@@ -698,7 +722,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
                             game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(529));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(569));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.hostPenalty * game.interBuyRate), xxx(706 + 125), yyy(569));
                         }
                         else
                         {
@@ -748,7 +772,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
                             game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(529));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(569));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.hostPenalty * game.interBuyRate), xxx(706 + 125), yyy(569));
                         }
                         else
                         {
@@ -798,7 +822,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.x.font = fonter(10, "Arial");
                             game.x.fillStyle = "white";
                             game.x.fillText("Buy Price: " + Math.ceil(superList[i].price * game.demand * game.interSellRate), xxx(706 + 125), yyy(529));
-                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.interBuyRate), xxx(706 + 125), yyy(569));
+                            game.x.fillText("Sell Price: " + Math.floor(superList[i].price * game.demand * game.hostPenalty * game.interBuyRate), xxx(706 + 125), yyy(569));
                         }
                         else
                         {
@@ -925,13 +949,26 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         }
         else //if the item is being dragged original slot looks void.
         {
-            game.x.beginPath();
-            game.x.fillStyle = "lightGrey";
-            game.x.strokeStyle = "lightGrey";
-            game.x.lineWidth = 1;
-            game.x.rect(xxx(51), yyy(100 + 32 * (i - game.interInvScroll1)), xxx(324), yyy(30));
-            game.x.fill();
-            game.x.stroke();
+            if (game.hostPenalty < 1)
+            {
+                game.x.beginPath();
+                game.x.fillStyle = "red";
+                game.x.strokeStyle = "red";
+                game.x.lineWidth = 1;
+                game.x.rect(xxx(51), yyy(100 + 32 * (i - game.interInvScroll1)), xxx(324), yyy(30));
+                game.x.fill();
+                game.x.stroke();
+            }
+            else
+            {
+                game.x.beginPath();
+                game.x.fillStyle = "lightGrey";
+                game.x.strokeStyle = "lightGrey";
+                game.x.lineWidth = 1;
+                game.x.rect(xxx(51), yyy(100 + 32 * (i - game.interInvScroll1)), xxx(324), yyy(30));
+                game.x.fill();
+                game.x.stroke();
+            }
         }
 
         if (game.mouseX > xxx(51) && game.mouseX < xxx(51 + 319) && game.mouseY > yyy(100) + yyy(32) * (i - game.interInvScroll1) && game.mouseY < yyy(100 + 32) + yyy(32) * (i - game.interInvScroll1))
@@ -943,6 +980,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                 var focusItm = "none";
                 var itmFocus = "none";
                 var desireFocus = 1;
+
                 for (var g = 0; g < list1.length; g++)
                 {
                     if (list1[g].dragged)
@@ -1148,6 +1186,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                 var focusItm = "none";
                 var itmFocus = "none";
                 var desireFocus = 1;
+
                 for (var g = 0; g < list1.length; g++)
                 {
                     if (list1[g].dragged)
@@ -1410,7 +1449,14 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             game.draggedItem.quantity -= 1;
                             if (listNum >= list1.length)
                             {
-                                list1.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                if (context == "Shop")
+                                {
+                                    list1.splice(listNum, 0, itemize(game.draggedItem.name, 1, false, game.draggedItem.host));
+                                }
+                                else
+                                {
+                                    list1.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                }
                             }
                             else if (list1[listNum].name == game.draggedItem.name && list1[listNum].quantity + 1 <= list1[listNum].maxStack)
                             {
@@ -1418,7 +1464,14 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             }
                             else
                             {
-                                list1.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                if (context == "Shop")
+                                {
+                                    list1.splice(listNum, 0, itemize(game.draggedItem.name, 1, false, game.draggedItem.host));
+                                }
+                                else
+                                {
+                                    list1.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                }
                             }
                         }
                         else
@@ -1580,7 +1633,10 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     allowed = false;
                     if (game.draggedItem.selected)
                     {
-                        game.checks += game.interBuyRate * game.demand * game.draggedItem.price * game.draggedItem.quantity;
+                        var isHostShop = false;
+
+                        game.checks += game.interBuyRate * game.demand * game.hostPenalty * game.draggedItem.price * game.draggedItem.quantity;
+
 
                         listHost.splice(listHost.indexOf(game.draggedItem), 1);
                         if (listNum >= list2.length)
@@ -1598,13 +1654,21 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                     }
                     else
                     {
-                        game.checks += game.interBuyRate * game.demand * game.draggedItem.price;
+                        game.checks += game.interBuyRate * game.demand * game.hostPenalty * game.draggedItem.price;
+
                         if (game.draggedItem.quantity > 1)
                         {
                             game.draggedItem.quantity -= 1;
                             if (listNum >= list2.length)
                             {
-                                list2.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                if (context == "shop")
+                                {
+                                    list2.splice(listNum, 0,  itemize(game.draggedItem.name, 1, false, game.draggedItem.host));
+                                }
+                                else
+                                {
+                                    list2.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                }
                             }
                             else if (list2[listNum].name == game.draggedItem.name && list2[listNum].quantity + 1 <= list2[listNum].maxStack)
                             {
@@ -1612,7 +1676,14 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
                             }
                             else
                             {
-                                list2.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                if (context == "shop")
+                                {
+                                    list2.splice(listNum, 0,  itemize(game.draggedItem.name, 1, false, game.draggedItem.host));
+                                }
+                                else
+                                {
+                                    list2.splice(listNum, 0, itemize(game.draggedItem.name, 1));
+                                }
                             }
                         }
                         else
@@ -1722,6 +1793,7 @@ function interlistItemTransferMenu(list1, list2, context) //context is what the 
         game.interInvScroll1 = 0;
         game.interInvScroll2 = 0;
         game.merch = "none";
+        game.hostPenalty = 1;
         if (context == "Shipyard" || context == "Docking")
         {
             shipConverter(false);

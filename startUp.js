@@ -133,6 +133,7 @@ function Game()
     this.interSellRate = 1; //what percentage shops will sell there goods at.
     this.merch = "none";
     this.demand = 1;
+    this.hostPenalty = 1;
     this.interDockingFee = 55;
     this.interCoords = [0, 0];
     this.aiMenu = false;

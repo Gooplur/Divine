@@ -1,7 +1,7 @@
 /**
  * Created by skyeguy on 12/30/16.
  */
-    function itemize(name, quantity, extra)
+    function itemize(name, quantity, extra, host)
     {
         this.name = name;
         this.quantity = quantity;
@@ -17,6 +17,15 @@
         this.image = ["divineStarterPack", 132, 23, 7, 9, 4]; //[image, Xgrab, Ygrab, proportion]
         this.brand = ["divineStarterPack", 132, 23, 7, 9, 6]; //[image, Xgrab, Ygrab, proportion]
         this.extra = extra;
+        //trade variables
+        if (typeof(host) == "undefined")
+        {
+            this.host = "none";
+        }
+        else
+        {
+            this.host = host;
+        }
         //ship variables
         this.upgrade = "none";
         this.ammo = "none";
@@ -514,22 +523,22 @@
         if (this.utility == "part" || this.utility == "core")
         {
             //Forms a Part type object.
-            return {name: this.name, quantity: this.quantity, part: this.part, utility: this.utility, manufacturer: this.manufacturer, maxStack: this.maxStack, price: this.price, selected: this.selected, dragged: this.dragged, image: this.image, brand: this.brand};
+            return {name: this.name, quantity: this.quantity, part: this.part, utility: this.utility, manufacturer: this.manufacturer, maxStack: this.maxStack, price: this.price, selected: this.selected, dragged: this.dragged, image: this.image, brand: this.brand, host: this.host};
         }
         else if (this.utility == "ammunition")
         {
             //Forms an Ammunition type object.
-            return {name: this.name, quantity: this.quantity, utility: this.utility, subUtility: this.subUtility, manufacturer: this.manufacturer, maxStack: this.maxStack, price: this.price, selected: this.selected, dragged: this.dragged, image: this.image};
+            return {name: this.name, quantity: this.quantity, utility: this.utility, subUtility: this.subUtility, manufacturer: this.manufacturer, maxStack: this.maxStack, price: this.price, selected: this.selected, dragged: this.dragged, image: this.image, host: this.host};
         }
         else if (this.utility == "resource")
         {
             //Forms a Resource type object.
-            return {name: this.name, quantity: this.quantity, utility: this.utility, description: this.description, maxStack: this.maxStack, price: this.price, selected: this.selected, dragged: this.dragged, image: this.image};
+            return {name: this.name, quantity: this.quantity, utility: this.utility, description: this.description, maxStack: this.maxStack, price: this.price, selected: this.selected, dragged: this.dragged, image: this.image, host: this.host};
         }
         else if (this.utility == "maintenance")
         {
             //Forms a Resource type object.
-            return {name: this.name, quantity: this.quantity, utility: this.utility, description: this.description, maxStack: this.maxStack, price: this.price, charge: this.charge, repair: this.repair, boost: this.boost, selected: this.selected, dragged: this.dragged, image: this.image};
+            return {name: this.name, quantity: this.quantity, utility: this.utility, description: this.description, maxStack: this.maxStack, price: this.price, charge: this.charge, repair: this.repair, boost: this.boost, selected: this.selected, dragged: this.dragged, image: this.image, host: this.host};
         }
         else if (this.utility == "ship")
         {
