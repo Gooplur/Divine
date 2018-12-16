@@ -87,6 +87,25 @@ function shipConverter(bool)
     }
 }
 
+function changeDelete()
+{
+    game.projectilesList = [];
+    for (var i = game.shipsList.length - 1; i >= 0; i--)
+    {
+        if (game.shipsList[i].faction != "Player")
+        {
+            game.shipsList.splice(i, 1);
+        }
+    }
+    for (var i = game.sceneryList.length - 1; i >= 0; i--)
+    {
+        if (game.sceneryList[i].type != "planet")
+        {
+            game.sceneryList.splice(i, 1);
+        }
+    }
+}
+
 function mapBuilder()
 {
     if (game.system == "Safir")
@@ -94,28 +113,33 @@ function mapBuilder()
         //Instantaneous
         if (game.change != "Safir")
         {
-            game.change = "Safir";
+            //delete ships, scenery and projectiles
+            changeDelete();
 
             //Scenery
+            game.sceneryList.push(new Scenery(52600, -52000, "wormhole", [], {destination: "Malakai", desX: -14500, desY: -81000}, 1400));
 
             //Ships
 
             //game.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
             //game.shipsList.push(new Ship(25000, -25000, "Disk01", "Player", "basic", false, "Advanced", "Stocked"));
-            game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", false, "Advanced", "Stocked"));
+            //game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", false, "Advanced", "Stocked"));
             //game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
-            game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
-            game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
-            //game.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
-            game.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
-            game.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
-            game.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", false, "Standard", "Stocked"));
-            game.shipsList.push(new Ship(23000, -25000, "Capsid08", "Player", "follower", false, "Standard", "Stocked"));
-            game.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", false, "Advanced", "Stocked"));
-            game.shipsList.push(new Ship(25000, -25000, "Capsid12B", "Player", "follower", true, "Standard", "Stocked"));
+            if (game.change == "start")
+            {
+                game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", true, "Standard", "Doom"));
+            }
+            //game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
+            ////game.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));
+            //game.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Stocked"));
+            //game.shipsList.push(new Ship(25000, -25000, "Harbinger88", "Player", "follower", false, "Advanced", "Stocked"));
+            //game.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", false, "Standard", "Stocked"));
+            //game.shipsList.push(new Ship(23000, -25000, "Capsid08", "Player", "follower", false, "Standard", "Stocked"));
+            //game.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", false, "Advanced", "Stocked"));
+            //game.shipsList.push(new Ship(25000, -25000, "Capsid12B", "Player", "follower", false, "Standard", "Stocked"));
 
-            game.shipsList.push(new Ship(-16000, 16000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
-            game.shipsList.push(new Ship(-9000, 9000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
+            //game.shipsList.push(new Ship(-16000, 16000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
+            //game.shipsList.push(new Ship(-9000, 9000, "Majestad", "Boofeln Widget Corporation", "tank", false, "Advanced", "Stocked"));
             game.shipsList.push(new Ship(-1300, -500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
             game.shipsList.push(new Ship(7560, -250, "Mantis09", "Boofeln Widget Corporation", "simple", false, "Advanced", "Doom"));
             game.shipsList.push(new Ship(-1000, 500, "Disk01", "Boofeln Widget Corporation", "basic", false, "Advanced", "Stocked"));
@@ -131,11 +155,32 @@ function mapBuilder()
             game.shipsList.push(new Ship(4750, 1700, "Afid01", "Boofeln Widget Corporation", "simple", false, "Standard", "Good"));
             game.shipsList.push(new Ship(6000, -3000, "Afid01", "Boofeln Widget Corporation", "basic", false, "Standard", "Good"));
             game.shipsList.push(new Ship(10000, -9000, "Capsid08", "Boofeln Widget Corporation", "basic", false, "Standard", "Stocked"));
-            game.shipsList.push(new Ship(-8200, 8400, "Capsid08", "Player", "basic", false, "Advanced", "Stocked"));
 
             game.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Advanced", "Good"));
             game.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
             game.shipsList.push(new Ship(4783, -58269, "Afid01", "Korlax Toothpick Agency", "swooper", false, "Standard", "Good"));
+
+            game.change = "Safir";
+        }
+        //Continuous
+
+    }
+    else if (game.system == "Malakai")
+    {
+        //Instantaneous
+        if (game.change != "Malakai")
+        {
+            //delete ships, scenery and projectiles
+            changeDelete();
+
+            //Scenery
+            game.sceneryList.push(new Scenery(-14500, -81000, "wormholeExit", [], false, 1400));
+
+            //Ships
+
+            //game.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
+
+            game.change = "Malakai";
         }
         //Continuous
 

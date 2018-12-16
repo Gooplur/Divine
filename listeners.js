@@ -122,6 +122,10 @@ function keyPressSensing(event)
     {
         game.zKey = true;
     }
+    if (key == 84)
+    {
+        game.tKey = true;
+    }
     if (key == 16)
     {
         game.shiftKey = true;
@@ -133,6 +137,10 @@ function keyPressSensing(event)
     if (key == 9)
     {
         game.tabKey = true;
+    }
+    if (key == 8)
+    {
+        game.deleteKey = true;
     }
 }
 
@@ -256,6 +264,10 @@ function keyReleaseSensing(event)
     {
         game.zKey = false;
     }
+    if (key == 84)
+    {
+        game.tKey = false;
+    }
     if (key == 16)
     {
         game.shiftKey = false;
@@ -267,6 +279,10 @@ function keyReleaseSensing(event)
     if (key == 9)
     {
         game.tabKey = false;
+    }
+    if (key == 8)
+    {
+        game.deleteKey = false;
     }
 }
 

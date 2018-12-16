@@ -153,6 +153,18 @@ function Game()
     this.aiSelect = "none";
     this.aiShip = -1;
     this.setAiSelect = false;
+    this.commsMenu = false;
+    this.commsList =
+        [
+            {sender: "The United Independent Republics", id: "uir0001", spot: 0, subject: "Welcome!", system: false, selected: false, active: false, summary: "Hello, we at the U IR department of space commerce would like to welcome you to the vast new world of space travel by reminding you that if you violate the U IR space regulations, you may recieve a fine of up to 10,000,000 Checks and/or up to five years in prison."},
+            {sender: "Peter", id: "peter", spot: 0, subject: "Digital Assistant", system: false, selected: false, active: true, summary: "Hi there, I'm Peter your digital assistant! I'm the default helper AI that was in that chip that the most wonderful U IR implanted in you when you were an infant to help you with your every informational need!"}
+        ];
+    this.commsScroll = 0;
+    this.commsSelect = "none";
+    this.commsConfirm = false;
+    this.activeCommunication = false;
+    this.comvo = -1;
+    this.comvoResponse = -1;
 
     //Economy;
     this.worldEconomy = new Economy();
@@ -189,10 +201,12 @@ function Game()
     this.jKey = false;
     this.vKey = false;
     this.xKey = false;
+    this.tKey = false;
     this.zKey = false;
     this.shiftKey = false;
     this.spaceKey = false;
     this.tabKey = false;
+    this.deleteKey = false;
         //Other Sensing Flags
     this.click = false;
     this.unclick = false;
@@ -223,10 +237,15 @@ function Game()
     }
         //Scenery List (asteroids, cargo holds, etc.)
     this.sceneryList = [];
+    //SAFIR
     this.sceneryList.push(new Scenery(0, 0, "planet", [], "Safir", 2300)); //STAR
     this.sceneryList.push(new Scenery(25000, -25000, "planet", [], "Aztlan", 190));
     this.sceneryList.push(new Scenery(-13266, -41523, "planet", [], "Kurm", 100));
     this.sceneryList.push(new Scenery(-19898, -37713, "planet", [], "Dorshun", 380));
+    //MALAKAI
+    this.sceneryList.push(new Scenery(0, 0, "planet", [], "Malakai", 5335)); //STAR
+
+    //
 
         //Ships List
     this.shipsList = [];
@@ -245,7 +264,10 @@ function Game()
         {
             for (var i = 0; i < self.sceneryList.length; i++)
             {
-                self.sceneryList[i].drawScene(z);
+                if (self.sceneryList[i].type == "planet" && game.system == self.sceneryList[i].system || self.sceneryList[i].type != "planet")
+                {
+                    self.sceneryList[i].drawScene(z);
+                }
             }
             for (var i = 0; i < self.shipsList.length; i++)
             {
@@ -280,7 +302,11 @@ function Game()
     {
         for (var i = 0; i < self.sceneryList.length; i++)
         {
-            self.sceneryList[i].process();
+            self.sceneryList[i].setup(self.sceneryList[i].type);
+            if (self.sceneryList[i].type == "planet" && game.system == self.sceneryList[i].system || self.sceneryList[i].type != "planet")
+            {
+                self.sceneryList[i].process();
+            }
         }
     };
 
@@ -338,6 +364,14 @@ function Game()
         else if (self.aiMenu)
         {
             aiList();
+        }
+        else if (self.activeCommunication)
+        {
+            communications();
+        }
+        else if (self.commsMenu)
+        {
+            commsArray();
         }
 
         game.x.restore();
@@ -571,7 +605,7 @@ function distance(esto, eso)
 
 function ifInScreenDraw(x, y, size)
 {
-    if (x < game.viewX + 2/3 * (game.c.width / game.scale) + size * game.scale && x > game.viewX - 2/3 * (game.c.width / game.scale) - size * game.scale && y < game.viewY + 2/3 * (game.c.height / game.scale) + size * game.scale && y > game.viewY - 2/3 * (game.c.height / game.scale) - size * game.scale)
+    if (x < game.viewX + 2/3 * (game.c.width / game.scale) + size * game.scale && x > game.viewX - 2/3 * (game.c.width / game.scale) - size * game.scale && y < game.viewY + 2/3 * (game.c.height / game.scale) + (size * 2 * game.scale) && y > game.viewY - 2/3 * (game.c.height / game.scale) - (size * 2 * game.scale))
     {
         return true;
     }

@@ -8,7 +8,6 @@ function navigator()
 {
     if (game.mode == "navigator")
     {
-
         //Selecting Ships
         for (var i = 0; i < game.shipsList.length; i++)
         {
@@ -33,21 +32,28 @@ function navigator()
             }
         }
 
+        //communications
+        if (game.rKey)
+        {
+            game.rKey = false;
+            game.commsMenu = true;
+        }
+
         //Controls for scrolling.
-        if (game.upKey == true)
+        if (game.wKey == true)
         {
             game.viewY -= game.scrollSpeed / game.scale;
         }
-        else if (game.downKey == true)
+        else if (game.sKey == true)
         {
             game.viewY += game.scrollSpeed / game.scale;
         }
 
-        if (game.leftKey == true)
+        if (game.aKey == true)
         {
             game.viewX -= game.scrollSpeed / game.scale;
         }
-        else if (game.rightKey == true)
+        else if (game.dKey == true)
         {
             game.viewX += game.scrollSpeed / game.scale;
         }

@@ -36,6 +36,8 @@ function Scenery(X, Y, type, list, extra, size)
     this.resetContentsTime = 0; //used in reseting shop contents after an elsewhere defined period of time.
     this.econo = false; //does this participate in the in-game economy
     this.star = false;
+    this.faction = false;
+    this.system = false;
 
     //cargohold variables
     this.contents = list;
@@ -50,6 +52,7 @@ function Scenery(X, Y, type, list, extra, size)
             {
                 if (this.extra == "Aztlan")
                 {
+                    this.system = "Safir";
                     this.econo = true;
                     this.faction = "UIR";
                     this.shopContents = [itemize("Freshwater", 999), itemize("Freshwater", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 2), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 4), itemize("Power Core", 7), itemize("Repair Kit", 999), itemize("Repair Kit", 6), itemize("Shield Jumper", 3), itemize("RedStarShields", 3), itemize("JadeDragonShields", 1), itemize("M1Missile", 999), itemize("M1Missile", 15), itemize("PlasmaticSeeker", 6), itemize("TrineumSeeker", 999), itemize("Technology", 6)];
@@ -58,11 +61,26 @@ function Scenery(X, Y, type, list, extra, size)
                 }
                 else if (this.extra == "Kurm")
                 {
+                    this.system = "Safir";
                     this.econo = true;
                     this.faction = "UIR";
                     this.shopContents = [itemize("Freshwater", 6), itemize("Petroleum", 999), itemize("Petroleum", 999), itemize("Petroleum", 3), itemize("Oxygen Tank", 999), itemize("Oxygen Tank", 1), itemize("Power Core", 2), itemize("Repair Kit", 3), itemize("M1Missile", 999), itemize("M1Missile", 14), itemize("PlasmaticSeeker", 6), itemize("Afid01-F1Lasers", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-F1Lasers", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-M1Launcher", 1), itemize("Afid01-Boosters", 1), itemize("Afid01-Boosters", 1), itemize("Afid01-F1SentryGun", 1), itemize("Afid01-F1SentryGun", 1), itemize("Afid01-F1SentryGun", 1), itemize("Disk01-F1SingleStream", 1), itemize("Disk01-F1SingleStream", 1), itemize("Disk01-F1SingleStream", 1), itemize("Mantis09-PlasmaCannon", 1), itemize("Mantis09-PlasmaBlasters", 1), itemize("Mantis09-PlasmaBlasters", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("Mantis09-PlasmaAccelerator", 1), itemize("Packaged Food", 8)];
                     this.desiredStock = [["Scrap", 3], ["Oxygen Tank", 20], ["Freshwater", 10], ["Petroleum", 12], ["Power Core", 4], ["Repair Kit", 6], ["Shield Jumper", 1], ["RedStarShields", 1], ["JadeDragonShields", 2], ["StabilizingParticleFogShield", 1], ["M1Missile", 40], ["PlasmaticSeeker", 11], ["Technology", 6], ["Afid01-F1Lasers", 6], ["Afid01-M1Launcher", 5], ["Afid01-Boosters", 3], ["Afid01-F1SentryGun", 4], ["Disk01-F1SingleStream", 5], ["Mantis09-PlasmaCannon", 1], ["Mantis09-PlasmaBlasters", 3], ["Mantis09-PlasmaAccelerator", 2], ["Packaged Food", 13]];
                     this.production = [["Power Core", 1], ["Repair Kit", 1], ["Technology", 1], ["M1Missile", 12], ["PlasmaticSeeker", 5], ["Afid01-F1Lasers", 2], ["Afid01-M1Launcher", 2], ["Afid01-Boosters", 1], ["Afid01-F1SentryGun", 2], ["Disk01-F1SingleStream", 3], ["Mantis09-PlasmaCannon", 1], ["Mantis09-PlasmaBlasters", 1], ["Mantis09-PlasmaAccelerator", 1]];
+                }
+                else if (this.extra == "Dorshun")
+                {
+                    this.system = "Safir";
+                }
+                else if (this.extra == "Safir")
+                {
+                    this.system = "Safir";
+                    this.star = true;
+                }
+                else if (this.extra == "Malakai")
+                {
+                    this.system = "Malakai";
+                    this.star = true;
                 }
             }
         }
@@ -92,6 +110,36 @@ function Scenery(X, Y, type, list, extra, size)
                 }
             }
         }
+        else if (this.type == "wormhole" || this.type == "wormholeExit")
+        {
+            if (z == 0)
+            {
+                if (this.type == "wormholeExit")
+                {
+                    this.spin += 0.1;
+                }
+                else
+                {
+                    this.spin -= 0.1;
+                }
+
+                if (ifInScreenDraw(this.X, this.Y, this.size * 14))
+                {
+                    draw(vortex, 0, 0, vortex.width, vortex.height, this.X, this.Y, vortex.width * 9, vortex.height * 9, this.spin, false, 1, false, false);
+
+                    if (this.type == "wormhole")
+                    {
+                        if (this.flag && this.extra != false)
+                        {
+                            game.x.textAlign = "center";
+                            game.x.font = fonter(16, "Arial");
+                            game.x.fillStyle = game.playerHUDColor;
+                            game.x.fillText("Wormhole to " + this.extra.destination + " System", xxx(0), yyy(-200));
+                        }
+                    }
+                }
+            }
+        }
         else if (this.type == "planet")
         {
             if (z == 0)
@@ -99,8 +147,11 @@ function Scenery(X, Y, type, list, extra, size)
                 if (this.extra == "Aztlan")
                 {
                     //draw the planet twice so that it does not appear transparent
-                    draw(divineKitB, 4, 3, 37, 35, this.X, this.Y, 37 * 12, 35 * 12, 0, false, 1, false, false);
-                    draw(divineKitB, 4, 3, 37, 35, this.X, this.Y, 37 * 12, 35 * 12, 0, false, 1, false, false);
+                    if (ifInScreenDraw(this.X, this.Y, this.size))
+                    {
+                        draw(divineKitB, 4, 3, 37, 35, this.X, this.Y, 37 * 12, 35 * 12, 0, false, 1, false, false);
+                        draw(divineKitB, 4, 3, 37, 35, this.X, this.Y, 37 * 12, 35 * 12, 0, false, 1, false, false);
+                    }
                     if (this.flag)
                     {
                         game.x.textAlign = "center";
@@ -112,7 +163,10 @@ function Scenery(X, Y, type, list, extra, size)
                 else if (this.extra == "Kurm")
                 {
                     //draw the planet
-                    draw(divineKitB, 135, 119, 34, 33, this.X, this.Y, 34 * 8, 33 * 8, 0, false, 1, false, false);
+                    if (ifInScreenDraw(this.X, this.Y, this.size))
+                    {
+                        draw(divineKitB, 135, 119, 34, 33, this.X, this.Y, 34 * 8, 33 * 8, 0, false, 1, false, false);
+                    }
 
                     if (this.flag)
                     {
@@ -125,7 +179,10 @@ function Scenery(X, Y, type, list, extra, size)
                 else if (this.extra == "Dorshun")
                 {
                     //draw the planet
+                    if (ifInScreenDraw(this.X, this.Y, this.size))
+                    {
                         draw(divineKitB, 117, 2, 51, 48, this.X, this.Y, 51 * 17, 48 * 17, 2, false, 1, false, false);
+                    }
 
                     if (this.flag)
                     {
@@ -138,7 +195,26 @@ function Scenery(X, Y, type, list, extra, size)
                 else if (this.extra == "Safir")
                 {
                     //draw the planet
-                    draw(sun3, 0, 0, sun3.width, sun3.height, this.X, this.Y, sun3.width * 14, sun3.height * 14, 0, false, 1, false, false);
+                    if (ifInScreenDraw(this.X, this.Y, this.size * 2.9))
+                    {
+                        draw(sun3, 0, 0, sun3.width, sun3.height, this.X, this.Y, sun3.width * 14, sun3.height * 14, 0, false, 1, false, false);
+                    }
+
+                    if (this.flag)
+                    {
+                        game.x.textAlign = "center";
+                        game.x.font = fonter(16, "Arial");
+                        game.x.fillStyle = game.playerHUDColor;
+                        game.x.fillText(this.extra, xxx(0), yyy(-200));
+                    }
+                }
+                else if (this.extra == "Malakai")
+                {
+                    //draw the planet
+                    if (ifInScreenDraw(this.X, this.Y, this.size * 5))
+                    {
+                        draw(sun2, 0, 0, sun2.width, sun2.height, this.X, this.Y, sun2.width * 18, sun2.height * 18, 0, false, 1, false, false);
+                    }
 
                     if (this.flag)
                     {
@@ -187,10 +263,114 @@ function Scenery(X, Y, type, list, extra, size)
             //keeps the cargohold's menu open while it is in use
 
         }
+        else if (this.type == "wormhole")
+        {
+            if (ifInScreenDraw(this.X, this.Y, this.size * 17))
+            {
+                for (var i = 0; i < game.projectilesList.length; i++)
+                {
+                    var dist = distance(this, game.projectilesList[i]);
+                    if (dist <= this.size * 17)
+                    {
+                        if (dist > 0)
+                        {
+                            if (game.projectilesList[i].tugResist == false && game.projectilesList[i].sticker == "none")
+                            {
+                                game.projectilesList[i].X += Math.cos(Math.atan2(this.Y - game.projectilesList[i].Y, this.X - game.projectilesList[i].X)) * 900 / (game.projectilesList[i].radius + (dist / 800));
+                                game.projectilesList[i].Y += Math.sin(Math.atan2(this.Y - game.projectilesList[i].Y, this.X - game.projectilesList[i].X)) * 900 / (game.projectilesList[i].radius + (dist / 800));
+                            }
+                        }
+                    }
+                }
+                for (var i = 0; i < game.shipsList.length; i++)
+                {
+                    var dist = distance(this, game.shipsList[i]);
+                    if (dist <= this.size * 17)
+                    {
+                        if (dist > 0)
+                        {
+                            if (game.shipsList[i].wormholeResistUP == false)
+                            {
+                                game.shipsList[i].X += Math.cos(Math.atan2(this.Y - game.shipsList[i].Y, this.X - game.shipsList[i].X)) * 900 / (game.shipsList[i].size + (dist / 16000));
+                                game.shipsList[i].Y += Math.sin(Math.atan2(this.Y - game.shipsList[i].Y, this.X - game.shipsList[i].X)) * 900 / (game.shipsList[i].size + (dist / 16000));
+                            }
+                        }
+                    }
+                    if (game.shipsList[i].player)
+                    {
+                        if (dist <= this.size && game.shipsList[i].wormholeResistUP == true || dist <= (this.size / 4))
+                        {
+                            this.flag = true;
+
+                            if (this.extra != false)
+                            {
+                                if (game.eKey || game.ctrlKey && game.scale >= 1.65)
+                                {
+                                    game.eKey = false;
+
+                                    // {destination: "Malakai", desX: 0, desY: 0}
+                                    for (var j = 0; j < game.shipsList.length; j++)
+                                    {
+                                        if (game.shipsList[j].faction == "Player")
+                                        {
+                                            game.shipsList[j].X = this.extra.desX;
+                                            game.shipsList[j].Y = this.extra.desY;
+                                        }
+                                    }
+                                    game.system = this.extra.destination;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            this.flag = false;
+                        }
+                    }
+                }
+            }
+        }
+        else if (this.type == "wormholeExit")
+        {
+            if (ifInScreenDraw(this.X, this.Y, this.size * 17))
+            {
+                for (var i = 0; i < game.projectilesList.length; i++)
+                {
+                    var dist = distance(this, game.projectilesList[i]);
+                    if (dist <= this.size * 17)
+                    {
+                        if (dist > 0)
+                        {
+                            if (game.projectilesList[i].tugResist == false && game.projectilesList[i].sticker == "none")
+                            {
+                                game.projectilesList[i].X += Math.cos(Math.atan2(this.Y - game.projectilesList[i].Y, this.X - game.projectilesList[i].X) - Math.PI) * 900 / (game.projectilesList[i].radius + (dist / 800));
+                                game.projectilesList[i].Y += Math.sin(Math.atan2(this.Y - game.projectilesList[i].Y, this.X - game.projectilesList[i].X) - Math.PI) * 900 / (game.projectilesList[i].radius + (dist / 800));
+                            }
+                        }
+                    }
+                }
+                for (var i = 0; i < game.shipsList.length; i++)
+                {
+                    var dist = distance(this, game.shipsList[i]);
+                    if (dist <= this.size * 17)
+                    {
+                        if (dist > 0)
+                        {
+                            if (game.shipsList[i].wormholeResistUP == false)
+                            {
+                                game.shipsList[i].X += Math.cos(Math.atan2(this.Y - game.shipsList[i].Y, this.X - game.shipsList[i].X) - Math.PI) * 900 / (game.shipsList[i].size + (dist / 16000));
+                                game.shipsList[i].Y += Math.sin(Math.atan2(this.Y - game.shipsList[i].Y, this.X - game.shipsList[i].X) - Math.PI) * 900 / (game.shipsList[i].size + (dist / 16000));
+                            }
+                        }
+                        if (dist < 400)
+                        {
+                            game.shipsList[i].speed = Math.min(game.shipsList[i].speedMAX * 2, 390);
+                        }
+                    }
+                }
+            }
+        }
         else if (this.type == "planet")
         {
-            this.setup(this.type);
-
             if (ifInScreenDraw(this.X, this.Y, this.size))
             {
                 for (var i = 0; i < game.shipsList.length; i++)
@@ -203,7 +383,7 @@ function Scenery(X, Y, type, list, extra, size)
                             {
                                 this.flag = true;
                                 //menu
-                                if (game.eKey)
+                                if (game.eKey || game.ctrlKey && game.ctrlKey && game.scale >= 1.65)
                                 {
                                     game.eKey = false;
                                     game.planetMenu = true;
@@ -232,7 +412,7 @@ function Scenery(X, Y, type, list, extra, size)
                             {
                                 this.flag = true;
                                 //menu
-                                if (game.eKey)
+                                if (game.eKey || game.ctrlKey && game.scale >= 1.65)
                                 {
                                     game.eKey = false;
                                     game.planetMenu = true;
@@ -268,7 +448,6 @@ function Scenery(X, Y, type, list, extra, size)
                         }
                         else if (this.extra == "Safir")
                         {
-                            this.star = true;
                             if (distance(this, game.shipsList[i]) <= size)
                             {
                                 if (game.shipsList[i].solar == true && game.shipsList[i].power < game.shipsList[i].powerMAX)
@@ -278,6 +457,27 @@ function Scenery(X, Y, type, list, extra, size)
                                 if (game.shipsList[i].solarOrganic == true && game.shipsList[i].integrity < game.shipsList[i].integrityMAX)
                                 {
                                     game.shipsList[i].integrity += 0.05;
+                                }
+
+                                this.flag = true;
+                            }
+                            else
+                            {
+                                this.flag = false;
+                            }
+
+                        }
+                        else if (this.extra == "Malakai")
+                        {
+                            if (distance(this, game.shipsList[i]) <= size)
+                            {
+                                if (game.shipsList[i].solar == true && game.shipsList[i].power < game.shipsList[i].powerMAX)
+                                {
+                                    game.shipsList[i].power += 0.80;
+                                }
+                                if (game.shipsList[i].solarOrganic == true && game.shipsList[i].integrity < game.shipsList[i].integrityMAX)
+                                {
+                                    game.shipsList[i].integrity += 0.08;
                                 }
 
                                 this.flag = true;

@@ -85,6 +85,8 @@ function Projectile(type, x, y, who, rotation, adX, adY)
     //On-Death-Do-Something variables
     this.doOnProjectEnd = false; //when the projectile reaches the end of its project range it does something.
     this.doOnContact = false;
+    //gravity
+    this.tugResist = false; //this is strong gravity resistance
 
     //effects
     this.distorted = false;

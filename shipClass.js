@@ -117,12 +117,14 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.stickyResistUP = false;
     this.transferResistUP = false;
     this.solarResistUP = false;
+    this.wormholeResistUP = false;
 
     //base resistances
     this.distortResist = false;
     this.stickyResist = false;
     this.transferResist = false;
     this.solarResist = false;
+    this.wormholeResist = false;
 
     //Status effects
     this.handlingDebuffTime = 0;
@@ -140,6 +142,9 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     this.shop = []; //this is the equipment that a ship has for sale... it is at discount price if you own the trade station.
     this.solar = false; //this determines if a ship recharges power using solar radiation
     this.solarOrganic = false; //this determines if solar radiation can be used to restore integrity
+    this.scavenger = false; //this determines if a ship can track cargo on their scanner
+    this.noEnemyTracking = false; //this determines if a ship can see enemies on their scanner
+    this.noAllyTracking = false; //this determines if a ship can see allies on their scanner
     //ACTION VARIABLES (like moving attacking etc.)
     this.speedAlteration = false;
     this.offline = false; //if a ship is powered offline it can not be discovered by long range trackers but it also cannot change its acceleration use its shielding systems, nor attack with its weapon systems.
@@ -953,6 +958,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
         this.stickyResistUP = this.stickyResist;
         this.transferResistUP = this.transferResist;
         this.solarResistUP = this.solarResist;
+        this.wormholeResistUP = this.wormholeResist;
 
         //bonusReset
         this.shieldsUP = 0;
@@ -1131,7 +1137,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
     {
         if (z == this.zIndex)
         {
-            if (ifInScreenDraw(this.X, this.Y, this.size * 2))
+            if (ifInScreenDraw(this.X, this.Y, this.size * 2.2))
             {
                 //DRAW SHIPS
                 if (this.type == "Afid01")
@@ -1504,41 +1510,70 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     //radar dots that represent planets allies and enemies
                     for (var i = 0; i < game.sceneryList.length; i++)
                     {
-                        if (game.sceneryList[i].type == "planet")
+                        if (game.sceneryList[i].type == "planet" && game.sceneryList[i].system == game.system || game.sceneryList[i].type == "wormhole")
+                        {
                             if (this.distanceTo(game.sceneryList[i]) <= this.radarRange)
                             {
-                                circle(true, this.X + Math.cos(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (11 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (11 + this.size * 1.4), 4, 0, 2*Math.PI, "#228B22", false, false, false, false, 0.85);
-                            }
-                    }
-                    for (var i = 0; i < game.shipsList.length; i++)
-                    {
-                        if (game.shipsList[i] !== this && game.shipsList[i].cloaking != true && game.shipsList[i].destructed != true)
-                        {
-                            var isAlly = false;
-                            if (game.shipsList[i].faction == "Player")
-                            {
-                                isAlly = true;
-                            }
-                            else
-                            {
-                                for (var j = 0; j < this.allies.length; j++)
+                                if (game.sceneryList[i].star == true)
                                 {
-                                    if (game.shipsList[i].faction == this.allies[j])
-                                    {
-                                        isAlly = true;
-                                    }
+                                    circle(true, this.X + Math.cos(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (13 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (13 + this.size * 1.4), 6, 0, 2*Math.PI, "orange", false, false, false, false, 0.95);
                                 }
-                            }
-
-                            if (this.distanceTo(game.shipsList[i]) <= this.radarRange)
-                            {
-                                if (isAlly)
+                                else if (game.sceneryList[i].type == "wormhole")
                                 {
-                                    circle(true, this.X + Math.cos(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (9 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (11 + this.size * 1.4), 2, 0, 2*Math.PI, "blue", false, false, false, false, 0.333);
+                                    circle(true, this.X + Math.cos(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (12 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (12 + this.size * 1.4), 5, 0, 2*Math.PI, "lavender", false, false, false, false, 0.9);
                                 }
                                 else
                                 {
-                                    circle(true, this.X + Math.cos(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (10 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (11 + this.size * 1.4), 2, 0, 2*Math.PI, "#d63a44", false, false, false, false, 0.425);
+                                    circle(true, this.X + Math.cos(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (11 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (11 + this.size * 1.4), 4, 0, 2*Math.PI, "#228B22", false, false, false, false, 0.85);
+                                }
+                            }
+                        }
+                        if (this.scavenger == true)
+                        {
+                            if (game.sceneryList[i].type == "cargohold")
+                            {
+                                circle(true, this.X + Math.cos(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (9.5 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.sceneryList[i].Y - this.Y, game.sceneryList[i].X - this.X)) * (9.5 + this.size * 1.4), 2.5, 0, 2*Math.PI, "yellow", false, false, false, false, 0.55);
+                            }
+                        }
+                    }
+                    if (this.noEnemyTracking == false || this.noAllyTracking == false)
+                    {
+                        for (var i = 0; i < game.shipsList.length; i++)
+                        {
+                            if (game.shipsList[i] !== this && game.shipsList[i].cloaking != true && game.shipsList[i].destructed != true)
+                            {
+                                var isAlly = false;
+                                if (game.shipsList[i].faction == "Player")
+                                {
+                                    isAlly = true;
+                                }
+                                else
+                                {
+                                    for (var j = 0; j < this.allies.length; j++)
+                                    {
+                                        if (game.shipsList[i].faction == this.allies[j])
+                                        {
+                                            isAlly = true;
+                                        }
+                                    }
+                                }
+
+                                if (this.distanceTo(game.shipsList[i]) <= this.radarRange)
+                                {
+                                    if (isAlly)
+                                    {
+                                        if (this.noAllyTracking == false)
+                                        {
+                                            circle(true, this.X + Math.cos(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (9 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (11 + this.size * 1.4), 2, 0, 2*Math.PI, "blue", false, false, false, false, 0.333);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (this.noEnemyTracking == false)
+                                        {
+                                            circle(true, this.X + Math.cos(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (10 + this.size * 1.4), this.Y + Math.sin(Math.atan2(game.shipsList[i].Y - this.Y, game.shipsList[i].X - this.X)) * (11 + this.size * 1.4), 2, 0, 2*Math.PI, "#d63a44", false, false, false, false, 0.425);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1758,8 +1793,9 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                     this.shieldingOnline = false;
                 }
             }
-            if (game.rKey == true)
+            if (game.tKey == true)
             {
+                game.tKey = false;
                 if (this.rechargeShield)
                 {
                     this.rechargeShield = false;
@@ -1768,6 +1804,11 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 {
                     this.rechargeShield = true;
                 }
+            }
+            if (game.rKey == true) //RADIO //COMMS //COMMUNICATIONS
+            {
+                game.rKey = false;
+                game.commsMenu = true;
             }
             if (game.iKey == true)
             {
@@ -4531,7 +4572,7 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
 
     this.runSystems = function()
     {
-        if (ifInScreenDraw(this.X, this.Y, this.size * 2) || game.togglePerformance == false)
+        if (ifInScreenDraw(this.X, this.Y, this.size * 2.2) || game.togglePerformance == false)
         {
             this.destruct();
             if (this.activateThisShip)
