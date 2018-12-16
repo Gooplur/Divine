@@ -605,7 +605,7 @@ function communications() //TODO this is the dialogue system for the game
             //sub circle 2
             if (((game.mouseX - xxx(550))*(game.mouseX - xxx(550)) + (game.mouseY - yyy(775))*(game.mouseY - yyy(775))) <= 50*50)
             {
-                circleHovered = 2;
+                circleHovered = 1;
                 if (game.unclick)
                 {
                     game.unclick = false;
@@ -861,7 +861,7 @@ function communications() //TODO this is the dialogue system for the game
             //sub circle 2
             if (((game.mouseX - xxx(550))*(game.mouseX - xxx(550)) + (game.mouseY - yyy(775))*(game.mouseY - yyy(775))) <= 50*50)
             {
-                circleHovered = 2;
+                circleHovered = 1;
                 if (game.unclick)
                 {
                     game.unclick = false;
@@ -1229,7 +1229,7 @@ function communications() //TODO this is the dialogue system for the game
             //sub circle 2
             if (((game.mouseX - xxx(550))*(game.mouseX - xxx(550)) + (game.mouseY - yyy(775))*(game.mouseY - yyy(775))) <= 50*50)
             {
-                circleHovered = 2;
+                circleHovered = 1;
                 if (game.unclick)
                 {
                     game.unclick = false;
@@ -1702,15 +1702,18 @@ function communications() //TODO this is the dialogue system for the game
                 }
                 evento = comvo[i].event;
                 game.comvoResponse = comvo[i].re;
-                game.comvo = comvo[i].inside;
+                if (comvo[i].inside.length > 0)
+                {
+                    game.comvo = comvo[i].inside;
+                }
                 break;
             }
         }
         if (game.comvoResponse != -1)
         {
             game.x.textAlign = "center";
-            game.x.font = fonter(10, "Arial");
-            game.x.fillStyle = "navy";
+            game.x.font = fonter(8, "Arial");
+            game.x.fillStyle = "white";
             game.x.fillText(game.comvoResponse, xxx(503), yyy(130));
         }
 
