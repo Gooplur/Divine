@@ -118,6 +118,7 @@ function mapBuilder()
 
             //Scenery
             game.sceneryList.push(new Scenery(52600, -52000, "wormhole", [], {destination: "Malakai", desX: -14500, desY: -81000}, 1400));
+            game.sceneryList.push(new Scenery(-92000, -20000, "wormholeExit", [], false, 1400));
 
             //Ships
 
@@ -176,11 +177,36 @@ function mapBuilder()
             //Scenery
             game.sceneryList.push(new Scenery(-14500, -81000, "wormholeExit", [], false, 1400));
 
+            game.sceneryList.push(new Scenery(91779, 93684, "wormhole", [], {destination: "Artemis", desX: -12860, desY: 79258}, 1400));
+
             //Ships
 
             //game.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
 
             game.change = "Malakai";
+        }
+        //Continuous
+
+    }
+    else if (game.system == "Artemis")
+    {
+        //Instantaneous
+        if (game.change != "Artemis")
+        {
+            //delete ships, scenery and projectiles
+            changeDelete();
+
+            //Scenery
+            game.sceneryList.push(new Scenery(-12860, 79258, "wormholeExit", [], false, 1400));
+
+            game.sceneryList.push(new Scenery(-69060, -85500, "wormhole", [], {destination: "Safir", desX: -92000, desY: -20000}, 1400));
+
+
+            //Ships
+
+            //game.shipsList.push(new Ship(0, 0, "Afid01", "Player", "basic", false, "Advanced", "Stocked"));
+
+            game.change = "Artemis";
         }
         //Continuous
 

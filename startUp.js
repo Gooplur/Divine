@@ -243,7 +243,12 @@ function Game()
     this.sceneryList.push(new Scenery(-13266, -41523, "planet", [], "Kurm", 100));
     this.sceneryList.push(new Scenery(-19898, -37713, "planet", [], "Dorshun", 380));
     //MALAKAI
-    this.sceneryList.push(new Scenery(0, 0, "planet", [], "Malakai", 5335)); //STAR
+    this.sceneryList.push(new Scenery(0, 0, "planet", [], "Malakai", 23335)); //STAR
+    this.sceneryList.push(new Scenery(-19850, 14344, "planet", [], "Haber", 150));
+    this.sceneryList.push(new Scenery(-6729, 56875, "planet", [], "Akigma", 420));
+    this.sceneryList.push(new Scenery(-392, 60232, "planet", [], "Kalishkya", 84));
+    //ARTEMIS
+    this.sceneryList.push(new Scenery(0, 0, "planet", [], "Artemis", 3432)); //STAR
 
     //
 

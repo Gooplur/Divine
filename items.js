@@ -379,7 +379,7 @@
             this.utility = "resource";
             this.maxStack = 4;
             this.price = 600;
-            this.description = "All the most important technological parts for manufacture and sale as consumer technologies.";
+            this.description = "Aborted human fetuses harvested at just the right time to retain the highest concentration of stem cells for use in biological research and organic technology.";
             this.image = ["divineKitE", 510, 6, 47, 48, 1.6];
         }
         else if (this.name == "Petroleum")
