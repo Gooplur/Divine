@@ -32,6 +32,32 @@ function navigator()
             }
         }
 
+        var playerShips = 0;
+        for (var l = 0; l < game.shipsList.length; l++)
+        {
+            if (game.shipsList[l].faction == "Player")
+            {
+                playerShips += 1;
+            }
+        }
+
+        if (playerShips > 0)
+        {
+            if (game.deleteKey)
+            {
+                game.deleteKey = false;
+                remember(); //save the game
+            }
+        }
+        else if (game.state == "Divine" && game.mainMenu == false && game.modeSelectorMenu == false)
+        {
+            game.checks -= 9000;
+            game.shipConverterList = [itemize("MinionC32", 1)];
+            game.viewX = game.interCoords[0];
+            game.viewY = game.interCoords[1];
+            shipConverter(false);
+        }
+
         //communications
         if (game.rKey)
         {

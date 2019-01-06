@@ -15,6 +15,7 @@ function Scenery(X, Y, type, list, extra, size)
     this.flag = false;
     this.isSetup = false;
     this.faction = false;
+    this.barcode = this.type + "_SceneryIdCode_" + Math.random() * 99 + (Math.random() * Math.PI);
     if (typeof(size) != "undefined")
     {
         if (size == false)

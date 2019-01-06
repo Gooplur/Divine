@@ -128,7 +128,50 @@ function mapBuilder()
             //game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "swooper-missile", false, "Standard", "Scarce"));
             if (game.change == "start")
             {
-                game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", true, "Standard", "Doom"));
+                var randFacc = Math.random();
+
+                if (game.startingClass == "Filibuster")
+                {
+                    if (randFacc > 0.75)
+                    {
+                        game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", true, "Standard", "Good"));
+                    }
+                    else if (randFacc > 0.5)
+                    {
+                        game.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", true, "Standard", "Doom"));
+                    }
+                    else if (randFacc > 0.25)
+                    {
+                        game.shipsList.push(new Ship(25000, -25000, "MinionC32", "Player", "follower", true, "Standard", "Doom"));
+                    }
+                    else
+                    {
+                        game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", true, "Advanced", "Stocked"));
+                    }
+                }
+                else if (game.startingClass == "Warlord")
+                {
+                    game.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", true, "Advanced", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "follower", false, "Advanced", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Standard", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", false, "Advanced", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Capsid08", "Player", "follower", false, "Standard", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Capsid12B", "Player", "follower", false, "Standard", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", false, "Advanced", "Stocked"));
+                    game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", false, "Standard", "Stocked"));
+                }
+                else if (game.startingClass == "Tradelord")
+                {
+                    game.shipsList.push(new Ship(25000, -25000, "Mantis09", "Player", "follower", true, "Standard", "Good"));
+                    game.shipsList.push(new Ship(25000, -25000, "Capsid12B", "Player", "follower", false, "Standard", "Doom"));
+                    game.shipsList.push(new Ship(25000, -25000, "Capsid12B", "Player", "follower", false, "Standard", "Doom"));
+                }
+                else if (game.startingClass == "Entrepreneur")
+                {
+                    game.shipsList.push(new Ship(25000, -25000, "Afid01", "Player", "follower", true, "Advanced", "Doom"));
+                }
             }
             //game.shipsList.push(new Ship(25000, -25000, "Screecher", "Player", "follower", false, "Advanced", "Doom"));
             ////game.shipsList.push(new Ship(25000, -25000, "Majestad", "Player", "simple", false, "Standard", "Stocked"));

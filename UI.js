@@ -81,6 +81,8 @@ function planetMenu(options) //options is a list of all the possible selections 
                     game.interInvCargoMAX1 = game.shipsList[game.userShipLocator].cargoMAX;
                     game.interBuyRate = game.sceneryList[game.currentPlanetLocator].pricing.shop[0]; //what percentage shops will pay for your goods.
                     game.interSellRate = game.sceneryList[game.currentPlanetLocator].pricing.shop[1]; //what percentage shops will sell there goods at.
+                    game.interCoords = [game.sceneryList[game.currentPlanetLocator].X, game.sceneryList[game.currentPlanetLocator].Y];
+                    game.interSystem = game.system;
                 }
                 else if (options[i] == "shipyard")
                 {
@@ -93,6 +95,7 @@ function planetMenu(options) //options is a list of all the possible selections 
                     game.interCoords = [game.sceneryList[game.currentPlanetLocator].X, game.sceneryList[game.currentPlanetLocator].Y];
                     shipConverter(true);
                     game.interInv1 = game.shipConverterList;
+                    game.interSystem = game.system;
                 }
                 else if (options[i] == "docking")
                 {
@@ -104,6 +107,7 @@ function planetMenu(options) //options is a list of all the possible selections 
                     game.interCoords = [game.sceneryList[game.currentPlanetLocator].X, game.sceneryList[game.currentPlanetLocator].Y];
                     shipConverter(true);
                     game.interInv1 = game.shipConverterList;
+                    game.interSystem = game.system;
                 }
             }
         }
@@ -2045,6 +2049,282 @@ function aiList()
         }
         game.aiShip = -1;
     }
+}
+
+function minimap() //TODO try to figure out how to add a minimap
+{
+    game.state = "DivinePaused";
+    game.scale = 1;
+
+    //
+
+    if (game.eKey)
+    {
+        game.eKey = false;
+        game.solarMap = false;
+        game.state = "Divine";
+    }
+}
+
+function main()
+{
+    game.state = "DivinePaused";
+    game.scale = 1;
+
+    game.x.save();
+    game.x.translate(-1/2 * game.c.width, -1/2 * game.c.height);
+    //background
+    game.x.beginPath();
+    game.x.fillStyle = "#18181A";
+    game.x.strokeStyle = "lightGrey";
+    game.x.lineWidth = 3;
+    game.x.rect(xxx(10), yyy(10), xxx(980), yyy(980));
+    game.x.fill();
+    game.x.stroke();
+
+    //NEW GAME
+    game.x.beginPath();
+    if (((game.mouseX - xxx(300))*(game.mouseX - xxx(300)) + (game.mouseY - yyy(500))*(game.mouseY - yyy(500))) <= 160*160)
+    {
+        game.x.fillStyle = "orange";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(300), yyy(500), 160, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(26, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("New Game", xxx(300), yyy(490));
+        if (game.unclick)
+        {
+            game.unclick = false;
+            game.mainMenu = false;
+            game.modeSelectorMenu = true;
+        }
+    }
+    else
+    {
+        game.x.fillStyle = "lightGrey";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(300), yyy(500), 160, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(26, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("New Game", xxx(300), yyy(490));
+    }
+
+    //LOAD GAME
+    game.x.beginPath();
+    if (((game.mouseX - xxx(700))*(game.mouseX - xxx(700)) + (game.mouseY - yyy(500))*(game.mouseY - yyy(500))) <= 160*160)
+    {
+        game.x.fillStyle = "orange";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(700), yyy(500), 160, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(26, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Load Game", xxx(700), yyy(490));
+        if (game.unclick)
+        {
+            game.unclick = false;
+            game.mainMenu = false;
+            game.state = "Divine";
+            remind();
+        }
+    }
+    else
+    {
+        game.x.fillStyle = "lightGrey";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(700), yyy(500), 160, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(26, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Load Game", xxx(700), yyy(490));
+    }
+
+    game.x.restore();
+}
+
+function modeSelector()
+{
+    game.state = "DivinePaused";
+    game.scale = 1;
+
+    game.x.save();
+    game.x.translate(-1/2 * game.c.width, -1/2 * game.c.height);
+    //background
+    game.x.beginPath();
+    game.x.fillStyle = "#18181A";
+    game.x.strokeStyle = "lightGrey";
+    game.x.lineWidth = 3;
+    game.x.rect(xxx(10), yyy(10), xxx(980), yyy(980));
+    game.x.fill();
+    game.x.stroke();
+
+    //WARLORD
+    game.x.beginPath();
+    if (((game.mouseX - xxx(200))*(game.mouseX - xxx(200)) + (game.mouseY - yyy(500))*(game.mouseY - yyy(500))) <= 120*120)
+    {
+        game.x.fillStyle = "orange";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(200), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Warlord", xxx(200), yyy(495));
+        if (game.unclick)
+        {
+            game.unclick = false;
+            game.modeSelectorMenu = false;
+            game.state = "Divine";
+            game.checks = 600000;
+            game.startingClass = "Warlord";
+            game.change = "start";
+        }
+    }
+    else
+    {
+        game.x.fillStyle = "lightGrey";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(200), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Warlord", xxx(200), yyy(495));
+    }
+
+    //TRADELORD
+    game.x.beginPath();
+    if (((game.mouseX - xxx(400))*(game.mouseX - xxx(400)) + (game.mouseY - yyy(500))*(game.mouseY - yyy(500))) <= 120*120)
+    {
+        game.x.fillStyle = "orange";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(400), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Tradelord", xxx(400), yyy(495));
+        if (game.unclick)
+        {
+            game.unclick = false;
+            game.modeSelectorMenu = false;
+            game.state = "Divine";
+            game.checks = 2200000;
+            game.startingClass = "Tradelord";
+            game.change = "start";
+        }
+    }
+    else
+    {
+        game.x.fillStyle = "lightGrey";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(400), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Tradelord", xxx(400), yyy(495));
+    }
+
+    //ENTREPRENEUR
+    game.x.beginPath();
+    if (((game.mouseX - xxx(600))*(game.mouseX - xxx(600)) + (game.mouseY - yyy(500))*(game.mouseY - yyy(500))) <= 120*120)
+    {
+        game.x.fillStyle = "orange";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(600), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Entrepreneur", xxx(600), yyy(495));
+        if (game.unclick)
+        {
+            game.unclick = false;
+            game.modeSelectorMenu = false;
+            game.state = "Divine";
+            game.checks = 25000;
+            game.startingClass = "Entrepreneur";
+            game.change = "start";
+        }
+    }
+    else
+    {
+        game.x.fillStyle = "lightGrey";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(600), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Entrepreneur", xxx(600), yyy(495));
+    }
+
+    //FILIBUSTER
+    game.x.beginPath();
+    if (((game.mouseX - xxx(800))*(game.mouseX - xxx(800)) + (game.mouseY - yyy(500))*(game.mouseY - yyy(500))) <= 120*120)
+    {
+        game.x.fillStyle = "orange";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(800), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Filibuster", xxx(800), yyy(495));
+        if (game.unclick)
+        {
+            game.unclick = false;
+            game.modeSelectorMenu = false;
+            game.state = "Divine";
+            game.checks = 10000;
+            game.startingClass = "Filibuster";
+            game.change = "start";
+        }
+    }
+    else
+    {
+        game.x.fillStyle = "lightGrey";
+        game.x.strokeStyle = "lightGrey";
+        game.x.lineWidth = 3;
+        game.x.arc(xxx(800), yyy(500), 120, 0, 2*Math.PI); //xxx(50), yyy(100), xxx(900), yyy(60)
+        game.x.fill();
+        game.x.stroke();
+        game.x.textAlign = "center";
+        game.x.font = fonter(18, "Arial");
+        game.x.fillStyle = "white";
+        game.x.fillText("Filibuster", xxx(800), yyy(495));
+    }
+
+    game.x.restore();
 }
 
 //screen positioning out of 1000 as standard for width and height.

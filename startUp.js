@@ -71,11 +71,15 @@ function Game()
     var self = this;
     this.state = "Divine"; //This determines which game is playing and what is paused.
     this.system = "Safir"; //This variable determines which solar-system the player is in.
-    this.change = "start"; //this variable allows the solar-system to refresh if change is not equal to the expected code per solar-system.
+    this.change = false; //this variable allows the solar-system to refresh if change is not equal to the expected code per solar-system.
+    this.startingClass = false;
 
     //These are the X and Y coords that represent the center of the screens view into the game world.
     this.viewX = 0;
     this.viewY = 0;
+
+    //data
+    this.gameData = {};
 
     //Player Focused Public Variables
     this.checks = 10000;
@@ -136,6 +140,7 @@ function Game()
     this.hostPenalty = 1;
     this.interDockingFee = 55;
     this.interCoords = [0, 0];
+    this.interSystem = "Safir";
     this.aiMenu = false;
     this.aiList =
         [
@@ -165,12 +170,16 @@ function Game()
     this.activeCommunication = false;
     this.comvo = -1;
     this.comvoResponse = -1;
+    this.solarMap = false;
+    this.mainMenu = true; //the main menu
+    this.modeSelectorMenu = false; //the menu in which you select your game difficulty
 
     //Economy;
     this.worldEconomy = new Economy();
 
     //shipItem to Ship Converter List (changes ship items into real ships)
     this.shipConverterList = [];
+    this.convertPlanets = [];
 
         //Keys
     this.upKey = false;
@@ -202,6 +211,7 @@ function Game()
     this.vKey = false;
     this.xKey = false;
     this.tKey = false;
+    this.mKey = false;
     this.zKey = false;
     this.shiftKey = false;
     this.spaceKey = false;
@@ -358,7 +368,15 @@ function Game()
         self.drawAll();
 
         //Alternate Menus
-        if (self.interInventory)
+        if (self.mainMenu)
+        {
+            main();
+        }
+        else if (self.modeSelectorMenu)
+        {
+            modeSelector();
+        }
+        else if (self.interInventory)
         {
             interlistItemTransferMenu(self.interInv1, self.interInv2, self.interContext);
         }
@@ -377,6 +395,10 @@ function Game()
         else if (self.commsMenu)
         {
             commsArray();
+        }
+        else if (self.solarMap)
+        {
+            minimap();
         }
 
         game.x.restore();

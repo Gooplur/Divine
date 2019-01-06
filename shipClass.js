@@ -1810,6 +1810,11 @@ function Ship(xx, yy, type, faction, AI, drive, upgrade, ammo, cargoHold)
                 game.rKey = false;
                 game.commsMenu = true;
             }
+            if (game.mKey == true)
+            {
+                game.mKey = false;
+                game.solarMap = true;
+            }
             if (game.iKey == true)
             {
                 game.iKey = false;

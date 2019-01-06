@@ -126,6 +126,10 @@ function keyPressSensing(event)
     {
         game.tKey = true;
     }
+    if (key == 77)
+    {
+        game.mKey = true;
+    }
     if (key == 16)
     {
         game.shiftKey = true;
@@ -267,6 +271,10 @@ function keyReleaseSensing(event)
     if (key == 84)
     {
         game.tKey = false;
+    }
+    if (key == 77)
+    {
+        game.mKey = false; //this.solarMap
     }
     if (key == 16)
     {
