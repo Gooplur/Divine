@@ -18,7 +18,6 @@ function remember() //save game
     planetConverter(true);
     game.gameData.convertPlanets = game.convertPlanets;
     game.gameData.system = game.interSystem;
-    game.gameData.change = game.change;
     game.gameData.checks = game.checks;
     game.gameData.commsList = game.commsList;
     game.gameData.interCoords = game.interCoords;
@@ -42,7 +41,6 @@ function remind() //load game
     game.convertPlanets = game.gameData.convertPlanets;
     planetConverter(false);
     game.system = game.gameData.system;
-    game.change = game.gameData.change;
     game.checks = game.gameData.checks;
     game.commsList = game.gameData.commsList;
     game.viewX = game.gameData.interCoords[0];
