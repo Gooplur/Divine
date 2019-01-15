@@ -54,7 +54,7 @@ function planetConverter(bool)
         game.convertPlanets = [];
         for (var i = game.sceneryList.length - 1; i >= 0 ; i--)
         {
-            if (game.sceneryList[i].type == "Planet")
+            if (game.sceneryList[i].type == "planet")
             {
                 game.convertPlanets.push({
                         type: game.sceneryList[i].type,
